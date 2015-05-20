@@ -1,0 +1,110 @@
+﻿@model SDNUOJ.Entity.ContestEntity
+
+@{
+    ViewBag.__Title = "竞赛信息编辑";
+
+    RouteData routeData = ViewContext.RouteData.Route.GetRouteData(this.Context);
+    String action = routeData.Values["action"] as String;
+}
+
+@using (Html.BeginForm(action, "Contest", new { id = Model.ContestID }, FormMethod.Post, new { @data_verify = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>竞赛信息编辑说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页添加或修改竞赛信息，本页标记<span class="star">*</span>的为必填项。<br />
+                    2. 如果竞赛类型选择为注册类竞赛，必须填写注册开始时间和结束时间。<br />
+                    3. 如果需要限制提交语言，请填写支持的语言名称，支持的全部语言：@ViewBag.AllSupportedLanguages。<br />
+                    4. 竞赛添加后默认为隐藏状态，如需显示请在管理界面进行相应操作。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">竞赛信息编辑</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>竞赛名称</td>
+                <td><input name="title" type="text" value="@Model.Title" class="textbox-long" data-emptyinfo="您没有输入竞赛名称，请重新输入！" /></td>
+            </tr>
+            <tr>
+                <td><span class="star">*</span>竞赛类型</td>
+                <td>
+                    <select name="type" class="selectbox">
+                        <option value="0" @Html.Raw(Model.ContestType == SDNUOJ.Entity.ContestType.Private ? " selected=\"selected\"" : "")>Private</option>
+                        <option value="1" @Html.Raw(Model.ContestType == SDNUOJ.Entity.ContestType.Public ? " selected=\"selected\"" : "")>Public</option>
+                        <option value="2" @Html.Raw(Model.ContestType == SDNUOJ.Entity.ContestType.RegisterPrivate ? " selected=\"selected\"" : "")>Register Private</option>
+                        <option value="3" @Html.Raw(Model.ContestType == SDNUOJ.Entity.ContestType.RegisterPublic ? " selected=\"selected\"" : "")>Register Public</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top;">
+                    <span class="star">*</span>竞赛描述<br />
+                    <span class="supplementary">支持HTML代码</span>
+                </td>
+                <td><textarea id="description" name="description" class="texteditor" data-editor="true" data-emptyinfo="您没有输入竞赛描述，请重新输入！">@Html.Raw(Model.Description)</textarea></td>
+            </tr>
+            <tr>
+                <td><span class="star">*</span>竞赛开始时间</td>
+                <td>
+                    <input name="startdate" type="text" class="datetimepicker" readonly="readonly" value="@Model.StartTime.ToString("yyyy-MM-dd")" data-emptyinfo="您没有输入竞赛开始时间，请重新输入！" />
+                    <select name="starthour" class="selectbox" data-value-from="00" data-value-to="23" data-value="@Model.StartTime.ToString("HH")"></select>：
+                    <select name="startminute" class="selectbox" data-value-from="00" data-value-to="59" data-value="@Model.StartTime.ToString("mm")"></select>：
+                    <select name="startsecond" class="selectbox" data-value-from="00" data-value-to="59" data-value="@Model.StartTime.ToString("ss")"></select>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="star">*</span>竞赛结束时间</td>
+                <td>
+                    <input name="enddate" type="text" class="datetimepicker" readonly="readonly" value="@Model.EndTime.ToString("yyyy-MM-dd")" data-emptyinfo="您没有输入竞赛结束时间，请重新输入！" />
+                    <select name="endhour" class="selectbox" data-value-from="00" data-value-to="23" data-value="@Model.EndTime.ToString("HH")"></select>：
+                    <select name="endminute" class="selectbox" data-value-from="00" data-value-to="59" data-value="@Model.EndTime.ToString("mm")"></select>：
+                    <select name="endsecond" class="selectbox" data-value-from="00" data-value-to="59" data-value="@Model.EndTime.ToString("ss")"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>注册开始时间</td>
+                <td>
+                    <input name="regstartdate" type="text" class="datetimepicker" readonly="readonly" value="@(Model.RegisterStartTime.HasValue ? Model.RegisterStartTime.Value.ToString("yyyy-MM-dd") : "")" />
+                    <select name="regstarthour" class="selectbox" data-value-from="00" data-value-to="23" data-value="@(Model.RegisterStartTime.HasValue ? Model.RegisterStartTime.Value.ToString("HH") : "")"></select>：
+                    <select name="regstartminute" class="selectbox" data-value-from="00" data-value-to="59" data-value="@(Model.RegisterStartTime.HasValue ? Model.RegisterStartTime.Value.ToString("mm") : "")"></select>：
+                    <select name="regstartsecond" class="selectbox" data-value-from="00" data-value-to="59" data-value="@(Model.RegisterStartTime.HasValue ? Model.RegisterStartTime.Value.ToString("ss") : "")"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>注册结束时间</td>
+                <td>
+                    <input name="regenddate" type="text" class="datetimepicker" readonly="readonly" value="@(Model.RegisterEndTime.HasValue ? Model.RegisterEndTime.Value.ToString("yyyy-MM-dd") : "")" />
+                    <select name="regendhour" class="selectbox" data-value-from="00" data-value-to="23" data-value="@(Model.RegisterEndTime.HasValue ? Model.RegisterEndTime.Value.ToString("HH") : "")"></select>：
+                    <select name="regendminute" class="selectbox" data-value-from="00" data-value-to="59" data-value="@(Model.RegisterEndTime.HasValue ? Model.RegisterEndTime.Value.ToString("mm") : "")"></select>：
+                    <select name="regendsecond" class="selectbox" data-value-from="00" data-value-to="59" data-value="@(Model.RegisterEndTime.HasValue ? Model.RegisterEndTime.Value.ToString("ss") : "")"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>支持语言名称<span class="supplementary">（多个用“,”分隔）</span></td>
+                <td><input name="supportlangs" type="text" value="@Model.SupportLanguage" class="textbox-long" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">提交</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

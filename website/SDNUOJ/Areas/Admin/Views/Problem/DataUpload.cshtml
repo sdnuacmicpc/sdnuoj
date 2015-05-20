@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.__Title = "题目数据上传";
+}
+
+@using (Html.BeginForm("DataUpload", "Problem", FormMethod.Post, new { @enctype = "multipart/form-data", @data_confirm = "true", @data_verify = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>题目数据上传说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页上传扩展名为.zip的题目数据包，数据包文件名需要与题目ID相同。<br />
+                    2. 如果题目之前存在数据包，本次上传后会自动替换之前的数据包，请谨慎操作。<br />
+                    3. 题目数据包需要包含last_modified文件，表示最后修改时间，输入输出需要放在input和output目录。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">上传题目数据包</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%"><span class="star">*</span>题目ID</td>
+                <td><input name="id" type="text" class="textbox" readonly="readonly" value="@ViewBag.ProblemID" data-emptyinfo="您没有输入题目ID，请重新输入！" /></td>
+            </tr>
+            <tr>
+                <td><span class="star">*</span>文件路径</td>
+                <td><input name="file" type="file" class="uploadbox" onpaste="return false;" onkeydown="return false;" data-emptyinfo="您没有选择要上传的题目数据，请重新选择！" data-regex="\.zip$" data-invalidinfo="您选择的文件类型有误，请重新选择！" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">上传</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

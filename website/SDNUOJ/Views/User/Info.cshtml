@@ -1,0 +1,70 @@
+﻿@model Tuple<SDNUOJ.Entity.UserEntity, List<Int32>, List<Int32>>
+
+@{
+    ViewBag.__Title = "User Information";
+    ViewBag.__Type = "userinfo";
+}
+
+<div class="dtable dtable-noborder user-info">
+    <div class="dhead">
+        <div class="row text-center">
+            <h2>@Model.Item1.UserName</h2>
+        </div>
+    </div>
+    <div class="dbody">
+        <div class="row">
+            <h3>Information</h3>
+        </div>
+        <div class="row">
+            <div class="well">
+            <span>
+                @Html.Raw(Model.Item1.NickName)@*!TIP:User.NickName添加时已Encode*@
+                @Html.Raw(SDNUOJ.Configuration.ConfigurationManager.AllowUserMail ? "(<a href=\"" + Url.Action("Send", "Mail", new { name = Model.Item1.UserName }) + "\">@" + Model.Item1.UserName + "</a>)" : "")
+            </span><br />
+            @if (Model.Item1.Permission > SDNUOJ.Entity.PermissionType.None) { <span>Group: @Model.Item1.Permission.ToString()</span><br /> }
+            <span>Rank: @Model.Item1.Rank,</span>
+            <span>Solved: @Html.ActionLink(Model.Item1.SolvedCount.ToString(), "List", "Status", new { name = Model.Item1.UserName, type = (Byte)SDNUOJ.Entity.ResultType.Accepted }, null),</span>
+            <span>Submissions: @Html.ActionLink(Model.Item1.SubmitCount.ToString(), "List", "Status", new { name = Model.Item1.UserName }, null),</span>
+            <span>Ratio: @Model.Item1.Ratio.ToString("F2")%</span><br /><br />
+            <span>
+                <em>
+                    from:@(!String.IsNullOrEmpty(Model.Item1.School) ? Model.Item1.School : "Unknown") ,
+                    registered on @Model.Item1.CreateDate.ToString("yyyy-MM-dd")
+                </em>
+            </span>
+        </div>
+    </div>
+    <div class="row">
+        <h3>Solved problems <span id="downloadcode_@(Model.Item1.UserName.ToLower() + (SDNUOJ.Configuration.ConfigurationManager.AllowDownloadSource ? "" : "_disabled"))"></span></h3>
+    </div>
+    <div class="row">
+        <div class="well">
+            @for (Int32 i = 0; i < Model.Item2.Count; i++)
+            {
+                @Html.ActionLink(Model.Item2[i].ToString(), "List", "Status", new { name = Model.Item1.UserName, pid = Model.Item2[i], type = (Byte)SDNUOJ.Entity.ResultType.Accepted }, null);
+                @:
+            }
+            @if (Model.Item2.Count == 0)
+            {
+                @: No solved problems
+            }
+        </div>
+    </div>
+    <div class="row">
+        <h3>Unsolved problems</h3>
+    </div>
+    <div class="row">
+        <div class="well">
+            @for (Int32 i = 0; i < Model.Item3.Count; i++)
+            {
+                @Html.ActionLink(Model.Item3[i].ToString(), "List", "Status", new { name = Model.Item1.UserName, pid = Model.Item3[i] }, null);
+                @:
+            }
+            @if (Model.Item3.Count == 0)
+            {
+                @: No unsolved problems
+            }
+        </div>
+    </div>
+</div>
+</div>

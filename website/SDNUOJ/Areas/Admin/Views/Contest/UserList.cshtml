@@ -1,0 +1,70 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.ContestUserEntity>
+
+@{
+    ViewBag.__Title = "竞赛用户管理";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>竞赛用户管理说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页添加、编辑、删除和设置是否启用指定竞赛用户。<br />
+                2. 删除竞赛用户只会删除该用户对于该竞赛的访问权限，不会影响用户信息。<br />
+                3. 竞赛用户仅在私有竞赛、注册私有竞赛和注册公开竞赛有效。
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped table-hover">
+    <thead>
+        <tr>
+            <th colspan="6">
+                竞赛用户管理 |
+                @Html.ActionLink("添加新用户", "UserAdd", "Contest", new { id = ViewBag.ContestID }, null) |
+                @Html.ActionLink("导出竞赛用户表", "UserExport", "Contest", new { id = ViewBag.ContestID }, null) |
+                @Html.ActionLink("启用", "UserEnable", "Contest", new { id = ViewBag.ContestID, ids = "__username__" }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })/@Html.ActionLink("禁用", "UserDisable", "Contest", new { id = ViewBag.ContestID, ids = "__username__" }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })选中用户 |
+                @Html.ActionLink("删除选中用户", "UserDelete", "Contest", new { id = ViewBag.ContestID, ids = "__username__" }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })
+            </th>
+        </tr>
+        <tr>
+            <td style="width:20px;"><input type="checkbox" data-selectall-name="username" /></td>
+            <td class="text-center" style="width:40px;">竞赛ID</td>
+            <td>用户名 (真实姓名)</td>
+            <td class="text-center" style="width:130px;">添加 / 注册时间</td>
+            <td class="text-center" style="width:40px;">启用</td>
+            <td class="text-center" style="width:40px;">删除</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td><input name="username" type="checkbox" value="@Item.UserName" /></td>
+            <td class="text-center">@Html.ActionLink(Item.ContestID.ToString(), "Index", "Home", new { area = "Contest", cid = Item.ContestID }, new { @target = "_blank" })</td>
+            <td>@Html.ActionLink(Item.UserName, "Info", "User", new { area = "", id = Item.UserName}, new { @target = "_blank" }) <span class="supplementary">(@(String.IsNullOrEmpty(Item.RealName) ? "无" : Item.RealName))</span></td>
+            <td class="text-center">@Item.RegisterTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            <td class="text-center">@Html.ActionLink((Item.IsEnable ? "禁用" : "启用"), (Item.IsEnable ? "UserDisable" : "UserEnable"), "Contest", new { id = Item.ContestID, ids = Item.UserName }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+            <td class="text-center">@Html.ActionLink("删除", "UserDelete", "Contest", new { id = Item.ContestID, ids = Item.UserName }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="6">没有竞赛用户</td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6">
+                @RenderPage("~/Areas/Admin/Views/Shared/_Pager.cshtml")
+            </td>
+        </tr>
+    </tfoot>
+</table>

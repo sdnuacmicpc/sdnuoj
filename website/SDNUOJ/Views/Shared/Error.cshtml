@@ -1,0 +1,26 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    ViewBag.__Title = "Error";
+}
+
+<div class="dtable">
+    <div class="dhead">
+        <div class="row text-center">
+            <h2>≥﹏≤</h2>
+        </div>
+    </div>
+    <div class="dbody">
+        <div class="row">
+            <div class="alert alert-full alert-danger text-center">
+                @Html.Raw(Model.Exception.Message.Replace(Environment.NewLine, "<br/>"))
+                @Html.Raw(SDNUOJ.Configuration.ConfigurationManager.IsDebugMode && !(Model.Exception is SDNUOJ.Controllers.Exception.UserException) ? "<br/>" + Model.Exception.StackTrace.Replace(Environment.NewLine, "<br/>") : "")
+            </div>
+        </div>
+    </div>
+    <div class="dfoot">
+        <div class="row text-center">
+            <a class="btn btn-default" href="javascript:void(0);" onclick="history.go(-1);">Back</a>
+        </div>
+    </div>
+</div>

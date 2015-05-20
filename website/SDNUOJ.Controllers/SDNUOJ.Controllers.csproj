@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{98A8EFE6-EE83-4BAC-96F5-9A705CBA5492}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SDNUOJ.Controllers</RootNamespace>
+    <AssemblyName>SDNUOJ.Controllers</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DotMaysWind.Data, Version=0.3.2.0, Culture=neutral, PublicKeyToken=0d869d299c64cf93, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Debug\DotMaysWind.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NPOI.2.1.3.1\lib\net40\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DotNetZip.1.9.3\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="LowercaseRoutesMVC">
+      <HintPath>..\packages\LowercaseRoutesMVC.1.0.3\lib\LowercaseRoutesMVC.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI, Version=2.1.3.1, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NPOI.2.1.3.1\lib\net40\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML">
+      <HintPath>..\packages\NPOI.2.1.3.1\lib\net40\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net">
+      <HintPath>..\packages\NPOI.2.1.3.1\lib\net40\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats">
+      <HintPath>..\packages\NPOI.2.1.3.1\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Admin\AdminBaseController.cs" />
+    <Compile Include="Admin\ContestController.cs" />
+    <Compile Include="Admin\DatabaseController.cs" />
+    <Compile Include="Admin\ForumController.cs" />
+    <Compile Include="Admin\HomeController.cs" />
+    <Compile Include="Admin\InfoController.cs" />
+    <Compile Include="Admin\JudgerController.cs" />
+    <Compile Include="Admin\NewsController.cs" />
+    <Compile Include="Admin\ProblemController.cs" />
+    <Compile Include="Admin\SolutionController.cs" />
+    <Compile Include="Admin\TopicPageController.cs" />
+    <Compile Include="Admin\ResourceController.cs" />
+    <Compile Include="Admin\SystemController.cs" />
+    <Compile Include="Admin\UploadController.cs" />
+    <Compile Include="Admin\UserController.cs" />
+    <Compile Include="Admin\WelcomeController.cs" />
+    <Compile Include="Attributes\AccessDatabaseOnlyAttribute.cs" />
+    <Compile Include="Attributes\ContestSubmitAttribute.cs" />
+    <Compile Include="Attributes\FunctionAttribute.cs" />
+    <Compile Include="BaseController.cs" />
+    <Compile Include="ContestsController.cs" />
+    <Compile Include="Contest\ContestAreaRegistration.cs" />
+    <Compile Include="Contest\ContestBaseController.cs" />
+    <Compile Include="Contest\ForumController.cs" />
+    <Compile Include="Contest\HomeController.cs" />
+    <Compile Include="Contest\OverallController.cs" />
+    <Compile Include="Contest\ProblemController.cs" />
+    <Compile Include="Contest\RankController.cs" />
+    <Compile Include="Contest\SolutionController.cs" />
+    <Compile Include="Contest\StatusController.cs" />
+    <Compile Include="Core\AdminManager.cs" />
+    <Compile Include="Core\ConfigurationFileManager.cs" />
+    <Compile Include="Core\ContestManager.cs" />
+    <Compile Include="Core\ContestProblemManager.cs" />
+    <Compile Include="Core\ContestUserManager.cs" />
+    <Compile Include="Core\DatabaseManager.cs" />
+    <Compile Include="Core\Exchange\ContestResultExport.cs" />
+    <Compile Include="Core\Exchange\ProblemImport.cs" />
+    <Compile Include="Core\Exchange\SolutionCodeExport.cs" />
+    <Compile Include="Core\ForumPostManager.cs" />
+    <Compile Include="Core\ForumTopicManager.cs" />
+    <Compile Include="Core\JudgeServerManager.cs" />
+    <Compile Include="Core\Judge\JudgeProblemManager.cs" />
+    <Compile Include="Core\Judge\JudgeSolutionManager.cs" />
+    <Compile Include="Core\Judge\JudgeStatusManager.cs" />
+    <Compile Include="Core\NewsManager.cs" />
+    <Compile Include="Core\ProblemCategoryItemManager.cs" />
+    <Compile Include="Core\ProblemCategoryManager.cs" />
+    <Compile Include="Core\ProblemDataManager.cs" />
+    <Compile Include="Core\ProblemManager.cs" />
+    <Compile Include="Core\RecentContestManager.cs" />
+    <Compile Include="Core\ResourceManager.cs" />
+    <Compile Include="Core\SolutionErrorManager.cs" />
+    <Compile Include="Core\SolutionManager.cs" />
+    <Compile Include="Core\TopicPageManager.cs" />
+    <Compile Include="Core\UploadsManager.cs" />
+    <Compile Include="Core\UserForgetPasswordManager.cs" />
+    <Compile Include="Core\UserMailManager.cs" />
+    <Compile Include="Core\UserManager.cs" />
+    <Compile Include="Exception\DatabaseNotSupportException.cs" />
+    <Compile Include="Exception\FunctionDisabledException.cs" />
+    <Compile Include="Exception\InvalidInputException.cs" />
+    <Compile Include="Exception\InvalidRequstException.cs" />
+    <Compile Include="Exception\NoPermissionException.cs" />
+    <Compile Include="Exception\NullResponseException.cs" />
+    <Compile Include="Exception\OperationFailedException.cs" />
+    <Compile Include="Exception\RequestType.cs" />
+    <Compile Include="Exception\SystemNotOpenException.cs" />
+    <Compile Include="Exception\UserException.cs" />
+    <Compile Include="Exception\UserUnLoginException.cs" />
+    <Compile Include="ForumController.cs" />
+    <Compile Include="GlobalAuthenticateModule.cs" />
+    <Compile Include="MailController.cs" />
+    <Compile Include="PageType.cs" />
+    <Compile Include="ResourceController.cs" />
+    <Compile Include="Status\JudgeOnlineStatus.cs" />
+    <Compile Include="Status\UserBrowserStatus.cs" />
+    <Compile Include="Status\UserCurrentStatus.cs" />
+    <Compile Include="Status\UserIPStatus.cs" />
+    <Compile Include="Status\UserStatus.cs" />
+    <Compile Include="Status\UserSubmitStatus.cs" />
+    <Compile Include="Attributes\NoClientCacheAttribute.cs" />
+    <Compile Include="FAQController.cs" />
+    <Compile Include="GlobalFiltersRegistration.cs" />
+    <Compile Include="GlobalRoutesTable.cs" />
+    <Compile Include="HomeController.cs" />
+    <Compile Include="InfoController.cs" />
+    <Compile Include="JudgeController.cs" />
+    <Compile Include="NewsController.cs" />
+    <Compile Include="ProblemController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RankController.cs" />
+    <Compile Include="SolutionController.cs" />
+    <Compile Include="StatusController.cs" />
+    <Compile Include="Status\CheckCodeStatus.cs" />
+    <Compile Include="TopicPageController.cs" />
+    <Compile Include="UserController.cs" />
+    <Compile Include="UtilityController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SDNUOJ.Caching\SDNUOJ.Caching.csproj">
+      <Project>{e624473d-de83-4a9b-ae3c-487d2d300b7e}</Project>
+      <Name>SDNUOJ.Caching</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDNUOJ.Configuration\SDNUOJ.Configuration.csproj">
+      <Project>{029df05a-4057-40aa-a000-ddd7462a9826}</Project>
+      <Name>SDNUOJ.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDNUOJ.Data\SDNUOJ.Data.csproj">
+      <Project>{bf6aeb9a-c96b-4e00-be0f-e19b45b4d735}</Project>
+      <Name>SDNUOJ.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDNUOJ.Entity\SDNUOJ.Entity.csproj">
+      <Project>{2effcd01-5ad3-4437-b176-d040443db279}</Project>
+      <Name>SDNUOJ.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDNUOJ.Logging\SDNUOJ.Logging.csproj">
+      <Project>{3d44536f-7ec1-4c6f-85ec-9ae133cd2844}</Project>
+      <Name>SDNUOJ.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDNUOJ.Storage.FreeProblemSet\SDNUOJ.Storage.FreeProblemSet.csproj">
+      <Project>{9d545427-5b87-4224-9212-a49444a3f5e3}</Project>
+      <Name>SDNUOJ.Storage.FreeProblemSet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDNUOJ.Storage\SDNUOJ.Storage.csproj">
+      <Project>{00274291-7727-45de-8fa6-50ec78e60ba7}</Project>
+      <Name>SDNUOJ.Storage</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDNUOJ.Utilities\SDNUOJ.Utilities.csproj">
+      <Project>{5ea9e7ef-9aac-44b0-90a8-a455a7950c25}</Project>
+      <Name>SDNUOJ.Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

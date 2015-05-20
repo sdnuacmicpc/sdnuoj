@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.__Title = "New Topic";
+}
+
+@using (Html.BeginForm("New", "Forum", FormMethod.Post, new { @class = "form-horizontal", @data_verify = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="dtable dtable-striped">
+        <div class="dhead">
+            <div class="row text-center">
+                <h2>New Topic</h2>
+            </div>
+        </div>
+        <div class="dbody">
+            @if (!String.IsNullOrEmpty(ViewBag.ProblemID))
+            {
+            <div class="row">
+                <label for="pid" class="col-sm-2 control-label"><span class="star">*</span>  Problem ID</label>
+                <div class="col-sm-8">
+                    <input id="pid" name="pid" type="text" maxlength="100" class="form-control" value="@ViewBag.ProblemID" required="required" readonly="readonly" />
+                </div>
+            </div>
+            }
+            <div class="row">
+                <label for="title" class="col-sm-2 control-label"><span class="star">*</span> Title</label>
+                <div class="col-sm-8">
+                    <input id="title" name="title" type="text" maxlength="100" class="form-control" required="required" placeholder="Topic title" data-emptyinfo="Topic title can not be NULL!" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="content" class="col-sm-2 control-label"><span class="star">*</span> Content</label>
+                <div class="col-sm-8">
+                    <textarea id="content" name="content" class="form-control" rows="10" required="required" placeholder="Your content" data-quicksubmit="true" data-emptyinfo="Topic content can not be NULL!"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="dfoot">
+            <div class="row text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-default">Reset</button>
+            </div>
+        </div>
+    </div>
+}

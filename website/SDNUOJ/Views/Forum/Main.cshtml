@@ -1,0 +1,92 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Utilities.TreeNode<SDNUOJ.Entity.ForumPostEntity>>
+
+@{
+    ViewBag.__Title = "Discuss Board";
+}
+
+@functions {
+    private String RenderChildren(SDNUOJ.Utilities.TreeNode<SDNUOJ.Entity.ForumPostEntity> node)
+    {
+        var sb = new System.Text.StringBuilder();
+        var post = node.DataSource;
+        
+        sb.AppendLine("<li>");
+        
+        if (node.ChildNodes.Count > 0)
+        {
+            sb.Append("<a class=\"tree-item-collapse\" data-collapse=\"true\" data-collapse-target=\"ul").Append(post.PostID.ToString()).Append("\"></a>");
+        }
+        else
+        {
+            sb.Append("<a class=\"tree-item-point\"></a>");
+        }
+
+        sb.Append("<a href=\"").Append(Url.Action("Reply", "Forum", new { id = post.PostID })).Append("\">").Append(post.Title).AppendLine("</a>");//!TIP:ForumPost.Title添加时已Encode
+        sb.Append("<span class=\"forum-postlength\">(").Append(post.ContentLength.ToString()).AppendLine(")</span>");
+        sb.Append("<a href=\"").Append(Url.Action("Info", "User", new { id = post.UserName })).Append("\" class=\"forum-username\">").Append(post.UserName).AppendLine("</a>");
+        sb.Append("<span>").Append(post.PostDate.ToString("yyyy-MM-dd HH:mm:ss")).AppendLine("</span>");
+        
+        if (node.ChildNodes.Count > 0)
+        {
+            sb.Append("<ul id=\"ul").Append(post.PostID.ToString()).Append("\" class=\"tree-list tree-item\">");
+
+            for (Int32 i = 0; i < node.ChildNodes.Count; i++)
+            {
+                sb.Append(RenderChildren(node.ChildNodes[i]));
+            }
+
+            sb.AppendLine("</ul>");
+        }
+
+        sb.AppendLine("</li>");
+
+        return sb.ToString();
+    }
+}
+
+<div class="dtable dtable-nofoot">
+    <div class="dhead">
+        <div class="row text-center">
+            <h2>Discuss Board | @Html.ActionLink("New", "New", "Forum", new { pid = ViewBag.ProblemID }, null)</h2>
+        </div>
+    </div>
+    <div class="dbody" style="padding-top:20px;">
+    @if (Model != null && Model.Count > 0)
+    {
+        <ul id="ul" class="tree-list">
+        @for (Int32 ulidx = 0; ulidx < Model.Count; ulidx++)
+        {
+            var Category = Model[ulidx];
+            var Topic = Model[ulidx].DataSource;
+            <li>
+                <div class="row">
+                    <div class="well">
+                        <a class="@(Category.ChildNodes.Count > 0 ? "tree-item-collapse" : "tree-item-point")"@Html.Raw(Category.ChildNodes.Count > 0 ? "data-collapse=\"true\" data-collapse-target=\"ul" + Topic.PostID.ToString() + "\"" : "")></a><a href="@Url.Action("Reply", "Forum", new { id = Topic.PostID })">@Html.Raw(Topic.Title)</a>
+                        <span class="forum-postlength">(@Topic.ContentLength)</span>
+                        @Html.ActionLink(Topic.UserName, "Info", "User", new { id = Topic.UserName }, new { @class = "forum-username" })
+                        <span>@Topic.PostDate.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                        @(Topic.RelativeType == SDNUOJ.Entity.ForumTopicType.Problem ? Html.ActionLink(String.Format("{0} {1}", Topic.RelativeType.ToString(), Topic.RelativeID.ToString()), "Show", "Problem", new { id = Topic.RelativeID }, new { @class = "forum-relativestring" }) : Html.Raw(""))
+                        <ul id="@("ul" + Topic.PostID.ToString())" class="tree-list tree-item">
+                        @for (Int32 liidx = 0; liidx < Category.ChildNodes.Count; liidx++)
+                        {
+                            var SubCategory = Category.ChildNodes[liidx];
+                            @Html.Raw(RenderChildren(SubCategory))
+                        }
+                        </ul>
+                    </div>
+                </div>
+            </li>
+        }
+        </ul>
+    }
+    else
+    {
+        <div class="well text-center">No topic</div>
+    }
+    </div>
+    <div class="dfoot">
+        <div class="row text-center">
+            @RenderPage("~/Views/Shared/_SimplePager.cshtml")
+        </div>
+    </div>
+</div>

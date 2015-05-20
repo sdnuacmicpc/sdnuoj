@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.__Title = "数据库压缩";
+}
+
+@using (Html.BeginForm("Compact", "Database", FormMethod.Post, new { @data_confirm = "true", @data_verify = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>数据库压缩说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页压缩当前使用的或备份的数据库，建议压缩备份数据库。<br />
+                    2. 若数据库无法压缩表示当前数据库正在使用，请稍后重试。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">数据库压缩</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>待压缩数据库文件名</td>
+                <td><input name="filename" type="text" class="textbox" value="@ViewBag.FileName" data-emptyinfo="待压缩数据库文件名不能为空！" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">提交</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

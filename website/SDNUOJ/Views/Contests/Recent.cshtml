@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.__Title = "Recent Contest";
+    ViewBag.__Type = "recent";
+}
+
+<div class="page-title row text-center">
+    <h2>Recent Contest</h2>
+</div>
+
+<table id="table-recent" class="table table-striped table-hover table-nohead">
+    <thead>
+        <tr>
+            <th class="text-center" style="width:60px">CID</th>
+            <th>Contest Name</th>
+            <th class="text-center" style="width:160px">Start</th>
+            <th class="text-center" style="width:180px">Type</th>
+            <th class="text-center" style="width:120px">OJ</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr id="tr-recent-info"><td id="td-recent-info" colspan="5" class="text-center">Loading recent contest...</td></tr>
+    </tbody>
+    <tfoot>
+        <tr><td colspan="5">Data Source : <a href="@SDNUOJ.Configuration.ConfigurationManager.RecentContestURL" target="_blank">@SDNUOJ.Configuration.ConfigurationManager.RecentContestURL</a></td></tr>
+    </tfoot>
+</table>

@@ -1,0 +1,65 @@
+﻿@model List<SDNUOJ.Entity.UserEntity>
+
+@{
+    ViewBag.__Title = "评测机管理";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>评测机管理说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页添加和删除评测机账号，删除评测机账号即为取消该账号的评测权限。<br />
+                2. 评测机最后在线时间根据评测机登录及请求记录得出，可能会有误差。
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped table-hover">
+    <thead>
+        <tr>
+            <th colspan="7">评测机管理 | @Html.ActionLink("添加评测机", "Add", "Judger")</th>
+        </tr>
+        <tr>
+            <td style="width:20px;"><input type="checkbox" disabled="disabled" /></td>
+            <td style="width:120px;">评测机ID</td>
+            <td>评测机名称</td>
+            <td class="text-center" style="width:130px;">最后登陆时间</td>
+            <td class="text-center" style="width:130px;">最后在线时间</td>
+            <td class="text-center" style="width:100px;">最后登陆IP</td>
+            <td class="text-center" style="width:40px;">删除</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td><input type="checkbox" disabled="disabled" /></td>
+            <td>@Html.ActionLink(Item.UserName, "Info", "User", new { area = "", id = Item.UserName }, new { @target = "_blank" })</td>
+            <td>@Html.Raw(Item.NickName)@*!TIP:User.NickName添加时已Encode*@</td>
+            <td class="text-center">@Item.LastDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            <td class="text-center">@(Item.LastOnline.HasValue ? Item.LastOnline.Value.ToString("yyyy-MM-dd HH:mm:ss") : "-")</td>
+            <td class="text-center">@Item.LastIP</td>
+            <td class="text-center">@Html.ActionLink("删除", "Delete", "Judger", new { id = Item.UserName }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="7">没有评测机账户</td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="7">
+                <span>共 @Model.Count 个评测机账户</span>
+            </td>
+        </tr>
+    </tfoot>
+</table>

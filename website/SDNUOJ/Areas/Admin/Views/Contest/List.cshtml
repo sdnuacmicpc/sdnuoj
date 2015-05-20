@@ -1,0 +1,73 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.ContestEntity>
+
+@{
+    ViewBag.__Title = "竞赛综合管理";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>竞赛综合管理说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页添加、编辑和设置竞赛的隐藏状态，不允许删除已添加的竞赛。<br />
+                2. 一个竞赛若隐藏，则除拥有竞赛管理权限的用户外均无法访问竞赛。
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped table-hover">
+    <thead>
+        <tr>
+            <th colspan="9">
+                竞赛综合管理 |
+                @Html.ActionLink("添加新竞赛", "Add", "Contest") |
+                @Html.ActionLink("隐藏", "Hide", "Contest", new { ids = "__id__" }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })/@Html.ActionLink("显示", "Show", "Contest", new { ids = "__id__" }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })选中竞赛
+            </th>
+        </tr>
+        <tr>
+            <td style="width:20px;"><input type="checkbox" data-selectall-name="id" /></td>
+            <td class="text-center" style="width:40px;">竞赛ID</td>
+            <td>竞赛标题</td>
+            <td class="text-center" style="width:130px;">开始时间</td>
+            <td class="text-center" style="width:80px;">结果</td>
+            <td class="text-center" style="width:40px;">题目</td>
+            <td class="text-center" style="width:40px;">用户</td>
+            <td class="text-center" style="width:40px;">隐藏</td>
+            <td class="text-center" style="width:40px;">编辑</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td><input name="id" type="checkbox" value="@Item.ContestID" /></td>
+            <td class="text-center">@Item.ContestID</td>
+            <td><a href="@Url.Action("Index", "Home", new { area = "Contest", cid = Item.ContestID })" target="_blank">@Html.Raw(Item.IsHide ? "<em>" + Item.Title + "<em>" : Item.Title)</a></td>
+            <td class="text-center">@Item.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            <td class="text-center">@Html.ActionLink("查看", "List", "Rank", new { area = "Contest", cid = Item.ContestID }, new { @target = "_blank" }) / @Html.ActionLink("导出", "Export", "Contest", new { id = Item.ContestID }, null)</td>
+            <td class="text-center">@Html.ActionLink("设置", "Problem", "Contest", new { id = Item.ContestID }, null)</td>
+            <td class="text-center">@Html.ActionLink("设置", "UserList", "Contest", new { cid = Item.ContestID, id = 1 }, null)</td>
+            <td class="text-center">@Html.ActionLink((Item.IsHide ? "显示" : "隐藏"), (Item.IsHide ? "Show" : "Hide"), "Contest", new { ids = Item.ContestID }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+            <td class="text-center">@Html.ActionLink("编辑", "Edit", "Contest", new { id = Item.ContestID }, null)</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="9">没有竞赛信息</td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="9">
+                @RenderPage("~/Areas/Admin/Views/Shared/_Pager.cshtml")
+            </td>
+        </tr>
+    </tfoot>
+</table>

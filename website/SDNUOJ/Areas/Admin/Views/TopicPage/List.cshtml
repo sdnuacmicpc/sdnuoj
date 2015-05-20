@@ -1,0 +1,65 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.TopicPageEntity>
+
+@{
+    ViewBag.__Title = "专题页面管理";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>专题页面管理说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页添加、编辑和删除专题页面，专题页面一旦删除无法恢复，请谨慎操作。<br />
+                2. 隐藏的专题页面只能由超级管理员查看，其他用户无法查看。
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped table-hover">
+    <thead>
+        <tr>
+            <th colspan="7">专题页面管理 | @Html.ActionLink("添加新专题页面", "Add", "TopicPage")</th>
+        </tr>
+        <tr>
+            <td style="width:20px;"><input type="checkbox" disabled="disabled" /></td>
+            <td>页面名称 (页面标题)</td>
+            <td class="text-center" style="width:100px;">创建用户</td>
+            <td class="text-center" style="width:130px;">更新时间</td>
+            <td class="text-center" style="width:40px;">隐藏</td>
+            <td class="text-center" style="width:40px;">编辑</td>
+            <td class="text-center" style="width:40px;">删除</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td><input type="checkbox" disabled="disabled" /></td>
+            <td>@Html.ActionLink(Item.PageName, "Index", "TopicPage", new { area = "", name = Item.PageName }, new { @target = "_blank" }) (@Html.ActionLink(Item.Title, "Index", "TopicPage", new { area = "", name = Item.PageName }, new { @target = "_blank" }))</td>
+            <td class="text-center">@Html.ActionLink(Item.CreateUser, "Info", "User", new { area = "", id = Item.CreateUser }, new { @target = "_blank" })</td>
+            <td class="text-center">@Item.LastDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            <td class="text-center">@Html.ActionLink((Item.IsHide ? "显示" : "隐藏"), (Item.IsHide ? "Show" : "Hide"), "TopicPage", new { id = Item.PageName }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+            <td class="text-center">@Html.ActionLink("编辑", "Edit", "TopicPage", new { id = Item.PageName }, null)</td>
+            <td class="text-center">@Html.ActionLink("删除", "Delete", "TopicPage", new { id = Item.PageName }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="7">没有专题页面</td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="7">
+                @RenderPage("~/Areas/Admin/Views/Shared/_Pager.cshtml")
+            </td>
+        </tr>
+    </tfoot>
+</table>

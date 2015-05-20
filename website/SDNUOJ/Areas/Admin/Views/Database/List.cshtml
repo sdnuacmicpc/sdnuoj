@@ -1,0 +1,69 @@
+﻿@model List<FileInfo>
+
+@{
+    ViewBag.__Title = "数据库文件管理";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>数据库文件管理说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页压缩、还原、下载和删除数据库，数据库一旦删除无法恢复，请谨慎操作。<br />
+                2. 当前使用的数据库不允许还原、下载和删除。<br />
+                3. 若文件列表存在.ldb文件则当前数据库正在使用，无法执行压缩操作。
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped table-hover">
+    <thead>
+        <tr>
+            <th colspan="8">数据库文件管理</th>
+        </tr>
+        <tr>
+            <td style="width:20px;"><input type="checkbox" disabled="disabled" /></td>
+            <td>文件名</td>
+            <td class="text-center" style="width:130px;">修改时间</td>
+            <td class="text-center" style="width:80px;">大小</td>
+            <td class="text-center" style="width:40px;">压缩</td>
+            <td class="text-center" style="width:40px;">还原</td>
+            <td class="text-center" style="width:40px;">下载</td>
+            <td class="text-center" style="width:40px;">删除</td>
+        </tr>
+    </thead>
+    <tbody>
+    @for (Int32 i = 0; i < Model.Count; i++)
+    {
+        var Item = Model[i];
+        <tr>
+            <td><input type="checkbox" disabled="disabled" /></td>
+            <td>@Item.Name</td>
+            <td class="text-center">@Item.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            <td class="text-center">@((Item.Length / 1024.0).ToString("0.00")) KB</td>
+            <td class="text-center">@Html.ActionLink("压缩", "Compact", "Database", new { id = i }, null)</td>
+            <td class="text-center">@(!String.Equals(Item.Name, ViewBag.DefaultFileName as String) ? Html.ActionLink("还原", "Restore", "Database", new { id = i }, null) : Html.Raw("还原"))</td>
+            <td class="text-center">@(!String.Equals(Item.Name, ViewBag.DefaultFileName as String) ? Html.ActionLink("下载", "Download", "Database", new { id = i }, null) : Html.Raw("下载"))</td>
+            <td class="text-center">@(!String.Equals(Item.Name, ViewBag.DefaultFileName as String) ? Html.ActionLink("删除", "Delete", "Database", new { id = i }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" }) : Html.Raw("删除"))</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="8">没有数据库文件</td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="8">
+                <span>共 @Model.Count 个数据库文件</span>
+            </td>
+        </tr>
+    </tfoot>
+</table>

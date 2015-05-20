@@ -1,0 +1,146 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.UserEntity>
+
+@{
+    ViewBag.__Title = "用户信息管理";
+}
+
+@using (Html.BeginForm("List", "User", new { id = 1 }, FormMethod.Get))
+{
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>用户信息管理说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页搜索、查看、锁定用户及对用户设置权限和密码。<br />
+                    2. 为了保存用户提交信息，故只允许锁定用户不允许删除。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">
+                    <a class="button-expand" data-collapse="true"></a>用户搜索 |
+                    @Html.ActionLink("清除查找条件", "List", "User")
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-collapsed="false">
+                <td style="width:25%;">用户名包含<span class="supplementary">（多个请用空格分隔）</span></td>
+                <td><input name="names" type="text" class="textbox-tiny" value="@ViewBag.Names" /></td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>昵称包含</td>
+                <td><input name="nickname" type="text" class="textbox-tiny" value="@ViewBag.NickName" /></td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>邮箱包含</td>
+                <td><input name="email" type="text" class="textbox-tiny" value="@ViewBag.Email" /></td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>学校包含</td>
+                <td><input name="school" type="text" class="textbox-tiny" value="@ViewBag.School" /></td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>最后登录IP包含</td>
+                <td><input name="lastip" type="text" class="textbox-tiny" value="@ViewBag.LastIP" /></td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>是否锁定</td>
+                <td>
+                    <select name="islocked" class="selectbox">
+                        <option value="">不限</option>
+                        <option value="0"@(String.Equals(ViewBag.IsLocked, "0") ? " selected=\"selected\"" : "")>否</option>
+                        <option value="1"@(String.Equals(ViewBag.IsLocked, "1") ? " selected=\"selected\"" : "")>是</option>
+                    </select>
+                </td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>注册时间范围</td>
+                <td>
+                    <input name="regstartdate" type="text" class="datetimepicker" readonly="readonly" value="@ViewBag.RegStartDate" />&nbsp;-
+                    <input name="regenddate" type="text" class="datetimepicker" readonly="readonly" value="@ViewBag.RegEndDate" />
+                </td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>最后登陆时间</td>
+                <td>
+                    <input name="loginstartdate" type="text" class="datetimepicker" readonly="readonly" value="@ViewBag.LoginStartDate" />&nbsp;-
+                    <input name="loginenddate" type="text" class="datetimepicker" readonly="readonly" value="@ViewBag.LoginEndDate" />
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <input name="order" type="hidden" value="@ViewBag.Order" />
+                    <button type="submit">搜索</button>&nbsp;
+                    <span class="supplementary">不填任何查询条件即列出所有记录</span>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <br />
+    <table class="table-main table-striped table-hover">
+        <thead>
+            <tr>
+                <th colspan="10">
+                    用户信息管理 |
+                    @Html.ActionLink("锁定", "Lock", "User", new { ids = "__username__" }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })/@Html.ActionLink("解锁", "Unlock", "User", new { ids = "__username__" }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })选中用户
+                </th>
+            </tr>
+            <tr>
+                <td style="width:20px;"><input type="checkbox" data-selectall-name="username" /></td>
+                <td><a data-switch-name="order" data-switch-value="">用户名</a></td>
+                <td class="text-center" style="width:110px;"><a data-switch-name="order" data-switch-value="0">通过数</a></td>
+                <td class="text-center" style="width:130px;"><a data-switch-name="order" data-switch-value="1">注册时间</a></td>
+                <td class="text-center" style="width:130px;"><a data-switch-name="order" data-switch-value="2">最后登录时间</a></td>
+                <td class="text-center" style="width:100px;"><a data-switch-name="order" data-switch-value="3">最后登录IP</a></td>
+                <td class="text-center" style="width:40px;">统计</td>
+                <td class="text-center" style="width:40px;">密码</td>
+                <td class="text-center" style="width:40px;">锁定</td>
+                <td class="text-center" style="width:40px;">信息</td>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var Item in Model)
+        {
+            <tr>
+                <td><input name="username" type="checkbox" value="@Item.UserName" /></td>
+                <td>@Html.ActionLink(Item.UserName, "Info", "User", new { area = "", id = Item.UserName }, new { @target = "_blank" })</td>
+                <td class="text-center">
+                    @Item.Ratio.ToString("F2")%
+                    (@Html.ActionLink(Item.SolvedCount.ToString(), "List", "Status", new { area = "", name = Item.UserName, type = (Byte)SDNUOJ.Entity.ResultType.Accepted }, null)/@Html.ActionLink(Item.SubmitCount.ToString(), "List", "Status", new { area = "", name = Item.UserName }, null))
+                </td>
+                <td class="text-center">@Item.CreateDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td class="text-center">@Item.LastDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td class="text-center">@Item.LastIP</td>
+                <td class="text-center">@Html.ActionLink("重算", "Recalculate", "User", new { id = Item.UserName }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+                <td class="text-center">@Html.ActionLink("修改", "ChangePassword", "User", new { id = Item.UserName }, null)</td>
+                <td class="text-center">@Html.ActionLink((Item.IsLocked ? "解锁" : "锁定"), (Item.IsLocked ? "Unlock" : "Lock"), "User", new { ids = Item.UserName }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+                <td class="text-center">@Html.ActionLink("查看", "Detail", "User", new { id = Item.UserName }, null)</td>
+            </tr>
+        }
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td class="text-center" colspan="10">没有指定用户</td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="10">
+                    @RenderPage("~/Areas/Admin/Views/Shared/_Pager.cshtml")
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

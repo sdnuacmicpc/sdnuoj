@@ -1,0 +1,57 @@
+﻿@model SDNUOJ.Entity.ResourceEntity
+
+@{
+    ViewBag.__Title = "下载资源编辑";
+
+    RouteData routeData = ViewContext.RouteData.Route.GetRouteData(this.Context);
+    String action = routeData.Values["action"] as String;
+}
+
+@using (Html.BeginForm(action, "Resource", new { id = Model.ResourceID }, FormMethod.Post, new { @data_verify = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>下载资源编辑说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页添加或修改下载资源，本页所有内容均为必填项。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">下载资源编辑</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>资源标题</td>
+                <td><input name="title" type="text" maxlength="255" value="@Model.Title" class="textbox" data-emptyinfo="您没有输入资源标题，请重新输入！" /></td>
+            </tr>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>资源URL</td>
+                <td><input name="url" type="text" maxlength="255" value="@Model.Url" class="textbox" data-emptyinfo="您没有输入资源URL，请重新输入！" /></td>
+            </tr>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>资源类型</td>
+                <td><input name="type" type="text" maxlength="255" value="@Model.Type" class="textbox" data-emptyinfo="您没有输入资源类型，请重新输入！" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">提交</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

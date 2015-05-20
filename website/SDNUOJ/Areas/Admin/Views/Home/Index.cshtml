@@ -1,0 +1,51 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="zh-hans" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>Admin Platform</title>
+    <link href="@this.StaticFile("/static/css/admin-framework.min.css")" type="text/css" rel="stylesheet" />
+</head>
+<body>
+    <table class="table-framework">
+        <tr>
+            <td class="top" colspan="2">
+                <div class="logo-container">
+                    <a href="@Url.Action("Index", "Home", new { area = "" })" target="_parent"><img class="logo" alt="Logo" src="/static/img/admin/logo.png" /></a>
+                </div>
+                <div id="menus" class="menus" data-isaccessdb="@ViewBag.IsAccessDatabase"></div>
+            </td>
+        </tr>
+        <tr>
+            <td class="middle" colspan="2">
+                <table class="table-middle">
+                    <tr>
+                        <td class="submenu-container">
+                            <div id="submenus" class="submenus"></div>
+                        </td>
+                        <td class="page-container">
+                            <iframe id="admin-page" name="admin-page" src="about:blank" frameborder="0"></iframe>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="bottom-copyright">
+                Powered By SDNU Online Judge Version @SDNUOJ.Configuration.ConfigurationManager.Version
+            </td>
+            <td class="bottom-links">
+                @Html.ActionLink("系统首页", "Index", "Home", new { area = "" }, new { @target = "_blank" }) |
+                @Html.ActionLink("后台首页", "Index", "Home", new { area = "Admin" }, new { @target = "admin-page" }) |
+                @Html.ActionLink("退出后台", "Index", "Home", new { area = "" }, null)
+            </td>
+        </tr>
+    </table>
+
+    <script src="@this.StaticFile("/static/js/foundation/jquery-1.11.2.min.js")" type="text/javascript"></script>
+    <script src="@this.StaticFile("/static/js/admin-framework.min.js")" type="text/javascript"></script>
+</body>
+</html>

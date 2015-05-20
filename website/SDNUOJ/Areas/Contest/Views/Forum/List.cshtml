@@ -1,0 +1,36 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.ForumTopicEntity>
+
+@{
+    var Contest = ViewData["Contest"] as SDNUOJ.Entity.ContestEntity;
+    
+    ViewBag.__Title = "Contest Clarification";
+    ViewBag.__ContestPageTitle = "Contest Clarification | <a href=\"" + Url.Action("New", "Forum", new { area = "Contest" }) + "\">New</a>";
+}
+
+<table class="table table-striped table-hover table-nofoot">
+    <thead>
+        <tr>
+            <th class="td-contestforum-time text-center">Last Reply</th>
+            <th>Title</th>
+            <th class="td-contestforum-author text-center">Author</th>
+        </tr>
+    </thead>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td class="text-center">@Item.LastDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            <td><a href="@Url.Action("Topic", "Forum", new { area = "Contest", id = Item.TopicID })">@Html.Raw(Item.Title)@*!TIP:ForumTopic.Title添加时已Encode*@</a></td>
+            <td class="text-center">@Html.ActionLink(Item.UserName, "Info", "User", new { area = "", id = Item.UserName }, null)</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="3" class="text-center">No topic</td>
+        </tr>
+    }
+</table>
+
+<div class="page-bottom row text-center">
+    @RenderPage("~/Views/Shared/_SimplePager.cshtml")
+</div>

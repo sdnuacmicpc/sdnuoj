@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.__Title = "Send Mail";
+}
+
+@using (Html.BeginForm("Send", "Mail", FormMethod.Post, new { @class = "form-horizontal", @data_verify = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="dtable dtable-striped">
+        <div class="dhead">
+            <div class="row text-center">
+                <h2>New Mail</h2>
+            </div>
+        </div>
+        <div class="dbody">
+            <div class="row">
+                <label for="title" class="col-sm-2 control-label"><span class="star">*</span> Title</label>
+                <div class="col-sm-8">
+                    <input id="title" name="title" type="text" maxlength="100" class="form-control" value="@(String.IsNullOrEmpty(ViewBag.Title) ? "" : "Re: " + ViewBag.Title)" required="required" placeholder="Mail title" data-emptyinfo="Mail title can not be NULL!" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="tousername" class="col-sm-2 control-label"><span class="star">*</span> To</label>
+                <div class="col-sm-8">
+                    <input id="tousername" name="tousername" type="text" maxlength="20" class="form-control" value="@ViewBag.ToName" required="required" placeholder="Username" data-emptyinfo="To User name can not be NULL!" data-regex="^\w+$" data-invalidinfo="Username is INVALID!" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="content" class="col-sm-2 control-label"><span class="star">*</span> Content</label>
+                <div class="col-sm-8">
+                    <textarea id="content" name="content" class="form-control" rows="10" required="required" placeholder="Your content" data-emptyinfo="Mail content can not be NULL!"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="dfoot">
+            <div class="row text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-default">Reset</button>
+            </div>
+        </div>
+    </div>
+}

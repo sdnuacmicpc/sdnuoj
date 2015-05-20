@@ -1,0 +1,61 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.UserEntity>
+
+@{
+    ViewBag.__Title = "用户权限管理";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>用户权限管理说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页查看、添加和编辑拥有权限的用户。<br />
+                2. 本页不显示评测机账户，如需添加或编辑评测机权限，请访问相关页面。
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped table-hover">
+    <thead>
+        <tr>
+            <th colspan="5">用户权限管理 | @Html.ActionLink("添加管理用户", "PermissionEdit", "User")</th>
+        </tr>
+        <tr>
+            <td style="width:20px;"><input type="checkbox" disabled="disabled" /></td>
+            <td style="width:130px;">用户名</td>
+            <td>权限类型</td>
+            <td class="text-center" style="width:40px;">权限</td>
+            <td class="text-center" style="width:40px;">信息</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td><input type="checkbox" disabled="disabled" /></td>
+            <td>@Html.ActionLink(Item.UserName, "Info", "User", new { area = "", id = Item.UserName }, new { @target = "_blank" })</td>
+            <td>@Item.Permission</td>
+            <td class="text-center">@Html.ActionLink("修改", "PermissionEdit", "User", new { id = Item.UserName }, null)</td>
+            <td class="text-center">@Html.ActionLink("查看", "Detail", "User", new { id = Item.UserName }, null)</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="5">没有管理权限用户</td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5">
+                @RenderPage("~/Areas/Admin/Views/Shared/_Pager.cshtml")
+            </td>
+        </tr>
+    </tfoot>
+</table>

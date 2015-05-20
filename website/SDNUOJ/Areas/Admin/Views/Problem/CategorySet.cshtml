@@ -1,0 +1,75 @@
+﻿@model Tuple<List<SDNUOJ.Entity.ProblemCategoryEntity>, List<SDNUOJ.Entity.ProblemCategoryEntity>>
+
+@{
+    ViewBag.__Title = "题目分类设置";
+    ViewBag.__Type = "problemcategory";
+}
+
+@using (Html.BeginForm("CategorySet", "Problem", new { id = ViewBag.ProblemID }, FormMethod.Post, new { @data_verify = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>题目分类设置说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页设置题目的分类，也可以不属于任何分类。<br />
+                    2. 一个题目可以选择多个分类，请将题目的分类设置到下面的选择框中。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">题目分类设置</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>题目ID</td>
+                <td><input name="id" type="text" class="textbox" readonly="readonly" value="@ViewBag.ProblemID" data-emptyinfo="您没有输入题目ID，请重新输入！" /></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top;">
+                    <span class="star">*</span>题目类型
+                </td>
+                <td>
+                    <select id="select-unchoosed" multiple="multiple" class="listbox-little">
+                    @foreach (var Item in Model.Item1)
+                    {
+                        <option value="@Item.TypeID">@Item.Title</option>
+                    }
+                    </select>
+                    <br />
+                    <button type="button" data-convert-type="1">↓</button>
+                    <button type="button" data-convert-type="2">↓↓</button>
+                    <button type="button" data-convert-type="-1">↑</button>
+                    <button type="button" data-convert-type="-2">↑↑</button>
+                    <br />
+                    <select id="select-choosed" multiple="multiple" class="listbox-little">
+                    @foreach (var Item in Model.Item2)
+                    {
+                        <option value="@Item.TypeID">@Item.Title</option>
+                    }
+                    </select>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <input name="source" type="hidden" value="@ViewBag.Source" />
+                    <input id="txt-target" name="target" type="hidden" value="@ViewBag.Source" />
+                    <button type="submit">提交</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

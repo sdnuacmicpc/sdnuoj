@@ -1,0 +1,23 @@
+﻿@model SDNUOJ.Entity.NewsEntity
+
+@{
+    ViewBag.__Title = "News" + ((Model != null && !String.IsNullOrEmpty(Model.Title)) ? " - " + Model.Title : "");
+}
+
+<div class="dtable dtable-striped">
+    <div class="dhead">
+        <div class="row text-center">
+            <h2>@Model.Title</h2>
+        </div>
+    </div>
+    <div class="dbody">
+        <div class="row row-fat">
+            @Html.Raw(Model.Description)
+        </div>
+    </div>
+    <div class="dfoot">
+        <div class="row">
+            <div class="callout-right text-right">Publish Date: @Model.PublishDate.ToString("yyyy-MM-dd HH:mm:ss")</div>
+        </div>
+    </div>
+</div>

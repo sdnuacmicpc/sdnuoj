@@ -1,0 +1,57 @@
+﻿@model List<KeyValuePair<String, String>>
+
+@{
+    ViewBag.__Title = "运行参数设置";
+}
+
+@using (Html.BeginForm("ConfigSave", "System", FormMethod.Post, new { @data_confirm = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>运行参数设置说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页修改系统运行参数，此功能需要对系统目录和Web.Config文件有修改权限。<br />
+                    2. 本功能是修改系统根目录下Web.Config的快捷方式，与直接编辑Web.Config文件效果相同。<br />
+                    3. 修改完系统运行参数后会导致本系统自动重启，设置前请慎重。若不了解参数具体含义，请勿修改。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main table-striped">
+        <thead>
+            <tr>
+                <th colspan="3">运行参数设置</th>
+            </tr>
+            <tr>
+                <td style="width:20px;"><input type="checkbox" disabled="disabled" /></td>
+                <td style="width:25%;">键名</td>
+                <td>键值</td>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var Item in Model)
+        {
+            <tr>
+                <td><input type="checkbox" disabled="disabled" /></td>
+                <td>@Item.Key</td>
+                <td><textarea name="@Item.Key" class="textbox" wrap="soft" data-disableenter="true">@Item.Value</textarea></td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="3">
+                    <button type="submit">保存</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

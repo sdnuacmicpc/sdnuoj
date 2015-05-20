@@ -1,0 +1,387 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5B9CAB77-86AD-415C-8F73-83230DD4A413}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SDNUOJ</RootNamespace>
+    <AssemblyName>SDNUOJ</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StaticFileExtension.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Global.asax" />
+    <Content Include="static\css\admin-framework.css" />
+    <Content Include="static\css\admin-framework.min.css">
+      <DependentUpon>admin-framework.css</DependentUpon>
+    </Content>
+    <Content Include="static\css\admin-general.css" />
+    <Content Include="static\css\admin-general.min.css">
+      <DependentUpon>admin-general.css</DependentUpon>
+    </Content>
+    <Content Include="static\css\foreground.css" />
+    <Content Include="static\css\foreground.min.css">
+      <DependentUpon>foreground.css</DependentUpon>
+    </Content>
+    <Content Include="static\css\foundation\bootstrap-3.3.4.min.css" />
+    <Content Include="static\css\foundation\codemirror-5.2.custom.css" />
+    <Content Include="static\css\foundation\codemirror-5.2.custom.min.css">
+      <DependentUpon>codemirror-5.2.custom.css</DependentUpon>
+    </Content>
+    <Content Include="static\css\foundation\jquery.datetimepicker-2.4.3-mod.css" />
+    <Content Include="static\css\foundation\jquery.datetimepicker-2.4.3-mod.min.css">
+      <DependentUpon>jquery.datetimepicker-2.4.3-mod.css</DependentUpon>
+    </Content>
+    <Content Include="static\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="static\img\admin\logo.png" />
+    <Content Include="static\img\editoricons.png" />
+    <Content Include="static\js\admin-framework.js">
+      <DependentUpon>admin-framework.js.bundle</DependentUpon>
+    </Content>
+    <Content Include="static\js\admin-framework.min.js">
+      <DependentUpon>admin-framework.js</DependentUpon>
+    </Content>
+    <Content Include="static\js\admin-general.js">
+      <DependentUpon>admin-general.js.bundle</DependentUpon>
+    </Content>
+    <Content Include="static\js\admin-general.min.js">
+      <DependentUpon>admin-general.js</DependentUpon>
+    </Content>
+    <Content Include="static\js\foreground.js">
+      <DependentUpon>foreground.js.bundle</DependentUpon>
+    </Content>
+    <Content Include="static\js\foreground.min.js">
+      <DependentUpon>foreground.js</DependentUpon>
+    </Content>
+    <Content Include="static\js\foundation\bootstrap-3.3.4.min.js" />
+    <Content Include="static\js\foundation\codemirror-package-5.2.js">
+      <DependentUpon>codemirror-package-5.2.js.bundle</DependentUpon>
+    </Content>
+    <Content Include="static\js\foundation\codemirror-package-5.2.min.js">
+      <DependentUpon>codemirror-package-5.2.js</DependentUpon>
+    </Content>
+    <Content Include="js-source\parts-codemirror\active-line.js" />
+    <Content Include="js-source\parts-codemirror\clike.js" />
+    <Content Include="js-source\parts-codemirror\codemirror.js" />
+    <Content Include="js-source\parts-codemirror\fullscreen.js" />
+    <Content Include="js-source\parts-codemirror\matchbrackets.js" />
+    <Content Include="js-source\parts-codemirror\pascal.js" />
+    <Content Include="js-source\parts-codemirror\placeholder.js" />
+    <Content Include="js-source\parts-codemirror\python.js" />
+    <Content Include="js-source\parts-codemirror\ruby.js" />
+    <Content Include="js-source\parts-codemirror\vb.js" />
+    <Content Include="static\js\foundation\excanvas.min.js" />
+    <Content Include="static\js\foundation\html5shiv-3.7.2.min.js" />
+    <Content Include="static\js\foundation\jquery-1.11.2.min.js" />
+    <Content Include="static\js\foundation\jquery.datetimepicker-2.4.3-mod.js" />
+    <Content Include="static\js\foundation\jquery.datetimepicker-2.4.3-mod.min.js">
+      <DependentUpon>jquery.datetimepicker-2.4.3-mod.js</DependentUpon>
+    </Content>
+    <Content Include="static\js\foundation\jquery.flot-0.8.3.min.js" />
+    <Content Include="static\js\foundation\json2-150225.js" />
+    <Content Include="static\js\foundation\json2-150225.min.js">
+      <DependentUpon>json2-150225.js</DependentUpon>
+    </Content>
+    <Content Include="static\js\foundation\respond-1.4.2.min.js" />
+    <Content Include="static\js\foundation\tinyeditor.js" />
+    <Content Include="static\js\foundation\tinyeditor.min.js">
+      <DependentUpon>tinyeditor.js</DependentUpon>
+    </Content>
+    <Content Include="js-source\parts-admin\admin-framework.js" />
+    <Content Include="js-source\parts-admin\admin-page-initializer.js" />
+    <Content Include="js-source\parts-admin\admin-pages-welcome.js" />
+    <Content Include="js-source\parts-admin\admin-page.js" />
+    <Content Include="js-source\parts-admin\admin-pages-problem.js" />
+    <Content Include="js-source\parts-foreground\jquery-placeholder.js" />
+    <Content Include="js-source\parts-core\sdnuoj-core.js" />
+    <Content Include="js-source\parts-core\sdnuoj-foundation.js" />
+    <Content Include="js-source\parts-core\sdnuoj-utilities.js" />
+    <Content Include="js-source\parts-foreground\foreground-page-initializer.js" />
+    <Content Include="js-source\parts-foreground\foreground-pages-submit.js" />
+    <Content Include="js-source\parts-foreground\foreground-page.js" />
+    <Content Include="js-source\parts-foreground\foreground-pages-contest.js" />
+    <Content Include="js-source\parts-foreground\foreground-pages-mail.js" />
+    <Content Include="js-source\parts-foreground\foreground-pages-problem.js" />
+    <Content Include="js-source\parts-foreground\foreground-pages-recent.js" />
+    <Content Include="js-source\parts-foreground\foreground-pages-status.js" />
+    <Content Include="js-source\parts-foreground\foreground-pages-user.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="static\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="static\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="static\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="static\fonts\glyphicons-halflings-regular.woff2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="static\js\admin-framework.js.bundle" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="static\js\admin-general.js.bundle" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="static\js\foreground.js.bundle">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Web.config" />
+    <Content Include="Areas\Contest\Views\Web.config" />
+    <Content Include="Areas\Contest\Views\Home\Index.cshtml" />
+    <Content Include="Areas\Contest\Views\Forum\List.cshtml" />
+    <Content Include="Areas\Contest\Views\Forum\New.cshtml" />
+    <Content Include="Areas\Contest\Views\Forum\Topic.cshtml" />
+    <Content Include="Areas\Contest\Views\Problem\Set.cshtml" />
+    <Content Include="Areas\Contest\Views\Problem\Show.cshtml" />
+    <Content Include="Areas\Contest\Views\Problem\Statistic.cshtml" />
+    <Content Include="Areas\Contest\Views\Rank\List.cshtml" />
+    <Content Include="Areas\Contest\Views\Overall\Statistics.cshtml" />
+    <Content Include="Areas\Contest\Views\Status\List.cshtml" />
+    <Content Include="Areas\Contest\Views\Problem\Submit.cshtml" />
+    <Content Include="Areas\Contest\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_Pager.cshtml" />
+    <Content Include="Areas\Admin\Views\Welcome\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\News\List.cshtml" />
+    <Content Include="Areas\Admin\Views\News\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\Info\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\System\CacheList.cshtml" />
+    <Content Include="Areas\Admin\Views\System\CacheView.cshtml" />
+    <Content Include="Areas\Admin\Views\System\Config.cshtml" />
+    <Content Include="Areas\Admin\Views\System\Info.cshtml" />
+    <Content Include="Areas\Admin\Views\Resource\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Resource\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\Upload\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Upload\New.cshtml" />
+    <Content Include="Areas\Admin\Views\TopicPage\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\TopicPage\List.cshtml" />
+    <Content Include="Areas\Admin\Views\User\Online.cshtml" />
+    <Content Include="Areas\Admin\Views\User\Detail.cshtml" />
+    <Content Include="Areas\Admin\Views\User\ChangePassword.cshtml" />
+    <Content Include="Areas\Admin\Views\Database\Compact.cshtml" />
+    <Content Include="Areas\Admin\Views\Database\Backup.cshtml" />
+    <Content Include="Areas\Admin\Views\Database\Restore.cshtml" />
+    <Content Include="Areas\Admin\Views\Database\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Database\Upload.cshtml" />
+    <Content Include="Areas\Admin\Views\User\PermissionList.cshtml" />
+    <Content Include="Areas\Admin\Views\User\PermissionEdit.cshtml" />
+    <Content Include="Areas\Admin\Views\Judger\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Judger\Add.cshtml" />
+    <Content Include="Areas\Admin\Views\Contest\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\Contest\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Contest\Export.cshtml" />
+    <Content Include="Areas\Admin\Views\Contest\Problem.cshtml" />
+    <Content Include="Areas\Admin\Views\Contest\UserList.cshtml" />
+    <Content Include="Areas\Admin\Views\Contest\UserExport.cshtml" />
+    <Content Include="Areas\Admin\Views\Contest\UserAdd.cshtml" />
+    <Content Include="Areas\Admin\Views\Problem\CategoryList.cshtml" />
+    <Content Include="Areas\Admin\Views\Problem\CategoryEdit.cshtml" />
+    <Content Include="Areas\Admin\Views\Problem\CategorySet.cshtml" />
+    <Content Include="Areas\Admin\Views\Problem\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Problem\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\Problem\Import.cshtml" />
+    <Content Include="Areas\Admin\Views\Problem\DataCreate.cshtml" />
+    <Content Include="Areas\Admin\Views\Problem\DataUpload.cshtml" />
+    <Content Include="Areas\Admin\Views\User\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Solution\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Forum\TopicList.cshtml" />
+    <Content Include="Areas\Admin\Views\Forum\PostList.cshtml" />
+    <Content Include="Areas\Admin\Views\Solution\Rejudge.cshtml" />
+    <None Include="Properties\PublishProfiles\Deploy.pubxml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Contests\Recent.cshtml" />
+    <Content Include="Views\Info\Index.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Problem\Set.cshtml" />
+    <Content Include="Views\Problem\Category.cshtml" />
+    <Content Include="Views\Problem\Show.cshtml" />
+    <Content Include="Views\Problem\Search.cshtml" />
+    <Content Include="Views\FAQ\Index.cshtml" />
+    <Content Include="Views\FAQ\ZH_CN.cshtml" />
+    <Content Include="Views\User\Info.cshtml" />
+    <Content Include="Views\Shared\_Pager.cshtml" />
+    <Content Include="Views\Rank\List.cshtml" />
+    <Content Include="Views\Status\List.cshtml" />
+    <Content Include="Views\Shared\_SimplePager.cshtml" />
+    <Content Include="Views\Solution\View.cshtml" />
+    <Content Include="Views\Solution\Info.cshtml" />
+    <Content Include="Views\TopicPage\Index.cshtml" />
+    <Content Include="Views\News\List.cshtml" />
+    <Content Include="Views\News\Detail.cshtml" />
+    <Content Include="Views\Problem\Statistic.cshtml" />
+    <Content Include="Views\Problem\Submit.cshtml" />
+    <Content Include="static\js\foundation\codemirror-package-5.2.js.bundle">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\Contests\Index.cshtml" />
+    <Content Include="Views\User\Control.cshtml" />
+    <Content Include="Views\User\Register.cshtml" />
+    <Content Include="Views\User\ForgetPassword.cshtml" />
+    <Content Include="Views\User\ResetPassword.cshtml" />
+    <Content Include="Views\Mail\Box.cshtml" />
+    <Content Include="Views\Mail\Detail.cshtml" />
+    <Content Include="Views\Mail\Send.cshtml" />
+    <Content Include="Views\Forum\New.cshtml" />
+    <Content Include="Views\Forum\Main.cshtml" />
+    <Content Include="Views\Forum\Reply.cshtml" />
+    <Content Include="Views\Resource\Index.cshtml" />
+    <Content Include="Views\User\Login.cshtml" />
+    <Content Include="Views\Contests\Register.cshtml" />
+    <Content Include="static\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SDNUOJ.Caching\SDNUOJ.Caching.csproj">
+      <Project>{e624473d-de83-4a9b-ae3c-487d2d300b7e}</Project>
+      <Name>SDNUOJ.Caching</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDNUOJ.Configuration\SDNUOJ.Configuration.csproj">
+      <Project>{029df05a-4057-40aa-a000-ddd7462a9826}</Project>
+      <Name>SDNUOJ.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDNUOJ.Controllers\SDNUOJ.Controllers.csproj">
+      <Project>{98a8efe6-ee83-4bac-96f5-9a705cba5492}</Project>
+      <Name>SDNUOJ.Controllers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDNUOJ.Entity\SDNUOJ.Entity.csproj">
+      <Project>{2effcd01-5ad3-4437-b176-d040443db279}</Project>
+      <Name>SDNUOJ.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDNUOJ.Storage\SDNUOJ.Storage.csproj">
+      <Project>{00274291-7727-45de-8fa6-50ec78e60ba7}</Project>
+      <Name>SDNUOJ.Storage</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDNUOJ.Utilities\SDNUOJ.Utilities.csproj">
+      <Project>{5ea9e7ef-9aac-44b0-90a8-a455a7950c25}</Project>
+      <Name>SDNUOJ.Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>46722</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:8000/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

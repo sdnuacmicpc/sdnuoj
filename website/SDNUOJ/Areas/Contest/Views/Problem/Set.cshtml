@@ -1,0 +1,60 @@
+﻿@model List<SDNUOJ.Entity.ProblemEntity>
+
+@{
+    var Contest = ViewData["Contest"] as SDNUOJ.Entity.ContestEntity;
+    var SubmitStatus = ViewBag.UserSubmits as Dictionary<Int32, Int16>;
+
+    ViewBag.__Title = "Contest Problems";
+    ViewBag.__ContestPageTitle = "Contest Problems";
+}
+
+@functions {
+    private String GetUserSubmitStatus(Dictionary<Int32, Int16> userSubmits, Int32 cpid)
+    {
+        if (userSubmits == null)
+        {
+            return String.Empty;
+        }
+
+        Int16 value = 0;
+        if (!userSubmits.TryGetValue(cpid, out value) || value == 0)
+        {
+            return String.Empty;
+        }
+
+        return (value > 0 ? "Y" : "N");
+    }
+}
+
+<table class="table table-striped table-hover table-nofoot" style="margin-bottom:28px;">
+    <thead>
+        <tr>
+            <th></th>
+            <th class="td-problemid text-center">PID</th>
+            <th>Problem Title</th>
+            <th class="td-problemratio text-center">Ratio(AC/Submit)</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td class="problem-@(String.IsNullOrEmpty(GetUserSubmitStatus(SubmitStatus, Item.ProblemID)) ? "normal" : GetUserSubmitStatus(SubmitStatus, Item.ProblemID).Replace("Y", "ac").Replace("N", "wa"))">@GetUserSubmitStatus(SubmitStatus, Item.ProblemID)</td>
+            <td class="text-center">@Item.ProblemID</td>
+            <td>
+                <a href="@Url.Action("Show", "Problem", new { area = "Contest", cid = Contest.ContestID, id = Item.ProblemID })">@Item.Title</a>
+            </td>
+            <td class="text-center">
+                @Item.Ratio.ToString("F2")%
+                (@Html.ActionLink(Item.SolvedCount.ToString(), "List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = Item.ProblemID, type = (Byte)SDNUOJ.Entity.ResultType.Accepted }, null)/@Html.ActionLink(Item.SubmitCount.ToString(), "List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = Item.ProblemID }, null))
+            </td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="4" class="text-center">No problem</td>
+        </tr>
+    }
+    </tbody>
+</table>

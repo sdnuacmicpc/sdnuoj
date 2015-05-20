@@ -1,0 +1,64 @@
+﻿@model Tuple<SDNUOJ.Entity.ForumTopicEntity, List<SDNUOJ.Entity.ForumPostEntity>>
+
+@{
+    var Contest = ViewData["Contest"] as SDNUOJ.Entity.ContestEntity;
+
+    ViewBag.__Title = "Contest Clarification";
+    ViewBag.__ContestPageTitle = Model.Item1.Title + (Model.Item1.IsLocked ? "&nbsp;<span class=\"glyphicon glyphicon-lock\" aria-hidden=\"true\"></span>" : "");
+}
+
+<div class="dtable dtable-striped">
+    <div class="dbody">
+    @for (Int32 i = 0; i < Model.Item2.Count; i++)
+    {
+        var Item = Model.Item2[i];
+        <div class="row">
+            <div class="col-xs-11 col-extra-thin">
+                <span class="forum-title-incontest">@Html.Raw(Item.Title)@*!TIP:ForumPost.Title添加时已Encode*@</span>
+                (@Html.ActionLink(Item.UserName, "Info", "User", new { area = "", id = Item.UserName }, new { @class = "forum-username" })
+                <span>at @Item.PostDate.ToString("yyyy-MM-dd HH:mm:ss")</span>)
+                
+            </div>
+            <div class="col-xs-1 col-extra-thin text-right">@i#</div>
+        </div>
+        <div class="row">
+            <pre class="well" style="margin-bottom:0;">@Html.Raw(Item.Content)@*!TIP:ForumPost.Content添加时已Encode*@</pre>
+        </div>
+    }
+    </div>
+</div>
+
+@if (!Model.Item1.IsLocked)
+{
+    using (Html.BeginForm("Reply", "Forum", new { area = "Contest", id = Model.Item1.TopicID }, FormMethod.Post, new { @class = "form-horizontal", @data_verify = "true" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="dtable dtable-striped">
+            <div class="dhead">
+                <div class="row text-center">
+                    <h3>Reply</h3>
+                </div>
+            </div>
+            <div class="dbody">
+                <div class="row">
+                    <label for="title" class="col-sm-2 control-label"><span class="star">*</span> Title</label>
+                    <div class="col-sm-8">
+                        <input id="title" name="title" type="text" value="Re: @Html.Raw(Model.Item1.Title)"@*!TIP:ForumTopic.Title添加时已Encode*@ maxlength="100" class="form-control" required="required" placeholder="Post title" data-emptyinfo="Post title can not be NULL!" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="content" class="col-sm-2 control-label"><span class="star">*</span> Content</label>
+                    <div class="col-sm-8">
+                        <textarea id="content" name="content" class="form-control" required="required" rows="10" placeholder="Your content" data-quicksubmit="true" data-emptyinfo="Post content can not be NULL!"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="dfoot">
+                <div class="row text-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-default">Reset</button>
+                </div>
+            </div>
+        </div>
+    }
+}

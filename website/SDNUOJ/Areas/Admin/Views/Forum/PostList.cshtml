@@ -1,0 +1,138 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.ForumPostEntity>
+
+@{
+    ViewBag.__Title = "论坛帖子管理";
+}
+
+@using (Html.BeginForm("PostList", "Forum", new { id = 1 }, FormMethod.Get))
+{
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>论坛帖子管理说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页搜索和隐藏论坛帖子，论坛帖子不允许删除。<br />
+                    2. 帖子一旦隐藏则在主题页面中不再显示。<br />
+                    3. 对于竞赛讨论版中的帖子，如果需要查看帖子内容，需要进入其主题帖管理后再点击标题打开。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">
+                    <a class="button-expand" data-collapse="true"></a>论坛帖子搜索 |
+                    @Html.ActionLink("清除查找条件", "PostList", "Forum")
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-collapsed="false">
+                <td style="width:25%;">论坛帖子ID<span class="supplementary">（多个请用空格分隔）</span></td>
+                <td><input name="fpids" type="text" class="textbox-tiny" value="@ViewBag.PostIDs" /></td>
+            </tr>
+            <tr data-collapsed="false">
+                <td>论坛主题ID<span class="supplementary">（多个请用空格分隔）</span></td>
+                <td><input name="ftids" type="text" class="textbox-tiny" value="@ViewBag.TopicIDs" /></td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>发帖用户名包含</td>
+                <td><input name="username" type="text" class="textbox-tiny" value="@ViewBag.UserName" /></td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>帖子标题包含</td>
+                <td><input name="title" type="text" class="textbox-tiny" value="@ViewBag.Title" /></td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>帖子内容包含</td>
+                <td><input name="content" type="text" class="textbox-tiny" value="@ViewBag.Content" /></td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>是否隐藏</td>
+                <td>
+                    <select name="ishide" class="selectbox">
+                        <option value="">不限</option>
+                        <option value="0"@(String.Equals(ViewBag.IsHide, "0") ? " selected=\"selected\"" : "")>否</option>
+                        <option value="1"@(String.Equals(ViewBag.IsHide, "1") ? " selected=\"selected\"" : "")>是</option>
+                    </select>
+                </td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>发帖时间范围</td>
+                <td>
+                    <input name="startdate" type="text" class="datetimepicker" readonly="readonly" value="@ViewBag.StartDate" />&nbsp;-
+                    <input name="enddate" type="text" class="datetimepicker" readonly="readonly" value="@ViewBag.EndDate" />
+                </td>
+            </tr>
+            <tr class="collapsed" data-collapsed="true">
+                <td>发帖IP包含</td>
+                <td><input name="postip" type="text" class="textbox-tiny" value="@ViewBag.PostIP" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">搜索</button>&nbsp;
+                    <span class="supplementary">不填任何查询条件即列出所有记录</span>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <br />
+    <table class="table-main table-striped table-hover">
+        <thead>
+            <tr>
+                <th colspan="9">
+                    论坛帖子管理 |
+                    @Html.ActionLink("隐藏", "PostHide", "Forum", new { ids = "__id__" }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })/@Html.ActionLink("显示", "PostShow", "Forum", new { ids = "__id__" }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })选中帖子
+                </th>
+            </tr>
+            <tr>
+                <td style="width:20px;"><input type="checkbox" data-selectall-name="id" /></td>
+                <td>帖子标题</td>
+                <td class="text-center" style="width:100px;">发帖用户</td>
+                <td class="text-center" style="width:130px;">发帖时间</td>
+                <td class="text-center" style="width:100px;">发帖IP</td>
+                <td class="text-center" style="width:40px;">深度</td>
+                <td class="text-center" style="width:40px;">主题</td>
+                <td class="text-center" style="width:40px;">父帖</td>
+                <td class="text-center" style="width:40px;">隐藏</td>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var Item in Model)
+        {
+            <tr>
+                <td><input name="id" type="checkbox" value="@Item.PostID" /></td>
+                <td>@Html.ActionLink(Item.Title, "Reply", "Forum", new { area = "", id = Item.PostID }, new { @target = "_blank" })</td>
+                <td class="text-center">@Html.ActionLink(Item.UserName, "Info", "User", new { area = "", id = Item.UserName }, new { @target = "_blank" })</td>
+                <td class="text-center">@Item.PostDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td class="text-center">@Item.PostIP</td>
+                <td class="text-center">@Item.Deepth</td>
+                <td class="text-center">@Html.ActionLink("管理", "TopicList", "Forum", new { ftids = Item.TopicID }, null)</td>
+                <td class="text-center">@(Item.ParentPostID != 0 ? Html.ActionLink("管理", "PostList", "Forum", new { id = 1, fpids = Item.ParentPostID }, null) : Html.Raw("-"))</td>
+                <td class="text-center">@Html.ActionLink((Item.IsHide ? "显示" : "隐藏"), (Item.IsHide ? "PostShow" : "PostHide"), "Forum", new { ids = Item.PostID }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+            </tr>
+        }
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td class="text-center" colspan="9">没有论坛帖子</td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="9">
+                    @RenderPage("~/Areas/Admin/Views/Shared/_Pager.cshtml")
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

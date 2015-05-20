@@ -1,0 +1,198 @@
+﻿/*!
+ * SDNU Online Judge
+ * https: //github.com/sdnuacmicpc/sdnuoj
+ *
+ * Copyright 2012-2015 SDNU ACM-ICPC TEAM
+ * Licensed under the MIT license
+ */
+
+* {
+    -webkit-text-size-adjust: none;
+}
+
+html {
+    height: 100%;
+    overflow: hidden;
+    overflow-x: hidden;
+}
+
+body {
+    height: 100%;
+    background: #c3daf9;
+    margin: 0;
+    overflow: hidden;
+    overflow-x: hidden;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    text-space-collapse: collapse;
+}
+
+th, td{
+    padding: 0;
+}
+
+div {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a:active {
+    outline: none;
+    blr: expression(this.onFocus=this.blur());
+}
+
+.table-framework {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.top {
+    height: 58px;
+}
+
+.logo-container {
+    width: 200px;
+    text-align: center;
+    padding-top: 7px;
+    float: left;
+}
+
+.logo {
+    width: 180px;
+    height: 42px;
+    border: 0;
+}
+
+.middle {
+    height: 100%;
+    *height: 85%;
+    height: 85%\0;
+    vertical-align: top;
+}
+
+.table-middle {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.submenu-container {
+    width: 178px;
+    vertical-align: top;
+}
+
+.page-container {
+    height: 100%;
+    vertical-align: top;
+}
+
+#admin-page {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    margin: 0;
+    visibility: inherit;
+}
+
+.bottom-copyright {
+    color: #113333;
+    height: 30px;
+    padding-left: 30px;
+    font-size: 11px;
+    font-family: Arial;
+}
+
+.bottom-links {
+    height: 30px;
+    padding-right: 20px;
+    text-align: right;
+    font-size: 12px;
+}
+
+.bottom-links a {
+    color: #113333;
+}
+
+.bottom-links a:hover {
+    color: #ff6600;
+    text-decoration: underline;
+}
+
+.menus {
+    margin: 0;
+    padding: 27px 10px 0 0 !important;
+    *padding: 28px 10px 0 0 !important;
+    padding: 28px 10px 0 0;
+}
+
+.menus a {
+    background-color: #77b2ea;
+    margin: 0 2px 0 0;
+    padding: 0 0 0 4px;
+    font-size: 12.5px;
+    float: left;
+}
+
+.menus a span {
+    color: #FFFFFF;
+    background-color: #77b2ea;
+    padding: 8px 14px 6px 12px;
+    font-size: 12.5px;
+    float: left;
+    display: block;
+}
+
+.menus a:hover {
+    color: #ffffff;
+}
+
+.menus a:hover span {
+    color: #ffffff;
+    background-color: #2f5175;
+}
+
+.menu-open span {
+    color: #ffffff;
+    background: #4e86c3 !important;
+    font-weight: bold;
+    float: left;
+    display: block;
+}
+
+.submenus {
+    vertical-align: top;
+    text-align: right;
+}
+
+.submenus a {
+    width: 178px;
+    height: 30px;
+    line-height: 30px;
+    color: #ffffff;
+    background-color: #77b2ea;
+    font-size: 12px;
+    text-align: right;
+    padding-right: 10px;
+    margin-bottom: 2px;
+    display: block !important;
+}
+
+.submenus a:hover {
+    color: #ffffff;
+    background-color: #2f5175;
+}
+
+.submenu-open {
+    color: #ff0200 !important;
+    background: #ffffff !important;
+    font-weight: bold;
+}

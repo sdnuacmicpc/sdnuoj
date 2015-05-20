@@ -1,0 +1,167 @@
+﻿@{
+    RouteData routeData = ViewContext.RouteData.Route.GetRouteData(this.Context);
+    String ContestID = routeData.Values["cid"] as String;
+}
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="Shandong Normal University Online Judge" />
+    <meta name="keywords" content="Online Judge, Shandong, Normal, University, Online, Judge, ACM, ICPC, SDNUOJ" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>@ViewBag.__Title</title>
+    <link href="@this.StaticFile("/static/css/foundation/bootstrap-3.3.4.min.css")" type="text/css" rel="stylesheet" />
+    <link href="@this.StaticFile("/static/css/foreground.min.css")" type="text/css" rel="stylesheet" />
+    <!--[if lt IE 9]>
+      <script src="@this.StaticFile("/static/js/foundation/html5shiv-3.7.2.min.js")" type="text/javascript"></script>
+      <script src="@this.StaticFile("/static/js/foundation/respond-1.4.2.min.js")" type="text/javascript"></script>
+      <script src="@this.StaticFile("/static/js/foundation/json2-150225.min.js")" type="text/javascript"></script>
+    <![endif]-->
+</head>
+<body>
+    <nav id="nav" class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("SDNUOJ", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    @if (SDNUOJ.Configuration.ConfigurationManager.AllowMainProblem) {
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Problem <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>@Html.ActionLink("Problem Set", "Set", "Problem", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("Problem Category", "Category", "Problem", new { area = "" }, null)</li>
+                        </ul>
+                    </li> }
+                    @if (SDNUOJ.Configuration.ConfigurationManager.AllowContest) {
+                    <li id="menu-contest" class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            Contest
+                            @{
+                                Int32 CurrentContest = 0;
+                                Int32.TryParse(ViewBag.CurrentContestCount as String, out CurrentContest);
+                                if (CurrentContest > 0) { <span class="badge badge-danger">@CurrentContest</span> }
+                            }
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="@Url.Action("Current", "Contests", new { area = "" }, null)">Current Contest
+                                    @if (CurrentContest > 0) { <span class="badge badge-danger">@CurrentContest</span> }
+                                </a>
+                            </li>
+                            <li>@Html.ActionLink("Passed Contest", "Passed", "Contests", new { area = "" }, null)</li>
+                        </ul>
+                    </li> }
+                    @if (SDNUOJ.Configuration.ConfigurationManager.AllowMainRanklist) { <li>@Html.ActionLink("Ranklist", "List", "Rank", new { area = "" }, null)</li> }
+                    @if (SDNUOJ.Configuration.ConfigurationManager.AllowMainStatus) { <li>@Html.ActionLink("Status", "List", "Status", new { area = "" }, null)</li> }
+                    @if (SDNUOJ.Configuration.ConfigurationManager.AllowMainForum) { <li>@Html.ActionLink("Discuss", "Main", "Forum", new { area = "" }, null)</li> }
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">More <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>@Html.ActionLink("F.A.Q", "Index", "FAQ", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("News", "List", "News", new { area = "" }, null)</li>
+                            @if (SDNUOJ.Configuration.ConfigurationManager.AllowResource) { <li>@Html.ActionLink("Resource", "Index", "Resource", new { area = "" }, null)</li> }
+                            @if (SDNUOJ.Configuration.ConfigurationManager.AllowContest) {
+                            <li class="divider"></li>
+                            <li>@Html.ActionLink("Recent Contest", "Recent", "Contests", new { area = "" }, null)</li> }
+                        </ul>
+                    </li>
+                </ul>
+                @using (Html.BeginForm("Login", "User", new { area = "" }, FormMethod.Post, new { @id = "login-form", @class = "navbar-form navbar-right", @style = "display:none;", @data_verify = "true" }))
+                {
+                    <div class="form-group">
+                        <input name="username" type="text" placeholder="Username" class="form-control" required="required" data-emptyinfo="Username can not be NULL!" data-regex="^\w+$" data-invalidinfo="Username is INVALID!" />
+                    </div>
+                    <div class="form-group">
+                        <input name="password" type="password" placeholder="Password" class="form-control" required="required" data-emptyinfo="Password can not be NULL!" />
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-default">Sign in</button>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            @if (SDNUOJ.Configuration.ConfigurationManager.AllowRegister) { <li>@Html.ActionLink("Register", "Register", "User", new { area = "" }, null)</li> }
+                            @if (SDNUOJ.Configuration.ConfigurationManager.AllowForgetPassword) { <li>@Html.ActionLink("Forget Password", "ForgetPassword", "User", new { area = "" }, null)</li> }
+                        </ul>
+                    </div>
+                }
+                <div id="user-panel" class="navbar-form navbar-right" style="display:none;">
+                    <div class="btn-group">
+                        <button id="btn-user" type="button" class="btn btn-default">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul id="user-dropdown" class="dropdown-menu" role="menu">
+                            @if (SDNUOJ.Configuration.ConfigurationManager.AllowUserMail) { <li>@Html.ActionLink("Mail Box", "Box", "Mail", new { area = "" }, new { @id = "user-mail" })</li> }
+                            @if (SDNUOJ.Configuration.ConfigurationManager.AllowUserControl) { <li>@Html.ActionLink("Control Panel", "Control", "User", new { area = "" }, new { @id = "user-control" })</li> }
+                            <li class="divider"></li>
+                            <li>@Html.ActionLink("Logout", "Logout", "User", new { area = "" }, new { @id = "user-logout" })</li>
+                        </ul>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    var co = document.cookie.split("; "), ss = null, un = null;
+                    for (var i = 0; i < co.length; i++) {
+                        if (co[i].split("=")[0] == "@SDNUOJ.Controllers.Status.UserBrowserStatus.BROWSER_STATUS_COOKIE_NAME") {
+                            ss = co[i].split("=")[1].split('|');
+                            un = (ss && ss.length >= @SDNUOJ.Controllers.Status.UserBrowserStatus.BROWSER_STATUS_STORE_COUNT ? ss[0] : null);
+                            break;
+                        }
+                    }
+                    document.getElementById("btn-user").innerHTML = (un != null ? un : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                    document.getElementById("user-panel").style.cssText = (un != null ? "" : "display:none;");
+                    document.getElementById("login-form").style.cssText = (un != null ? "display:none;" : "");
+                </script>
+            </div><!--/.navbar-collapse -->
+        </div>
+    </nav>
+
+    <div id="main-container" class="container" data-type="@ViewBag.__Type">
+        <div id="browser-warning" class="alert alert-danger text-left" role="alert" style="display:none">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            Sorry, your browser is not supported. SDNUOJ requires Internet Explorer 8 or greater, please upgrade your browser!
+        </div>
+
+        @if (!String.IsNullOrEmpty(ViewBag.__ContestPageTitle))
+        {
+            <div class="page-title row text-center">
+                <h2>@Html.Raw(ViewBag.__ContestPageTitle)</h2>
+            </div>
+
+            <ul id="contest-submenus" class="nav nav-tabs" data-contestid="@ContestID">
+                <li>@Html.ActionLink("Home", "Index", "Home", new { area = "Contest", cid = ContestID }, null)</li>
+                <li>@Html.ActionLink("Problems", "Set", "Problem", new { area = "Contest", cid = ContestID }, null)</li>
+                <li>@Html.ActionLink("Clarification", "List", "Forum", new { area = "Contest", cid = ContestID }, null)</li>
+                <li>@Html.ActionLink("Ranklist", "List", "Rank", new { area = "Contest", cid = ContestID }, null)</li>
+                <li>@Html.ActionLink("Status", "List", "Status", new { area = "Contest", cid = ContestID }, null)</li>
+            </ul>
+        }
+        
+        @RenderBody()
+    </div> <!-- /container -->
+    
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted">&copy; 2012-2015 <a href="https://github.com/sdnuacmicpc/sdnuoj" target="_blank">SDNU ACM-ICPC TEAM</a>, @SDNUOJ.Configuration.ConfigurationManager.MainVersion <span class="beta">Beta</span></p>
+            <!--Rev.@SDNUOJ.Configuration.ConfigurationManager.Revision, Page Executing Time: @ViewBag.ExecutedTime s, Page Time: @DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")-->
+        </div>
+    </footer>
+
+    <script src="@this.StaticFile("/static/js/foundation/jquery-1.11.2.min.js")" type="text/javascript"></script>
+    <script src="@this.StaticFile("/static/js/foundation/bootstrap-3.3.4.min.js")" type="text/javascript"></script>
+    <script src="@this.StaticFile("/static/js/foreground.min.js")" type="text/javascript"></script>
+</body>
+</html>

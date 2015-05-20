@@ -1,0 +1,72 @@
+﻿@model IEnumerator<KeyValuePair<String, Object>> 
+
+@{
+    ViewBag.__Title = "系统缓存管理";
+
+    Boolean HasCache = false;
+}
+
+@using (Html.BeginForm("CacheDelete", "System", FormMethod.Post, new { @data_confirm = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>系统缓存管理说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页查看和删除系统缓存，缓存删除后会自动重建。<br />
+                    2. 系统缓存可以减少数据库的读取次数，提高系统运行效率。<br />
+                    3. 系统当前已创建 @ViewBag.CacheCount 个缓存。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main table-striped table-hover">
+        <thead>
+            <tr>
+                <th colspan="4">系统缓存管理</th>
+            </tr>
+            <tr>
+                <td style="width:20px;"><input type="checkbox" data-selectall-name="key" /></td>
+                <td style="width:25%;">键名</td>
+                <td>类型</td>
+            </tr>
+        </thead>
+        <tbody>
+        @while (Model.MoveNext())
+        {
+            var Item = Model.Current;
+            
+            if (Item.Key.IndexOf("oj.") != 0)
+            {
+                continue;
+            }
+            
+            HasCache = true;
+            <tr>
+                <td><input name="key" type="checkbox" value="@Item.Key" /></td>
+                <td>@Html.ActionLink(Item.Key, "CacheView", "System", new { key = Item.Key }, null)</td>
+                <td>@(Item.Value != null ? Item.Value.GetType().ToString() : "Null")</td>
+            </tr>
+        }
+        @if (!HasCache)
+        {
+            <tr>
+                <td class="text-center" colspan="4">没有系统缓存</td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="4">
+                    <button type="submit">清除</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

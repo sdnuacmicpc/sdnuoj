@@ -1,0 +1,45 @@
+﻿@model List<SDNUOJ.Utilities.TreeNode<SDNUOJ.Entity.ResourceEntity>>
+
+@{
+    ViewBag.__Title = "Resource";
+}
+
+<div class="dtable">
+    <div class="dhead">
+        <div class="row text-center">
+            <h2>Resource</h2>
+        </div>
+    </div>
+    <div class="dbody" style="padding-top:20px;">
+    @if (Model != null && Model.Count > 0)
+    {
+        <ul id="ul" class="tree-list">
+        @for (Int32 ulidx = 0; ulidx < Model.Count; ulidx++)
+        {
+            var Category = Model[ulidx];
+            <li>
+                <div class="well">
+                    <h4>
+                        <a class="@(Category.ChildNodes.Count > 0 ? "tree-item-collapse" : "tree-item-expand")" data-collapse="true"@Html.Raw(Category.ChildNodes.Count > 0 ? " data-collapse-target=\"ul" + ulidx.ToString() + "\"" : "")></a>@Category.Value
+                    </h4>
+                    <ul id="@("ul" + ulidx.ToString())" class="tree-list tree-item">
+                    @for (Int32 liidx = 0; liidx < Category.ChildNodes.Count; liidx++)
+                    {
+                        var SubCategory = Category.ChildNodes[liidx];
+                        var Item = SubCategory.DataSource;
+                        <li>
+                            <a href="@Item.Url">@Item.Title</a>
+                        </li>
+                    }
+                    </ul>
+                </div>
+            </li>
+        }
+        </ul>
+    }
+    else
+    {
+        <div class="well text-center">No download resource</div>
+    }
+    </div>
+</div>

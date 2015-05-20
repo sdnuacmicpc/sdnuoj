@@ -1,0 +1,61 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.NewsEntity>
+
+@{
+    ViewBag.__Title = "系统公告管理";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>系统公告管理说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页添加、编辑和删除公告，公告一旦删除无法恢复，请谨慎操作。<br />
+                2. 默认公告为在首页显示的公告，无法删除，只允许进行编辑。
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped table-hover">
+    <thead>
+        <tr>
+            <th colspan="5">系统公告管理 | @Html.ActionLink("添加新公告", "Add", "News")</th>
+        </tr>
+        <tr>
+            <td style="width:20px;"><input type="checkbox" disabled="disabled" /></td>
+            <td>公告标题</td>
+            <td class="text-center" style="width:130px;">更新时间</td>
+            <td class="text-center" style="width:40px;">编辑</td>
+            <td class="text-center" style="width:40px;">删除</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td><input type="checkbox" disabled="disabled" /></td>
+            <td>@Html.ActionLink(Item.Title, "Detail", "News", new { area = "", id = Item.AnnounceID }, new { @target = "_blank" })</td>
+            <td class="text-center">@Item.PublishDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            <td class="text-center">@Html.ActionLink("编辑", "Edit", "News", new { id = Item.AnnounceID }, null)</td>
+            <td class="text-center">@(Item.AnnounceID > 1 ? Html.ActionLink("删除", "Delete", "News", new { id = Item.AnnounceID }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" }) : Html.Raw("删除"))</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="5">没有系统公告</td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5">
+                @RenderPage("~/Areas/Admin/Views/Shared/_Pager.cshtml")
+            </td>
+        </tr>
+    </tfoot>
+</table>

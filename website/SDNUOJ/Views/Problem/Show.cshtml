@@ -1,0 +1,79 @@
+﻿@model SDNUOJ.Entity.ProblemEntity
+
+@{
+    ViewBag.__Title = "Problem - " + Model.ProblemID;
+}
+
+<div class="dtable dtable-noborder problem-info">
+    <div class="dhead">
+        <div class="row text-center">
+            <h2>@Model.ProblemID.@Model.Title</h2>
+        </div>
+    </div>
+    <div class="dbody">
+        <div class="row text-center">
+            <div class="well" style="margin-top:10px">
+                <span class="text-info">
+                    Time Limit: @Model.TimeLimit MS &nbsp;&nbsp;
+                    Memory Limit: @Model.MemoryLimit KB<br />
+                    Total Submission(s): @Html.ActionLink(Model.SubmitCount.ToString(), "List", "Status", new { pid = Model.ProblemID }, null) &nbsp;&nbsp;
+                    Accepted Submission(s): @Html.ActionLink(Model.SolvedCount.ToString(), "List", "Status", new { pid = Model.ProblemID, type = (Byte)SDNUOJ.Entity.ResultType.Accepted }, null)
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <h3>Description</h3>
+        </div>
+        <div class="row">
+            <div class="well">@Html.Raw(Model.Description)</div>
+        </div>
+        <div class="row">
+            <h3>Input</h3>
+        </div>
+        <div class="row">
+            <div class="well">@Html.Raw(Model.Input)</div>
+        </div>
+        <div class="row">
+            <h3>Output</h3>
+        </div>
+        <div class="row">
+            <div class="well">@Html.Raw(Model.Output)</div>
+        </div>
+        <div class="row">
+            <h3>Sample Input</h3>
+        </div>
+        <div class="row">
+            <div class="well"><pre class="code">@Html.Raw(Model.SampleInput)@*!TIP:Problem.SampleInput获取时已Encode*@</pre></div>
+        </div>
+        <div class="row">
+            <h3>Sample Output</h3>
+        </div>
+        <div class="row">
+            <div class="well"><pre class="code">@Html.Raw(Model.SampleOutput)@*!TIP:Problem.SampleOutput获取时已Encode*@</pre></div>
+        </div>
+        @if (!String.IsNullOrEmpty(Model.Hint))
+        {
+            <div class="row">
+                <h3>Hint</h3>
+            </div>
+            <div class="row">
+                <div class="well">@Html.Raw(Model.Hint)</div>
+            </div>
+        }
+        <div class="row">
+            <h3>Source</h3>
+        </div>
+        <div class="row">
+            <div class="well">@(String.IsNullOrEmpty(Model.Source) ? Html.Raw("Unknown") : Html.ActionLink(Model.Source, "Search", "Problem", new { type = "source", content = Model.Source }, null))</div>
+        </div>
+    </div>
+    <div class="dfoot">
+        <div class="row text-center">
+            <div class="btn-group">
+                @Html.ActionLink("Submit", "Submit", "Problem", new { id = Model.ProblemID }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("Statistic", "Statistic", "Problem", new { id = Model.ProblemID }, new { @class = "btn btn-default" })
+                @if (SDNUOJ.Configuration.ConfigurationManager.AllowMainForum) { @Html.ActionLink("Discuss", "Forum", "Problem", new { id = Model.ProblemID }, new { @class = "btn btn-default" }) }
+            </div>
+        </div>
+    </div>
+</div>

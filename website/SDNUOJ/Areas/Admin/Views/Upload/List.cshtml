@@ -1,0 +1,63 @@
+﻿@model SDNUOJ.Utilities.PagedList<FileInfo>
+
+@{
+    ViewBag.__Title = "上传文件管理";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>上传文件管理说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页上传新文件，或查看、删除所有人上传过的文件。<br />
+                2. 删除上传文件仅最高管理员拥有该权限，文件一旦删除无法恢复，请谨慎操作。
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped table-hover">
+    <thead>
+        <tr>
+            <th colspan="6">上传文件管理 | @Html.ActionLink("上传新文件", "New", "Upload")</th>
+        </tr>
+        <tr>
+            <td style="width:20px;"><input type="checkbox" disabled="disabled" /></td>
+            <td>文件名</td>
+            <td class="text-center" style="width:130px;">上传时间</td>
+            <td class="text-center" style="width:80px;">大小</td>
+            <td class="text-center" style="width:40px;">下载</td>
+            <td class="text-center" style="width:40px;">删除</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td><input type="checkbox" disabled="disabled" /></td>
+            <td><a href="@ViewBag.RootPath@Item.Name" target="_blank">@Item.Name</a></td>
+            <td class="text-center">@Item.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            <td class="text-center">@((Item.Length / 1024.0).ToString("0.00")) KB</td>
+            <td class="text-center"><a href="/@ViewBag.RootPath@Item.Name" target="_blank">下载</a></td>
+            <td class="text-center">@Html.ActionLink("删除", "Delete", "Upload", new { name = Item.Name }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="6">没有上传文件</td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6">
+                @RenderPage("~/Areas/Admin/Views/Shared/_Pager.cshtml")
+            </td>
+        </tr>
+    </tfoot>
+</table>

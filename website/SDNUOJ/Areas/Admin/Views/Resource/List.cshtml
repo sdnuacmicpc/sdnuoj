@@ -1,0 +1,61 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.ResourceEntity>
+
+@{
+    ViewBag.__Title = "下载资源管理";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>下载资源管理说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页添加、编辑和删除下载资源，下载资源一旦删除无法恢复，请谨慎操作。<br />
+                2. 首页显示的下载资源将按资源类别进行分组，同时按类别名称和资源标题进行排序显示。
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped table-hover">
+    <thead>
+        <tr>
+            <th colspan="5">下载资源管理 | @Html.ActionLink("添加下载资源", "Add", "Resource")</th>
+        </tr>
+        <tr>
+            <td style="width:20px;"><input type="checkbox" disabled="disabled" /></td>
+            <td>资源标题</td>
+            <td style="width:200px;">资源类别</td>
+            <td class="text-center" style="width:40px;">编辑</td>
+            <td class="text-center" style="width:40px;">删除</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td><input type="checkbox" disabled="disabled" /></td>
+            <td><a href="@Item.Url" target="_blank">@Item.Title</a></td>
+            <td>@Item.Type</td>
+            <td class="text-center">@Html.ActionLink("编辑", "Edit", "Resource", new { id = Item.ResourceID }, null)</td>
+            <td class="text-center">@Html.ActionLink("删除", "Delete", "Resource", new { id = Item.ResourceID }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="5">没有下载资源</td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5">
+                @RenderPage("~/Areas/Admin/Views/Shared/_Pager.cshtml")
+            </td>
+        </tr>
+    </tfoot>
+</table>

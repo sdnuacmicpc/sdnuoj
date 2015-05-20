@@ -1,0 +1,59 @@
+﻿@model List<SDNUOJ.Entity.ContestProblemEntity>
+
+@{
+    ViewBag.__Title = "竞赛题目设置";
+}
+
+@using (Html.BeginForm("ProblemEdit", "Contest", new { id = ViewBag.ContestID }, FormMethod.Post, new { @data_verify = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>竞赛题目设置说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页设置竞赛题目，按顺序每行填写一个题目ID，题目ID必须存在。<br />
+                    2. 竞赛中对所有题目重新分配竞赛题目ID，竞赛题目ID从1001开始编号。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">竞赛题目设置</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>竞赛ID</td>
+                <td><input name="id" type="text" readonly="readonly" class="textbox" value="@ViewBag.ContestID" data-emptyinfo="您没有输入竞赛ID，请重新输入！" /></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top;">题目ID列表<br /><span class="supplementary">按顺序每行一个题目ID</span></td>
+                <td>
+<textarea name="problemids" class="textarea">
+@foreach (var Item in Model)
+{
+    @Item.ProblemID;
+@:
+}
+</textarea>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">提交</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

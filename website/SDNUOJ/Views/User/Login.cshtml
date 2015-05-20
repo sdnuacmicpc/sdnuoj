@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.__Title = "Sign in";
+}
+
+<div id="sigin-title" class="page-title row text-center">
+    <h2>Sign in</h2>
+</div>
+
+@using (Html.BeginForm("Login", "User", FormMethod.Post, new { @data_verify = "true" }))
+{
+    <div class="sign-in">
+        <input name="username" type="text" class="form-control" placeholder="Username" required="required">
+        <input name="password" type="password" class="form-control" placeholder="Password" required="required">
+        <input name="referer" type="hidden" value="@ViewBag.ReturnUrl" /><br/>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </div>
+    <script>document.getElementById("login-form").style.display = "none";</script>
+}

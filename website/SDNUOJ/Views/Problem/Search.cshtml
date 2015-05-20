@@ -1,0 +1,69 @@
+﻿@model List<SDNUOJ.Entity.ProblemEntity>
+
+@{
+    ViewBag.__Title = "Problem Search Result";
+    ViewBag.__Type = "problems";
+}
+
+<div class="page-title row text-center">
+    <h2>Problem Search Result</h2>
+</div>
+
+<div class="row search-bar">
+@using (Html.BeginForm("Search", "Problem", FormMethod.Get))
+{
+    <div class="visible-xs-inline-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
+        <span>Search:</span>
+        <input name="content" type="text" class="form-control input-middle" value="@(String.Equals(ViewBag.SearchType, "category") ? "" : ViewBag.Content)" />
+    </div>
+    <div class="visible-xs-inline-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
+        <span>In</span>
+        <select name="type" class="form-control input-short">
+            <option value="pid">PIDs</option>
+            <option value="title" @(String.Equals(ViewBag.SearchType, "title") ? " selected=\"selected\"" : "")>Title</option>
+            <option value="source" @(String.Equals(ViewBag.SearchType, "source") ? " selected=\"selected\"" : "")>Source</option>
+        </select>
+    </div>
+    <div class="visible-xs-inline-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
+        <button type="submit" class="btn btn-default">Search</button>
+    </div>
+}
+</div>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th id="@(SDNUOJ.Configuration.ConfigurationManager.AllowMainSubmitStatus ? "SOpen" : "SClose")"></th>
+            <th class="td-problemid text-center">PID</th>
+            <th>Problem Title</th>
+            <th class="td-problemratio text-center">Ratio(AC/Submit)</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td id="@("S" + Item.ProblemID.ToString())" class="problem-normal"></td>
+            <td class="text-center">@Item.ProblemID</td>
+            <td>
+                <span class="problemset-title-@(Item.IsHide ? "hide" : "normal")"><a href="@Url.Action("Show", "Problem", new { id = Item.ProblemID })">@Item.Title</a></span>
+            </td>
+            <td class="text-center">
+                @Item.Ratio.ToString("F2")%
+                (@Html.ActionLink(Item.SolvedCount.ToString(), "List", "Status", new { pid = Item.ProblemID, type = (Byte)SDNUOJ.Entity.ResultType.Accepted }, null)/@Html.ActionLink(Item.SubmitCount.ToString(), "List", "Status", new { pid = Item.ProblemID }, null))
+            </td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="4" class="text-center">No such problem</td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4">Total Problem(s): @Model.Count</td>
+        </tr>
+    </tfoot>
+</table>

@@ -1,0 +1,8 @@
+﻿@model SDNUOJ.Entity.TopicPageEntity
+
+@{
+    ViewBag.__Title = (Model != null ? Model.Title : "Topic Page");
+}
+
+
+@Html.Raw(Model.Content)

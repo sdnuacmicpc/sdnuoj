@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<bundle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://vswebessentials.com/schemas/v1/bundle.xsd">
+  <settings>
+    <!--Determines if the bundle file should be automatically optimized after creation/update.-->
+    <minify>true</minify>
+    <!--Determine whether to generate/re-generate this bundle on building the solution.-->
+    <runOnBuild>true</runOnBuild>
+    <!--Specifies a custom subfolder to save files to. By default, compiled output will be placed in the same folder and nested under the original file.-->
+    <outputDirectory />
+  </settings>
+  <!--The order of the <file> elements determines the order of the files in the bundle.-->
+  <files>
+    <file>/js-source/parts-core/sdnuoj-foundation.js</file>
+    <file>/js-source/parts-core/sdnuoj-utilities.js</file>
+    <file>/js-source/parts-core/sdnuoj-core.js</file>
+    <file>/js-source/parts-foreground/jquery-placeholder.js</file>
+    <file>/js-source/parts-foreground/foreground-page.js</file>
+    <file>/js-source/parts-foreground/foreground-pages-contest.js</file>
+    <file>/js-source/parts-foreground/foreground-pages-problem.js</file>
+    <file>/js-source/parts-foreground/foreground-pages-recent.js</file>
+    <file>/js-source/parts-foreground/foreground-pages-status.js</file>
+    <file>/js-source/parts-foreground/foreground-pages-user.js</file>
+    <file>/js-source/parts-foreground/foreground-pages-mail.js</file>
+    <file>/js-source/parts-foreground/foreground-pages-submit.js</file>
+    <file>/js-source/parts-foreground/foreground-page-initializer.js</file>
+  </files>
+</bundle>

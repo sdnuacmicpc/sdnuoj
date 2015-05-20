@@ -1,0 +1,106 @@
+﻿@{
+    ViewBag.__Title = "重新评测提交";
+}
+
+@using (Html.BeginForm("Rejudge", "Solution", FormMethod.Post, new { @data_confirm = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>重新评测提交说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以设置多个条件并列筛选进行重新评测，若不需要某项条件则请留空。<br />
+                    2. 若重测数据过多，建议在在线用户少时操作，以保证评测机可以及时评测新提交的数据。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">重新评测提交</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;">提交ID<span class="supplementary">（多个请用空格分隔）</span></td>
+                <td><input name="sids" type="text" class="textbox-tiny" value="@ViewBag.SolutionIDs" /></td>
+            </tr>
+            <tr>
+                <td>竞赛ID<span class="supplementary">（0为非竞赛）</span></td>
+                <td><input name="cid" type="text" class="textbox-tiny" value="@ViewBag.ContestID" /></td>
+            </tr>
+            <tr>
+                <td>题目ID<span class="supplementary">（题库题目ID）</span></td>
+                <td><input name="pid" type="text" class="textbox-tiny" value="@ViewBag.ProblemID" /></td>
+            </tr>
+            <tr>
+                <td>用户名</td>
+                <td><input name="username" type="text" class="textbox-tiny" value="@ViewBag.UserName" /></td>
+            </tr>
+            <tr>
+                <td>提交语言</td>
+                <td>
+                    <select name="lang" class="selectbox">
+                        <option value="">All</option>
+                        @foreach (var Item in ViewBag.Languages)
+                        {
+                        <option value="@Item.Value"@(String.Equals(ViewBag.Language, Item.Value.ToString()) ? " selected=\"selected\"" : "")>@Item.Key</option>
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>评测结果</td>
+                <td>
+                    <select name="type" class="selectbox">
+                        <option value="">All</option>
+                        <option value="0"@(String.Equals(ViewBag.Type, "0") ? " selected=\"selected\"" : "")>Pending</option>
+                        <option value="1"@(String.Equals(ViewBag.Type, "1") ? " selected=\"selected\"" : "")>Rejudge Pending</option>
+                        <option value="2"@(String.Equals(ViewBag.Type, "2") ? " selected=\"selected\"" : "")>Judging</option>
+                        <option value="3"@(String.Equals(ViewBag.Type, "3") ? " selected=\"selected\"" : "")>Compile Error</option>
+                        <option value="4"@(String.Equals(ViewBag.Type, "4") ? " selected=\"selected\"" : "")>Runtime Error</option>
+                        <option value="5"@(String.Equals(ViewBag.Type, "5") ? " selected=\"selected\"" : "")>Time Limit Exceeded</option>
+                        <option value="6"@(String.Equals(ViewBag.Type, "6") ? " selected=\"selected\"" : "")>Memory Limit Exceeded</option>
+                        <option value="7"@(String.Equals(ViewBag.Type, "7") ? " selected=\"selected\"" : "")>Output Limit Exceeded</option>
+                        <option value="8"@(String.Equals(ViewBag.Type, "8") ? " selected=\"selected\"" : "")>Wrong Answer</option>
+                        <option value="9"@(String.Equals(ViewBag.Type, "9") ? " selected=\"selected\"" : "")>Presentation Error</option>
+                        <option value="10"@(String.Equals(ViewBag.Type, "10") ? " selected=\"selected\"" : "")>Accepted</option>
+                        <option value="255"@(String.Equals(ViewBag.Type, "255") ? " selected=\"selected\"" : "")>Judge Failed</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>开始时间</td>
+                <td>
+                    <input name="startdate" type="text" class="datetimepicker" readonly="readonly" value="@ViewBag.Startdate" />
+                    <select name="starthour" class="selectbox" data-value-from="00" data-value-to="23" data-value="@ViewBag.Starthour"></select>：
+                    <select name="startminute" class="selectbox" data-value-from="00" data-value-to="59" data-value="@ViewBag.Startminute"></select>：
+                    <select name="startsecond" class="selectbox" data-value-from="00" data-value-to="59" data-value="@ViewBag.Startsecond"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>结束时间</td>
+                <td>
+                    <input name="enddate" type="text" class="datetimepicker" readonly="readonly" value="@ViewBag.EndDate" />
+                    <select name="endhour" class="selectbox" data-value-from="00" data-value-to="23" data-value="@ViewBag.EndHour"></select>：
+                    <select name="endminute" class="selectbox" data-value-from="00" data-value-to="59" data-value="@ViewBag.EndMinute"></select>：
+                    <select name="endsecond" class="selectbox" data-value-from="00" data-value-to="59" data-value="@ViewBag.EndSecond"></select>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">提交</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

@@ -1,0 +1,69 @@
+﻿@{
+    ViewBag.__Title = "题目信息导入";
+    ViewBag.__Type = "problemimport";
+}
+
+@using (Html.BeginForm("Import", "Problem", FormMethod.Post, new { @enctype = "multipart/form-data", @data_confirm = "true", @data_verify = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>题目信息导入说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页导入Free Problem Set V1.2及以下版本的题目信息和数据，您可以上传xml文件或在线粘贴xml内容，大文件建议使用上传。<br />
+                    2. 当FPS文件中包含题目数据时，会自动创建题目数据，题目上传后默认为隐藏状态。题目一旦上传无法删除，请谨慎操作。<br />
+                    3. Free Problem Set题目格式请参考：<a href="http://code.google.com/p/freeproblemset/wiki/TransportFileDefinition" target="_blank">http://code.google.com/p/freeproblemset/wiki/TransportFileDefinition</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">题目信息导入</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>文件格式</td>
+                <td>
+                    <select name="filetype" class="selectbox">
+                        <!--<option value="0">XOL(eXtendible Onlinejudge Language)</option>-->
+                        <option value="1">FPS(Free Problem Set) V1.2</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="star">*</span>上传方式</td>
+                <td>
+                    <select id="import-filetype" name="uploadtype" class="selectbox">
+                        <option value="0">在线编辑</option>
+                        <option value="1">上传文件</option>
+                    </select>
+                </td>
+            </tr>
+            <tr id="tr-content">
+                <td style="vertical-align:top;"><span class="star">*</span>文件内容</td>
+                <td><textarea name="content" class="textarea" data-emptyinfo="您没有输入文件内容，请重新输入！"></textarea></td>
+            </tr>
+            <tr id="tr-file" class="collapsed">
+                <td><span class="star">*</span>文件路径</td>
+                <td><input name="file" type="file" class="uploadbox" onpaste="return false;" onkeydown="return false;" data-emptyinfo="您没有选择要上传的文件，请重新选择！" data-regex="\.xml$" data-invalidinfo="您选择的文件类型有误，请重新选择！" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">提交</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

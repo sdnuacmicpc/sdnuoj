@@ -1,0 +1,165 @@
+﻿@{
+    ViewBag.__Title = "系统信息检测";
+
+    var ServerVariables = Request.ServerVariables;
+    var EnvironmentVariables = Environment.GetEnvironmentVariables();
+}
+
+<table class="table-main table-striped">
+    <thead>
+        <tr>
+            <th colspan="4">系统基本信息</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="width:15%;">当前系统版本</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["SystemVersion"]</span></td>
+            <td style="width:15%;">数据库类型</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["DataBaseType"]</span></td>
+        </tr>
+        <tr>
+            <td style="width:15%;">服务器名和IP</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["ServerName"]</span></td>
+            <td style="width:15%;">数据库占用空间</td>
+            <td style="width:35%;"><span class="supplementary">@(((Int64)ViewData["DataBaseSize"]) >= 0 ? ViewData["DataBaseSize"] + " 字节" : "当前数据库不支持获取大小")</span></td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped">
+    <thead>
+        <tr>
+            <th colspan="4">服务器信息</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="width:15%;">服务器操作系统</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["ServerOSVersion"]</span></td>
+            <td style="width:15%;">.NET解释引擎版本</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["DotNetVersion"]</span></td>
+        </tr>
+        <tr>
+            <td style="width:15%;">服务器软件版本</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["ServerSoftware"]</span></td>
+            <td style="width:15%;">系统所在物理路径</td>
+            <td style="width:35%;"><span class="supplementary" style="word-break:break-word;">@ViewData["RealPath"]</span></td>
+        </tr>
+        <tr>
+            <td style="width:15%;">服务器语言</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["ServerLanguage"]</span></td>
+            <td style="width:15%;">服务器系统时区</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["TimeZoneName"]</span></td>
+        </tr>
+        <tr>
+            <td style="width:15%;">服务器CPU数量</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["ServerCPUCount"]</span></td>
+            <td style="width:15%;">服务器CPU类型</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["ServerCPUType"]</span></td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped">
+    <thead>
+        <tr>
+            <th colspan="4">运行信息</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="width:15%;">服务器运行时间</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["ServerRunTime"]</span></td>
+            <td style="width:15%;">脚本超时时间</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["ScriptTimeout"] 秒</span></td>
+        </tr>
+        <tr>
+            <td style="width:15%;">系统启动时间</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["SystemStartTime"]</span></td>
+            <td style="width:15%;">服务器当前时间</td>
+            <td style="width:35%;"><span class="supplementary">@ViewData["ServerNowTime"]</span></td>
+        </tr>
+        <tr>
+            <td style="width:15%;">ASP.NET消耗CPU时间</td>
+            <td style="width:35%;"><span class="supplementary">@(((Double)ViewData["DotNetCpuTime"]).ToString("N2")) 秒</span></td>
+            <td style="width:15%;">ASP.NET占用内存</td>
+            <td style="width:35%;"><span class="supplementary">@(((Double)ViewData["DotNetMemoryUse"]).ToString("N2")) MB</span></td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped">
+    <thead>
+        <tr>
+            <th colspan="2">服务器变量</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (String key in ServerVariables.Keys)
+    {
+        <tr>
+            <td style="width:15%;">@key</td>
+            <td><span class="supplementary" style="word-break:break-word;">@ServerVariables[key]</span></td>
+        </tr>
+    }
+    @if (ServerVariables.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="2">没有服务器变量</td>
+        </tr>
+    }
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped">
+    <thead>
+        <tr>
+            <th colspan="2">服务器环境变量</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var key in EnvironmentVariables.Keys)
+    {
+        <tr>
+            <td style="width:15%;">@key</td>
+            <td><span class="supplementary" style="word-break:break-word;">@EnvironmentVariables[key]</span></td>
+        </tr>
+    }
+    @if (EnvironmentVariables.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="2">没有服务器环境变量</td>
+        </tr>
+    }
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped">
+    <thead>
+        <tr>
+            <th>磁盘文件操作速度测试 | @Html.ActionLink("测试本项", "Info", "System", new { id = "filetest" }, null)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>正在重复创建、读取和删除文本文件50次......<span class="supplementary">@(((Double)ViewData["FileTestTime"]) == 0 ? "本项没有测试" : (((Double)ViewData["FileTestTime"]) > 0 ? "已完成！共耗时 " + ((Double)ViewData["FileTestTime"]) + " 毫秒" : "失败！对上传目录没有写权限！"))</span></td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped">
+    <thead>
+        <tr>
+            <th>C#脚本解释和运算速度测试 | @Html.ActionLink("测试本项", "Info", "System", new { id = "mathtest" }, null)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>整数运算测试，正在进行500万次累加运算......<span class="supplementary">@(((Double)ViewData["ComputePlusTime"]) == 0 ? "本项没有测试" : "已完成！共耗时 " + ((Double)ViewData["ComputePlusTime"]).ToString("N3") + " 毫秒")</span></td>
+        </tr>
+        <tr>
+            <td>浮点运算测试，正在进行200万次开方运算......<span class="supplementary">@(((Double)ViewData["ComputeSqrtTime"]) == 0 ? "本项没有测试" : "已完成！共耗时 " + ((Double)ViewData["ComputeSqrtTime"]).ToString("N3") + " 毫秒")</span></td>
+        </tr>
+    </tbody>
+</table>

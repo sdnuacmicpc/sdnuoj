@@ -1,0 +1,29 @@
+﻿@{
+    Int32 pageCount = ViewBag.PageCount;
+    Int32 pageIndex = ViewBag.PageIndex;
+    Int32 lastPageIndex = pageIndex > 1 ? pageIndex - 1 : 1;
+    Int32 nextPageIndex = pageIndex < pageCount ? pageIndex + 1 : pageCount;
+    
+    RouteData routeData = ViewContext.RouteData.Route.GetRouteData(this.Context);
+    String action = routeData.Values["action"] as String;
+    String controller = routeData.Values["controller"] as String;
+}
+
+@functions {
+    private RouteValueDictionary GetRouteValues(RouteData routeData, Int32 id)
+    {
+        RouteValueDictionary dict = new RouteValueDictionary(routeData.Values);
+        dict["id"] = id;
+
+        return dict;
+    }
+}
+
+<nav>
+    <ul class="pagination">
+        <li><a href="@Url.Action(action, controller, GetRouteValues(routeData, 1))@Request.Url.Query">&laquo;&nbsp;First</a></li>
+        <li><a href="@Url.Action(action, controller, GetRouteValues(routeData, lastPageIndex))@Request.Url.Query" rel="prev">&lsaquo;&nbsp;Prev</a></li>
+        <li><a href="@Url.Action(action, controller, GetRouteValues(routeData, nextPageIndex))@Request.Url.Query" rel="next">Next&nbsp;&rsaquo;</a></li>
+        <li><a href="@Url.Action(action, controller, GetRouteValues(routeData, pageCount))@Request.Url.Query">Last&nbsp;&raquo;</a></li>
+    </ul>
+</nav>

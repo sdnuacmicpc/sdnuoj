@@ -1,0 +1,64 @@
+﻿@model List<KeyValuePair<String, String>>
+
+@{
+    ViewBag.__Title = "缓存内容查看";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>缓存内容查看说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页查看缓存的具体内容及删除当前查看的缓存。
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+@using (Html.BeginForm("CacheDelete", "System", FormMethod.Post, new { @data_confirm = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main table-striped">
+        <thead>
+            <tr>
+                <th colspan="3">缓存内容查看</th>
+            </tr>
+            <tr>
+                <td style="width:20px;"><input type="checkbox" disabled="disabled" /></td>
+                <td style="width:25%">属性</td>
+                <td>内容</td>
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model != null)
+        {
+            foreach (var Item in Model)
+            {
+                <tr>
+                    <td><input type="checkbox" disabled="disabled" /></td>
+                    <td>@Item.Key</td>
+                    <td><textarea class="textarea" readonly="readonly" style="height:@((Item.Value.ToString().Length + 50) / 50 < 6 ? (Item.Value.ToString().Length + 50) / 50 * 18 : 108)px;">@Item.Value</textarea></td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td class="text-center" colspan="3">指定缓存不存在或已过期</td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="4">
+                    <input name="key" type="hidden" value="@ViewBag.CacheKey" />
+                    <button type="submit">清除</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

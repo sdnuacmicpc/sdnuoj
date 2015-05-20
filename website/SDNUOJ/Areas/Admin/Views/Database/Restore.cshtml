@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.__Title = "数据库还原";
+}
+
+@using (Html.BeginForm("Restore", "Database", FormMethod.Post, new { @data_confirm = "true", @data_verify = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>数据库还原说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页恢复数据库，备份数据库的文件名格式为：年_月_日_时_分_秒.resx。<br />
+                    2. 若数据库无法恢复表示当前数据库正在使用，请稍后重试。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">数据库还原</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>备份数据库文件名</td>
+                <td><input name="filename" type="text" class="textbox" value="@ViewBag.FileName" data-emptyinfo="备份数据库文件名不能为空！" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">提交</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

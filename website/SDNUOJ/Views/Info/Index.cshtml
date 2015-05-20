@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.__Title = "System Message";
+}
+
+<div class="dtable">
+    <div class="dhead">
+        <div class="row text-center">
+            <h2>System Message</h2>
+        </div>
+    </div>
+    <div class="dbody">
+        <div class="row">
+            <div class="alert alert-full alert-@(String.IsNullOrEmpty(ViewBag.Style) ? "warning" : ViewBag.Style) text-center">
+                @Html.Raw((String.IsNullOrEmpty(ViewBag.Description) || String.IsNullOrEmpty(HttpUtility.UrlDecode(ViewBag.Description.Trim()))) ? "(# ゜Д゜)" : HttpUtility.UrlDecode(ViewBag.Description.Trim()))
+            </div>
+        </div>
+    </div>
+    <div class="dfoot">
+        <div class="row text-center">
+            <a class="btn btn-default" href="@Html.Raw(String.IsNullOrEmpty(ViewBag.BackUrl) ? "javascript:void(0);" : ViewBag.BackUrl)" @Html.Raw(String.IsNullOrEmpty(ViewBag.BackUrl) ? "onclick=\"history.go(-1);\"" : "")>Back</a>
+        </div>
+    </div>
+</div>

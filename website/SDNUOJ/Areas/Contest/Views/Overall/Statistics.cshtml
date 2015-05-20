@@ -1,0 +1,107 @@
+﻿@model IDictionary<Int32, SDNUOJ.Entity.Complex.ContestProblemStatistic>
+
+@{
+    var Contest = ViewData["Contest"] as SDNUOJ.Entity.ContestEntity;
+
+    ViewBag.__Title = "Contest Statistics";
+    ViewBag.__ContestPageTitle = "Contest Statistics";
+    ViewBag.__Type = "contest.statistics";
+
+    var Problems = ViewBag.Problems as List<SDNUOJ.Entity.ContestProblemEntity>;
+    var Languages = ViewBag.Languages as Dictionary<String, Byte>;
+}
+
+<div class="table-responsive" style="margin-bottom:28px;">
+    <table id="table-contest-statistics" class="table table-striped table-hover table-nofoot">
+        <thead>
+            <tr>
+                <th class="text-center" style="width:60px;">PID</th>
+                <th class="text-center" style="width:60px;">Total</th>
+                <th id="type=10" class="text-center">AC</th>
+                <th id="type=9" class="text-center">PE</th>
+                <th id="type=8" class="text-center">WA</th>
+                <th id="type=7" class="text-center">OLE</th>
+                <th id="type=6" class="text-center">MLE</th>
+                <th id="type=5" class="text-center">TLE</th>
+                <th id="type=4" class="text-center">RE</th>
+                <th id="type=3" class="text-center">CE</th>
+                @foreach (var Language in Languages)
+                {
+                <th id="lang=@Language.Value" class="text-center" style="width:80px;">@Language.Key</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var ProblemStatistic in Model.Values)
+        {
+            <tr>
+                <td class="text-center">
+                    <strong>
+                        @Html.ActionLink(ProblemStatistic.ProblemID.ToString(), "Show", "Problem", new { area = "Contest", cid = Contest.ContestID, id = ProblemStatistic.ProblemID }, null)
+                    </strong>
+                </td>
+                <td class="text-center">
+                    <a href="@Url.Action("List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = ProblemStatistic.ProblemID })">
+                        <span class="label label-default">@ProblemStatistic.SubmitCount</span>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <a href="@Url.Action("List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = ProblemStatistic.ProblemID, type = 10 })">
+                        <span class="label status_Accepted">@ProblemStatistic.AcceptedCount</span>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <a href="@Url.Action("List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = ProblemStatistic.ProblemID, type = 9 })">
+                        <span class="label status_PresentationError">@ProblemStatistic.PresentationErrorCount</span>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <a href="@Url.Action("List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = ProblemStatistic.ProblemID, type = 8 })">
+                        <span class="label status_WrongAnswer">@ProblemStatistic.WrongAnswerCount</span>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <a href="@Url.Action("List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = ProblemStatistic.ProblemID, type = 7 })">
+                        <span class="label status_OutputLimitExceeded">@ProblemStatistic.OutputLimitExceededCount</span>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <a href="@Url.Action("List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = ProblemStatistic.ProblemID, type = 6 })">
+                        <span class="label status_MemoryLimitExceeded">@ProblemStatistic.MemoryLimitExceededCount</span>
+                    </a>
+
+                </td>
+                <td class="text-center">
+                    <a href="@Url.Action("List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = ProblemStatistic.ProblemID, type = 5 })">
+                        <span class="label status_TimeLimitExceeded">@ProblemStatistic.TimeLimitExceededCount</span>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <a href="@Url.Action("List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = ProblemStatistic.ProblemID, type = 4 })">
+                        <span class="label status_RuntimeError">@ProblemStatistic.RuntimeErrorCount</span>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <a href="@Url.Action("List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = ProblemStatistic.ProblemID, type = 3 })">
+                        <span class="label status_CompileError">@ProblemStatistic.CompileErrorCount</span>
+                    </a>
+                </td>
+                @foreach (var Language in Languages)
+                {
+                <td class="text-center">
+                    <a href="@Url.Action("List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = ProblemStatistic.ProblemID, lang = Language.Value })">
+                        <span class="label label-default">@ProblemStatistic.GetLanguageStatistic(Language.Value).Count</span>
+                    </a>
+                </td>
+                }
+            </tr>
+        }
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="@(10 + Languages.Count)" class="text-center">No problem statistics</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

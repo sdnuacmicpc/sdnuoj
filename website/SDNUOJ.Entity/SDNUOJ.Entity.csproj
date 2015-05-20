@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2EFFCD01-5AD3-4437-B176-D040443DB279}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SDNUOJ.Entity</RootNamespace>
+    <AssemblyName>SDNUOJ.Entity</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="NewsEntity.cs" />
+    <Compile Include="Complex\ContestProblemStatistic.cs" />
+    <Compile Include="Complex\LanguageStatistic.cs" />
+    <Compile Include="Complex\ProblemStatistic.cs" />
+    <Compile Include="Complex\RankItem.cs" />
+    <Compile Include="Complex\RankItemInfo.cs" />
+    <Compile Include="Complex\RankItemInfoType.cs" />
+    <Compile Include="ContestEntity.cs" />
+    <Compile Include="ContestProblemEntity.cs" />
+    <Compile Include="ContestUserEntity.cs" />
+    <Compile Include="TopicPageEntity.cs" />
+    <Compile Include="Enum\ContestStatus.cs" />
+    <Compile Include="Enum\ContestType.cs" />
+    <Compile Include="ForumPostEntity.cs" />
+    <Compile Include="ForumTopicEntity.cs" />
+    <Compile Include="LanguageType.cs" />
+    <Compile Include="Enum\PermissionType.cs" />
+    <Compile Include="ProblemEntity.cs" />
+    <Compile Include="ProblemCategoryItemEntity.cs" />
+    <Compile Include="ProblemCategoryEntity.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceEntity.cs" />
+    <Compile Include="Enum\ResultType.cs" />
+    <Compile Include="SolutionEntity.cs" />
+    <Compile Include="Enum\ForumTopicType.cs" />
+    <Compile Include="SolutionErrorEntity.cs" />
+    <Compile Include="UserEntity.cs" />
+    <Compile Include="UserForgetPasswordEntity.cs" />
+    <Compile Include="UserMailEntity.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SDNUOJ.Configuration\SDNUOJ.Configuration.csproj">
+      <Project>{029DF05A-4057-40AA-A000-DDD7462A9826}</Project>
+      <Name>SDNUOJ.Configuration</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

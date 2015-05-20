@@ -1,0 +1,66 @@
+﻿@{
+    ViewBag.__Title = "Register";
+}
+
+<div class="page-title row text-center">
+    <h2>Register</h2>
+</div>
+
+@using (Html.BeginForm("Register", "User", FormMethod.Post, new { @data_verify = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table table-striped table-condensed table-nohead">
+        <thead>
+            <tr>
+                <td colspan="2" class="text-center">
+                    <span class="label label-primary">Note</span>
+                    <span>Please fill in the blank below, "<span class="star">*</span>" is necessary.</span>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="td-firstcol"><span class="star">*</span> Username</td>
+                <td><input name="username" type="text" maxlength="20" class="form-control input-middle" required="required" data-emptyinfo="Username can not be NULL!" data-regex="^\w+$" data-invalidinfo="Username is INVALID!" /></td>
+            </tr>
+            <tr>
+                <td class="td-firstcol"><span class="star">*</span> Password</td>
+                <td><input id="txt-password" name="password" type="password" maxlength="20" class="form-control input-middle" required="required" data-emptyinfo="Password can not be NULL!" /></td>
+            </tr>
+            <tr>
+                <td class="td-firstcol"><span class="star">*</span> Confirm Password</td>
+                <td><input name="password2" type="password" maxlength="20" class="form-control input-middle" required="required" data-emptyinfo="Confirm password can not be NULL!" data-comparedto="txt-password" data-notequalinfo="Two passwords are not match!" /></td>
+            </tr>
+            <tr>
+                <td class="td-firstcol">Nick Name</td>
+                <td><input name="nickname" type="text" maxlength="40" class="form-control input-middle" /></td>
+            </tr>
+            <tr>
+                <td class="td-firstcol">School</td>
+                <td><input name="school" type="text" maxlength="40" class="form-control input-middle" /></td>
+            </tr>
+            <tr>
+                <td class="td-firstcol"><span class="star">*</span> Email</td>
+                <td><input name="email" type="email" maxlength="40" class="form-control input-middle" required="required" data-emptyinfo="Email can not be NULL!" data-regex="^[\w-]+(\.[\w-]+)*@@[\w-]+(\.[\w-]+)+$" data-invalidinfo="Email is INVALID!" /></td>
+            </tr>
+            <tr>
+                <td class="td-firstcol"><span class="star">*</span> Verification Code</td>
+                <td><input name="checkcode" type="text" maxlength="40" class="form-control input-middle" required="required" data-emptyinfo="Verification Code can not be NULL!" /></td>
+            </tr>
+            <tr>
+                <td class="td-firstcol">&nbsp;</td>
+                <td>
+                    <img alt="Click to change" class="img-checkcode" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" onclick="this.src='/utility/checkcode?'+(Math.random());" />
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="text-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-default">Reset</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

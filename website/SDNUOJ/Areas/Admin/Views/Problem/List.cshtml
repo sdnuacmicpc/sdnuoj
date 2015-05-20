@@ -1,0 +1,77 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.ProblemEntity>
+
+@{
+    ViewBag.__Title = "题目综合管理";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>题目综合管理说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页添加、编辑和设置题目的隐藏状态，不允许删除已添加的题目。<br />
+                2. 您可以创建或上传题目的数据，操作执行后会替换之前存在的数据。<br />
+                3. 一个题目若隐藏，则无题目管理权限的用户无法查看和提交数据，在竞赛中的题目不受影响。<br />
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped table-hover">
+    <thead>
+        <tr>
+            <th colspan="9">
+                题目综合管理 |
+                @Html.ActionLink("添加新题目", "Add", "Problem") |
+                @Html.ActionLink("隐藏", "Hide", "Problem", new { ids = "__id__" }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })/@Html.ActionLink("显示", "Show", "Problem", new { ids = "__id__" }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })选中题目
+            </th>
+        </tr>
+        <tr>
+            <td style="width:20px;"><input type="checkbox" data-selectall-name="id" /></td>
+            <td class="text-center" style="width:40px;">题目ID</td>
+            <td>题目标题</td>
+            <td class="text-center" style="width:110px;">通过率</td>
+            <td class="text-center" style="width:180px;">数据</td>
+            <td class="text-center" style="width:40px;">分类</td>
+            <td class="text-center" style="width:40px;">统计</td>
+            <td class="text-center" style="width:40px;">隐藏</td>
+            <td class="text-center" style="width:40px;">编辑</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td><input name="id" type="checkbox" value="@Item.ProblemID" /></td>
+            <td class="text-center">@Item.ProblemID</td>
+            <td><a href="@Url.Action("Show", "Problem", new { area = "", id = Item.ProblemID })" target="_blank">@Html.Raw(Item.IsHide ? "<em>" + Item.Title + "<em>" : Item.Title)</a></td>
+            <td class="text-center">
+                @Item.Ratio.ToString("F2")%
+                (@Html.ActionLink(Item.SolvedCount.ToString(), "List", "Status", new { area = "", pid = Item.ProblemID, type = (Byte)SDNUOJ.Entity.ResultType.Accepted }, new { @target = "_blank" })/@Html.ActionLink(Item.SubmitCount.ToString(), "List", "Status", new { area = "", pid = Item.ProblemID }, new { @target = "_blank" }))
+            </td>
+            <td class="text-center">@Html.ActionLink("创建", "DataCreate", "Problem", new { id = Item.ProblemID }, null) / @Html.ActionLink("上传", "DataUpload", "Problem", new { id = Item.ProblemID }, null) / @Html.ActionLink("下载", "DataDownload", "Problem", new { id = Item.ProblemID }, null) / @Html.ActionLink("删除", "DataDelete", "Problem", new { id = Item.ProblemID }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+            <td class="text-center">@Html.ActionLink("设置", "CategorySet", "Problem", new { id = Item.ProblemID }, null)</td>
+            <td class="text-center">@Html.ActionLink("重算", "Recalculate", "Problem", new { id = Item.ProblemID }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+            <td class="text-center">@Html.ActionLink((Item.IsHide ? "显示" : "隐藏"), (Item.IsHide ? "Show" : "Hide"), "Problem", new { ids = Item.ProblemID }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
+            <td class="text-center">@Html.ActionLink("编辑", "Edit", "Problem", new { id = Item.ProblemID }, null)</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="9">没有题目信息</td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="9">
+                @RenderPage("~/Areas/Admin/Views/Shared/_Pager.cshtml")
+            </td>
+        </tr>
+    </tfoot>
+</table>

@@ -1,0 +1,109 @@
+﻿@model Tuple<SDNUOJ.Entity.ForumPostEntity, List<SDNUOJ.Utilities.TreeNode<SDNUOJ.Entity.ForumPostEntity>>>
+
+@{
+    ViewBag.__Title = "Reply Post";
+}
+
+@functions {
+    private String RenderChildren(SDNUOJ.Utilities.TreeNode<SDNUOJ.Entity.ForumPostEntity> node)
+    {
+        var sb = new System.Text.StringBuilder();
+        var post = node.DataSource;
+
+        sb.AppendLine("<li>");
+
+        sb.Append("<a href=\"").Append(Url.Action("Reply", "Forum", new { id = post.PostID })).Append("\">").Append(post.Title).AppendLine("</a>");//!TIP:ForumPost.Title添加时已Encode
+        sb.Append("<span class=\"forum-postlength\">(").Append(post.ContentLength.ToString()).AppendLine(")</span>");
+        sb.Append("<a href=\"").Append(Url.Action("Info", "User", new { id = post.UserName })).Append("\" class=\"forum-username\">").Append(post.UserName).AppendLine("</a>");
+        sb.Append("<span>").Append(post.PostDate.ToString("yyyy-MM-dd HH:mm:ss")).AppendLine("</span>");
+
+        if (node.ChildNodes.Count > 0)
+        {
+            sb.Append("<ul id=\"ul").Append(post.PostID.ToString()).Append("\" class=\"tree-item\">");
+
+            for (Int32 i = 0; i < node.ChildNodes.Count; i++)
+            {
+                sb.Append(RenderChildren(node.ChildNodes[i]));
+            }
+
+            sb.AppendLine("</ul>");
+        }
+
+        sb.AppendLine("</li>");
+
+        return sb.ToString();
+    }
+}
+
+<div class="dtable dtable-striped" style="margin-bottom:0;">
+    <div class="dhead">
+        <div class="row text-center">
+            <h2>@Html.Raw(Model.Item1.Title)@Html.Raw(@ViewBag.IsLocked ? "&nbsp;<span class=\"glyphicon glyphicon-lock\" aria-hidden=\"true\"></span>" : "")</h2>
+        </div>
+    </div>
+    <div class="dbody">
+        <div class="row">
+            Posted by @Html.ActionLink(Model.Item1.UserName, "Info", "User", new { id = Model.Item1.UserName }, new { @class = "forum-username" })
+            at <span>@Model.Item1.PostDate.ToString("yyyy-MM-dd HH:mm:ss")</span>
+            @if (Model.Item1.RelativeType == SDNUOJ.Entity.ForumTopicType.Problem) { @Html.Raw("on "); @Html.ActionLink(String.Format("{0} {1}", Model.Item1.RelativeType.ToString(), Model.Item1.RelativeID.ToString()), "Show", "Problem", new { id = Model.Item1.RelativeID }, new { @class = "forum-relativestring" }); }
+        </div>
+        <div class="row">
+            <pre class="well" style="margin-top:10px;margin-bottom:0;">@Html.Raw(Model.Item1.Content)@*!TIP:ForumPost.Content添加时已Encode*@</pre>
+        </div>
+    </div>
+</div>
+
+<div class="dtable" style="margin-bottom:0;">
+    <div class="dbody">
+        <div class="row">Followed by</div>
+        <div class="row row-noborder">
+            <div class="well">
+            @if (Model.Item2.Count > 0)
+            {
+                <ul class="tree-item" style="margin-bottom:0;">
+                @for (Int32 i = 0; i < Model.Item2.Count; i++)
+                {
+                    @Html.Raw(RenderChildren(Model.Item2[i]))
+                }
+                </ul>
+            }
+            else
+            {
+                @: No followed post
+            }
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("Reply", "Forum", new { id = Model.Item1.PostID }, FormMethod.Post, new { @class = "form-horizontal", @data_verify = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="dtable dtable-striped">
+        <div class="dhead">
+            <div class="row text-center">
+                <h3>Reply</h3>
+            </div>
+        </div>
+        <div class="dbody">
+            <div class="row">
+                <label for="title" class="col-sm-2 control-label"><span class="star">*</span> Title</label>
+                <div class="col-sm-8">
+                    <input id="title" name="title" type="text" value="Re: @Model.Item1.Title" maxlength="100" class="form-control" required="required" placeholder="Post title" data-emptyinfo="Post title can not be NULL!" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="content" class="col-sm-2 control-label"><span class="star">*</span> Content</label>
+                <div class="col-sm-8">
+                    <textarea id="content" name="content" class="form-control" required="required" rows="10" placeholder="Your content" data-quicksubmit="true" data-emptyinfo="Post content can not be NULL!"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="dfoot">
+            <div class="row text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-default">Reset</button>
+            </div>
+        </div>
+    </div>
+}

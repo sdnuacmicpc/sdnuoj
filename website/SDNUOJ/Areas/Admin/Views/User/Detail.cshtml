@@ -1,0 +1,106 @@
+﻿@model SDNUOJ.Entity.UserEntity
+
+@{
+    ViewBag.__Title = "用户信息查看";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>用户信息查看说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页面查看指定用户的信息，但不可以进行编辑操作。
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped">
+    <thead>
+        <tr>
+            <th colspan="2">用户基本信息</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="width:25%">用户名</td>
+            <td>@Html.ActionLink(Model.UserName, "Info", "User", new { area = "", id = Model.UserName }, new { @target = "_blank" })</td>
+        </tr>
+        <tr>
+            <td style="width:25%">用户密码哈希值</td>
+            <td>@Model.PassWord</td>
+        </tr>
+        <tr>
+            <td style="width:25%">用户昵称</td>
+            <td>@Html.Raw(String.IsNullOrEmpty(Model.NickName) ? "无" : Model.NickName)</td>
+        </tr>
+        <tr>
+            <td style="width:25%">电子邮箱</td>
+            <td>@Model.Email</td>
+        </tr>
+        <tr>
+            <td style="width:25%">所在学校</td>
+            <td>@(String.IsNullOrEmpty(Model.School) ? "无" : Model.School)</td>
+        </tr>
+        <tr>
+            <td style="width:25%">用户权限</td>
+            <td>@Model.Permission</td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped">
+    <thead>
+        <tr>
+            <th colspan="2">用户提交信息</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="width:25%">提交数</td>
+            <td>@Html.ActionLink(Model.SubmitCount.ToString(), "List", "Status", new { area = "", name = Model.UserName }, new { @target = "_blank" })</td>
+        </tr>
+        <tr>
+            <td style="width:25%">通过数</td>
+            <td>@Html.ActionLink(Model.SolvedCount.ToString(), "List", "Status", new { area = "", name = Model.UserName, type = (Byte)SDNUOJ.Entity.ResultType.Accepted }, new { @target = "_blank" })</td>
+        </tr>
+        <tr>
+            <td style="width:25%">通过率</td>
+            <td>@Model.Ratio.ToString("F2")%</td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped">
+    <thead>
+        <tr>
+            <th colspan="2">用户安全信息</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="width:25%">是否锁定</td>
+            <td>@(Model.IsLocked ? "是" : "否")</td>
+        </tr>
+        <tr>
+            <td style="width:25%">用户注册时间</td>
+            <td>@Model.CreateDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+        </tr>
+        <tr>
+            <td style="width:25%">用户注册IP</td>
+            <td>@Model.CreateIP</td>
+        </tr>
+        <tr>
+            <td style="width:25%">最后登录时间</td>
+            <td>@Model.LastDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+        </tr>
+        <tr>
+            <td style="width:25%">最后登录IP</td>
+            <td>@Model.LastIP</td>
+        </tr>
+    </tbody>
+</table>

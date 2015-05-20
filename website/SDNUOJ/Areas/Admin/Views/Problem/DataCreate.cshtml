@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.__Title = "题目数据创建";
+    ViewBag.__Type = "problemdata";
+}
+
+@using (Html.BeginForm("DataCreate", "Problem", FormMethod.Post, new { @id = "form-createproblemdata", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>题目数据创建说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页创建题目的数据，若题目数据较大，建议在本地创建完成后上传题目数据包。<br />
+                    2. 如果题目之前存在数据包，则操作后会自动替换之前的数据包，请谨慎操作。<br />
+                    3. 如果通过上传数据文件创建题目数据包，请保证输入文件扩展名为.in，输出文件扩展名为.out或.ans。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table id="table-data" class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">题目数据创建 | <a id="btn-adddata">添加测试数据</a></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;">题目ID</td>
+                <td><input name="id" type="text" class="textbox" readonly="readonly" value="@ViewBag.ProblemID" data-emptyinfo="您没有输入题目ID，请重新输入！" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">提交</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

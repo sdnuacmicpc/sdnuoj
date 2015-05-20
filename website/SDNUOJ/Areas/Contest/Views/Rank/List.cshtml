@@ -1,0 +1,50 @@
+﻿@model List<SDNUOJ.Entity.Complex.RankItem>
+
+@{
+    var Contest = ViewData["Contest"] as SDNUOJ.Entity.ContestEntity;
+
+    ViewBag.__Title = "Contest Ranklist";
+    ViewBag.__ContestPageTitle = "Contest Ranklist";
+    
+    var Problems = ViewBag.Problems as List<SDNUOJ.Entity.ContestProblemEntity>;
+}
+
+<div class="table-responsive" style="margin-bottom:28px;">
+    <table class="table table-striped table-hover table-nofoot">
+        <thead>
+            <tr>
+                <th class="td-contestrank-rank text-center">Rank</th>
+                <th>User Name</th>
+                <th class="td-contestrank-solved text-center">Solved</th>
+                <th class="td-contestrank-block text-center">Penalty</th>
+                @foreach (var Problem in Problems)
+                {
+                <th class="td-contestrank-block text-center">@Html.ActionLink(Problem.ContestProblemID.ToString(), "Show", "Problem", new { area = "Contest", cid = Contest.ContestID, id = Problem.ContestProblemID }, null)</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+        @for (Int32 i = 0; i < Model.Count; i++)
+        {
+            var Item = Model[i];
+            <tr>
+                <td class="text-center">@(i + 1)</td>
+                <td>@Html.ActionLink(Item.UserName, "Info", "User", new { area = "", id = Item.UserName }, null)</td>
+                <td class="text-center">@Html.ActionLink(Item.SolvedCount.ToString(), "List", "Status", new { area = "Contest", cid = Contest.ContestID, name = Item.UserName }, null)</td>
+                <td class="contest_Penalty text-center">@Item.Penalty</td>
+                @for (Int32 pi = 0; pi < Problems.Count; pi++)
+                {
+                var PItem = Item[Problems[pi].ContestProblemID];
+                <td class="contest_@PItem.Type">@((PItem.Penalty != TimeSpan.Zero) ? PItem.Penalty.ToString() : "")@((PItem.WrongCount > 0) ? "(-" + PItem.WrongCount.ToString() + ")" : "")</td>
+                }
+            </tr>
+        }
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="@(4 + Problems.Count)" class="text-center">No user submission</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,71 @@
+﻿@model Tuple<SDNUOJ.Entity.NewsEntity, List<SDNUOJ.Entity.NewsEntity>, List<SDNUOJ.Entity.UserEntity>>
+
+@{
+    var DefaultNews = Model.Item1;
+    var LastestNewsList = Model.Item2;
+    var TopTenUser = Model.Item3;
+
+    ViewBag.__Title = SDNUOJ.Configuration.ConfigurationManager.OnlineJudgeName;
+}
+
+<div class="jumbotron" style="margin-top:20px;">
+    @Html.Raw(DefaultNews != null ? DefaultNews.Description : "")
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel-group" id="accordion-news" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="news-heading">
+                    <h4 class="panel-title">
+                        <strong>Latest News</strong>
+                        <a href="@Url.Action("List", "News")"><span class="small">[more...]</span></a>
+                    </h4>
+                </div>
+                @for (Int32 i = 0; i < LastestNewsList.Count; i++)
+                {
+                    var Item = LastestNewsList[i];
+                    <div class="panel-heading" role="tab" id="news-heading-@Item.AnnounceID">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion-news" href="#news-@Item.AnnounceID" aria-expanded="true" aria-controls="news-@Item.AnnounceID">
+                                @Item.Title [@Item.PublishDate.ToString("yyyy-MM-dd")]
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="news-@Item.AnnounceID" class="panel-collapse collapse @(i == 0 ? "in" : "") role=" tabpanel" aria-labelledby="news-heading-@Item.AnnounceID">
+                        <div class="panel-body">
+                            @Html.Raw(Item.Description) @Html.ActionLink("[more...]", "Detail", "News", new { id = Item.AnnounceID }, null)
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4 class="panel-title"><strong>Weekly TOP 10</strong></h4></div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>UserName</th>
+                        <th style="width:20%">Accepted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var Item in TopTenUser)
+                {
+                    <tr>
+                        <td>@Html.ActionLink(Item.UserName, "Info", "User", new { id = Item.UserName }, null)</td>
+                        <td class="text-center">@Html.ActionLink(Item.SolvedCount.ToString(), "List", "Status", new { pid = Item.UserName, type = (Byte)SDNUOJ.Entity.ResultType.Accepted }, null)</td>
+                    </tr>
+                }
+                @if (TopTenUser.Count == 0)
+                {
+                    <tr>
+                        <td class="text-center" colspan="2">No user</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

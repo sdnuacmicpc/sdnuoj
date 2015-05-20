@@ -1,0 +1,88 @@
+﻿@model SDNUOJ.Entity.ProblemEntity
+
+@{
+    ViewBag.__Title = "题目信息编辑";
+
+    RouteData routeData = ViewContext.RouteData.Route.GetRouteData(this.Context);
+    String action = routeData.Values["action"] as String;
+}
+
+@using (Html.BeginForm(action, "Problem", new { id = Model.ProblemID }, FormMethod.Post, new { @data_verify = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>题目信息编辑说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页添加或修改题目信息，本页标记<span class="star">*</span>的为必填项。<br />
+                    2. 基础时间限制默认为 1000ms，基础内存限制默认为 32768KB，各语言根据配置文件加乘。<br />
+                    3. 题目添加后默认为隐藏状态，如需显示请在管理界面进行相应操作。<br />
+                    4. 题目新建后请访问题目管理页面创建或上传题目数据。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">题目信息编辑</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>题目标题</td>
+                <td><input name="title" type="text" value="@Model.Title" class="textbox-long" data-emptyinfo="您没有输入题目标题，请重新输入！" /></td>
+            </tr>
+            <tr>
+                <td><span class="star">*</span>时间限制(MS)</td>
+                <td><input name="timelimit" type="text" value="@Model.TimeLimit" class="textbox-long" data-emptyinfo="您没有输入时间限制，请重新输入！" data-regex="^\d+$" data-invalidinfo="时间限制输入错误，请重新输入！" /></td>
+            </tr>
+            <tr>
+                <td><span class="star">*</span>内存限制(KB)</td>
+                <td><input name="memorylimit" type="text" value="@Model.MemoryLimit" class="textbox-long" data-emptyinfo="您没有输入内存限制，请重新输入！" data-regex="^\d+$" data-invalidinfo="内存限制输入错误，请重新输入！" /></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top;"><span class="star">*</span>题目描述<br /><span class="supplementary">支持HTML代码</span></td>
+                <td><textarea id="description" name="description" class="texteditor" data-editor="true" data-emptyinfo="您没有输入题目描述，请重新输入！">@Html.Raw(Model.Description)</textarea></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top;"><span class="star">*</span>题目输入<br /><span class="supplementary">支持HTML代码</span></td>
+                <td><textarea id="input" name="input" class="texteditor" data-editor="true" data-emptyinfo="您没有输入题目输入，请重新输入！">@Html.Raw(Model.Input)</textarea></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top;"><span class="star">*</span>题目输出<br /><span class="supplementary">支持HTML代码</span></td>
+                <td><textarea id="output" name="output" class="texteditor" data-editor="true" data-emptyinfo="您没有输入题目输出，请重新输入！">@Html.Raw(Model.Output)</textarea></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top;"><span class="star">*</span>样例输入<br /><span class="supplementary">不支持HTML代码</span></td>
+                <td><textarea name="samplein" class="textarea-long" data-emptyinfo="您没有输入题目样例输入，请重新输入！">@Model.SampleInput</textarea></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top;"><span class="star">*</span>样例输出<br /><span class="supplementary">不支持HTML代码</span></td>
+                <td><textarea name="sampleout" class="textarea-long" data-emptyinfo="您没有输入题目样例输出，请重新输入！">@Model.SampleOutput</textarea></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top;">提示信息<br /><span class="supplementary">支持HTML代码</span></td>
+                <td><textarea id="hint" name="hint" class="texteditor" data-editor="true">@Html.Raw(Model.Hint)</textarea></td>
+            </tr>
+            <tr>
+                <td>题目来源</td>
+                <td><input name="source" type="text" value="@Model.Source" class="textbox-long" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">提交</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

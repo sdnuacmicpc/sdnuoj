@@ -1,0 +1,57 @@
+﻿@model List<String>
+
+@{
+    ViewBag.__Title = "在线用户管理";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>在线用户管理说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="supplementary">
+                1. 您可以在本页查看在线的用户列表，信息根据用户未读邮件缓存获取，最大误差为 5分钟。<br />
+                2. 请确保系统内容缓存以及系统邮件已经开启，否则系统不会记录用户在线情况。
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table-main table-striped table-hover">
+    <thead>
+        <tr>
+            <th colspan="3">在线用户管理</th>
+        </tr>
+        <tr>
+            <td style="width:20px;"><input type="checkbox" disabled="disabled" /></td>
+            <td>用户名</td>
+            <td class="text-center" style="width:40px;">信息</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td><input type="checkbox" disabled="disabled" /></td>
+            <td>@Html.ActionLink(Item, "Info", "User", new { area = "", id = Item }, new { @target = "_blank" })</td>
+            <td class="text-center">@Html.ActionLink("查看", "Detail", "User", new { id = Item }, null)</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td class="text-center" colspan="3">没有在线的用户</td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3">
+                <span>共 @Model.Count 个在线用户</span>
+            </td>
+        </tr>
+    </tfoot>
+</table>

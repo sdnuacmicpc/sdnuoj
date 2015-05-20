@@ -1,0 +1,70 @@
+﻿@model SDNUOJ.Entity.ProblemEntity
+
+@{
+    var Contest = ViewData["Contest"] as SDNUOJ.Entity.ContestEntity;
+
+    ViewBag.__Title = "Contest Problem - " + ViewBag.ContestProblemID;
+    ViewBag.__ContestPageTitle = ViewBag.ContestProblemID + "." + Model.Title;
+}
+
+<div class="dtable dtable-noborder problem-info">
+    <div class="dbody">
+        <div class="row text-center">
+            <div class="well" style="margin-top:10px">
+                <span class="text-info">
+                    Time Limit: @Model.TimeLimit MS &nbsp;&nbsp;
+                    Memory Limit: @Model.MemoryLimit KB<br />
+                    Total Submission(s): @Html.ActionLink(Model.SubmitCount.ToString(), "List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = ViewBag.ContestProblemID }, null) &nbsp;&nbsp;
+                    Accepted Submission(s): @Html.ActionLink(Model.SolvedCount.ToString(), "List", "Status", new { area = "Contest", cid = Contest.ContestID, pid = ViewBag.ContestProblemID, type = (Byte)SDNUOJ.Entity.ResultType.Accepted }, null)
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <h3>Description</h3>
+        </div>
+        <div class="row">
+            <div class="well">@Html.Raw(Model.Description)</div>
+        </div>
+        <div class="row">
+            <h3>Input</h3>
+        </div>
+        <div class="row">
+            <div class="well">@Html.Raw(Model.Input)</div>
+        </div>
+        <div class="row">
+            <h3>Output</h3>
+        </div>
+        <div class="row">
+            <div class="well">@Html.Raw(Model.Output)</div>
+        </div>
+        <div class="row">
+            <h3>Sample Input</h3>
+        </div>
+        <div class="row">
+            <div class="well"><pre class="code">@Html.Raw(Model.SampleInput)@*!TIP:Problem.SampleInput获取时已Encode*@</pre></div>
+        </div>
+        <div class="row">
+            <h3>Sample Output</h3>
+        </div>
+        <div class="row">
+            <div class="well"><pre class="code">@Html.Raw(Model.SampleOutput)@*!TIP:Problem.SampleOutput获取时已Encode*@</pre></div>
+        </div>
+        @if (!String.IsNullOrEmpty(Model.Hint))
+        {
+            <div class="row">
+                <h3>Hint</h3>
+            </div>
+            <div class="row">
+                <div class="well">@Html.Raw(Model.Hint)</div>
+            </div>
+        }
+    </div>
+    <div class="dfoot">
+        <div class="row text-center">
+            <div class="btn-group">
+                @Html.ActionLink("Submit", "Submit", "Problem", new { area = "Contest", cid = Contest.ContestID, id = ViewBag.ContestProblemID }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("Statistic", "Statistic", "Problem", new { area = "Contest", cid = Contest.ContestID, id = ViewBag.ContestProblemID }, new { @class = "btn btn-default" })
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.__Title = "后台管理首页";
+    ViewBag.__Type = "welcome";
+}
+
+<table class="table-main">
+    <thead>
+        <tr>
+            <th colspan="2">系统概要</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="2">
+                系统信息
+                本系统用户数：<span class="emphasize">@ViewData["UserCount"]</span>
+                题目数：<span class="emphasize">@ViewData["ProblemCount"]</span>
+                提交数：<span class="emphasize">@ViewData["SolutionCount"]</span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                本系统已运行
+                @ViewData["SystemRunTime"]，当前使用版本为：<span class="supplementary">@ViewData["SystemVersion"]</span>
+                &nbsp;@Html.Raw(ViewBag.IsSuperAdministrator ? "<a href=\"" + Url.Action("Info", "System") + "\">&gt;&gt;更详细系统信息检测</a>" : "")
+            </td>
+        </tr>
+        <tr>
+            <td style="width:50%">
+                系统运行平台：<span class="supplementary">@ViewData["SystemPlatform"]</span>
+            </td>
+            <td>
+                使用数据库类型：<span class="supplementary">@ViewData["DataBaseType"]</span>
+            </td>
+        </tr>
+        <tr>
+            <td style="width:50%">
+                服务器名和IP：<span class="supplementary">@ViewData["ServerName"]</span>
+            </td>
+            <td>
+                .NET解释引擎版本：<span class="supplementary">@ViewData["DotNetVersion"]</span>
+            </td>
+        </tr>
+        @if (ViewBag.IsSuperAdministrator && ViewBag.IsAccessDatabase)
+        {
+        <tr>
+            <td colspan="2">
+                <a href="@Url.Action("Backup", "Database")"><span class="emphasize">数据定期备份</span></a>：请注意做好定期数据备份，数据的定期备份可最大限度的保障系统数据的安全。
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+<br />
+<table class="table-main">
+    <thead>
+        <tr>
+            <th>
+                提交统计 |
+                <select id="admin-year" name="year"></select>
+                <select id="admin-month" name="month"></select>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <div id="statistic-legend" class="chart-legend"></div>
+                <div id="statistic-chart"></div>
+                <div id="statistic-chart-tooltip" class="chart-tooltip"></div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!--[if lt IE 9]>
+    <script src="@this.StaticFile("/static/js/foundation/excanvas.min.js")" type="text/javascript"></script>
+<![endif]-->

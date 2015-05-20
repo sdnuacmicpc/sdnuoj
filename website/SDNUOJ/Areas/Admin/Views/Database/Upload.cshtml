@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.__Title = "数据库上传";
+}
+
+@using (Html.BeginForm("Upload", "Database", FormMethod.Post, new { @enctype = "multipart/form-data", @data_confirm = "true", @data_verify = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>数据库上传说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页上传扩展名为.resx的数据库文件，如果扩展名无效，请手动修改为此扩展名。<br />
+                    2. 数据库上传后将以“年_月_日_时_分_秒.resx”的形式重新命名。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">数据库上传</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>文件路径</td>
+                <td><input name="file" type="file" value="" class="uploadbox" onpaste="return false;" onkeydown="return false;" data-emptyinfo="您没有选择要上传的数据库，请重新选择！" data-regex="\.resx$" data-invalidinfo="您选择的文件类型有误，请重新选择！" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">上传</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

@@ -1,0 +1,53 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.ContestEntity>
+
+@{
+    ViewBag.__Title = "Contest";
+
+    TimeSpan ts = TimeZoneInfo.Local.BaseUtcOffset;
+    String TimeZone = (ts.Hours >= 0 ? "+" : "") + ts.Hours.ToString() + (ts.Minutes != 0 ? ":" + Math.Abs(ts.Minutes).ToString("D2") : "");
+}
+
+<div class="page-title row text-center">
+    <h2>Contest</h2>
+</div>
+
+<table class="table table-striped table-hover table-nohead table-nofoot">
+    <thead>
+        <tr>
+            <th class="td-contestid text-center">CID</th>
+            <th>Contest Name</th>
+            <th class="td-contesttime text-center">Start (UTC@(TimeZone))</th>
+            <th class="td-contesttype text-center">Type</th>
+            <th class="td-conteststatus text-center">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var Item in Model)
+    {
+        <tr>
+            <td class="text-center" style="vertical-align:middle">@Item.ContestID</td>
+            <td style="vertical-align:middle">
+            <a href="@Url.Action("Index", "Home", new { area = "Contest", cid = Item.ContestID })">@Item.Title</a>
+            @if (Item.ContestStatus == SDNUOJ.Entity.ContestStatus.Registering)
+            {
+                @: | 
+                @Html.ActionLink("Register", "Register", "Contests", new { area = "", id = Item.ContestID }, null)
+            }
+            </td>
+            <td class="text-center" style="vertical-align:middle">@Item.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            <td class="text-center" style="vertical-align:middle"><span class="label contest_@Item.ContestType">@Item.ContestTypeString</span>@Html.Raw((Item.ContestType == SDNUOJ.Entity.ContestType.RegisterPublic || Item.ContestType == SDNUOJ.Entity.ContestType.RegisterPrivate) ? "<br/>Start:&nbsp;" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", Item.RegisterStartTime) + "<br/>End:&nbsp;&nbsp;" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", Item.RegisterEndTime) : "")
+            <td class="text-center" style="vertical-align:middle"><span class="label contest_@Item.ContestStatus">@Item.ContestStatus</span></td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="5" class="text-center">No such contest</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<div class="page-bottom row text-center">
+    @RenderPage("~/Views/Shared/_SimplePager.cshtml")
+</div>

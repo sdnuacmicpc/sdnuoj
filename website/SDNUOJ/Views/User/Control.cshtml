@@ -1,0 +1,57 @@
+﻿@model SDNUOJ.Entity.UserEntity
+
+@{
+    ViewBag.__Title = "User Control Panel";
+}
+
+<div class="page-title row text-center">
+    <h2>User Control Panel</h2>
+</div>
+
+@using (Html.BeginForm("Control", "User", FormMethod.Post, new { @data_verify = "true" }))
+{
+    <table class="table table-striped table-condensed table-nohead">
+        <thead>
+            <tr>
+                <td colspan="2" class="text-center">
+                    <span class="label label-primary">Note</span>
+                    <span>Leave the "New Password" fields blank you don't want to update your password.</span>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="td-firstcol"><span class="star">*</span> Current Password</td>
+                <td><input name="password" type="password" maxlength="20" class="form-control input-middle" required="required" data-emptyinfo="Current password can not be NULL!" /></td>
+            </tr>
+            <tr>
+                <td class="td-firstcol">New Password</td>
+                <td><input id="txt-password" name="newpassword" type="password" maxlength="20" class="form-control input-middle" /></td>
+            </tr>
+            <tr>
+                <td class="td-firstcol">Confirm New Password</td>
+                <td><input name="newpassword2" type="password" maxlength="20" class="form-control input-middle" data-comparedto="txt-password" data-notequalinfo="Two passwords are not match!" /></td>
+            </tr>
+            <tr>
+                <td class="td-firstcol">Nick Name</td>
+                <td><input name="nickname" type="text" maxlength="40" class="form-control input-middle" value="@Html.Raw(Model.NickName)" /></td>@*!TIP:User.NickName添加时已Encode*@
+            </tr>
+            <tr>
+                <td class="td-firstcol">School</td>
+                <td><input name="school" type="text" maxlength="40" class="form-control input-middle" value="@Model.School" /></td>
+            </tr>
+            <tr>
+                <td class="td-firstcol"><span class="star">*</span> Email</td>
+                <td><input name="email" type="email" maxlength="40" class="form-control input-middle" value="@Model.Email" required="required" data-emptyinfo="Email can not be NULL!" data-regex="^[\w-]+(\.[\w-]+)*@@[\w-]+(\.[\w-]+)+$" data-invalidinfo="Email is INVALID!" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="text-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-default">Reset</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

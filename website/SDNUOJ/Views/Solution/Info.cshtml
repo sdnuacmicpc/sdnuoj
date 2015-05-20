@@ -1,0 +1,21 @@
+﻿@model SDNUOJ.Entity.SolutionErrorEntity
+
+@{
+    ViewBag.__Title = "Solution Error View";
+}
+
+<div class="dtable dtable-striped">
+    <div class="dhead">
+        <div class="row text-center">
+            <h2>Judge Information</h2>
+        </div>
+    </div>
+    <div class="dbody">
+        <div class="row text-center">
+            <span class="text-info">Run ID: @Model.SolutionID</span>
+        </div>
+        <div class="row alert alert-@(!String.IsNullOrEmpty(Model.ErrorInfo) ? "danger" : "warning")" style="border-radius:0;">
+            @Html.Raw(!String.IsNullOrEmpty(Model.ErrorInfo) ? Model.ErrorInfo : "No relevant information")@*!TIP:SoultionError.ErrorInfo获取时已Encode*@
+        </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+﻿@model SDNUOJ.Entity.ContestEntity
+
+@{
+    ViewBag.__Title = "Contest Information";
+    ViewBag.__ContestPageTitle = Model.Title;
+    ViewBag.__Type = "contest.index";
+
+    DateTime Now = DateTime.Now;
+}
+
+<div class="text-center">
+    <div class="contest-info">
+        <span class="text-info">Start Time: @Model.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</span>&nbsp;&nbsp;&nbsp;&nbsp;
+        <span class="text-info">End Time: @Model.EndTime.ToString("yyyy-MM-dd HH:mm:ss")</span><br />
+        <span class="text-info">Contest Type: <span class="label contest_@Model.ContestType">@Model.ContestTypeString</span></span>&nbsp;&nbsp;&nbsp;&nbsp;
+        <span class="text-info">Contest Status: <span class="label contest_@Model.ContestStatus">@Model.ContestStatus</span></span><br />
+        <hr />@Html.Raw(Model.Description)<hr />
+        <span class="contest_ServerTime">Current Server Time: <span id="server-time">@Now.ToString("yyyy-MM-dd HH:mm:ss")</span></span>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var TIME_DIFF = (function () {
+        var serverTime = new Date();
+        serverTime.setFullYear(@Now.Year, @(Now.Month - 1), @Now.Day);
+        serverTime.setHours(@Now.Hour, @Now.Minute, @Now.Second, 0);
+        return serverTime.getTime() - new Date().getTime();
+    })();
+</script>

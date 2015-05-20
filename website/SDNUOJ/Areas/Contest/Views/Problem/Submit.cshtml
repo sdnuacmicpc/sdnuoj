@@ -1,0 +1,40 @@
+﻿@model SDNUOJ.Entity.ProblemEntity
+
+@{
+    var Contest = ViewData["Contest"] as SDNUOJ.Entity.ContestEntity;
+
+    ViewBag.__Title = "Contest Submit";
+    ViewBag.__ContestPageTitle = "Contest Submit";
+    ViewBag.__Type = "submitcode";
+}
+
+@using (Html.BeginForm("Submit", "Solution", new { area = "Contest", cid = Contest.ContestID, id = ViewBag.ContestProblemID }, FormMethod.Post, new { @data_verify = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="dtable dtable-striped">
+        <div class="dbody">
+            <div class="row">
+                <div class="td-firstcol submit-bar col-xs-6">
+                    <span>Problem ID:</span>
+                    <input class="form-control input-short" value="@ViewBag.ContestProblemID" readonly="readonly" />&nbsp;&nbsp;
+                </div>
+                <div class="submit-bar col-xs-6">
+                    &nbsp;&nbsp;
+                    <span>Language:</span>
+                    @Html.DropDownList("lang", ViewBag.Languages as IEnumerable<SelectListItem>, new { @class = "form-control input-short", @data_emptyinfo = "Language can not be NULL!" })
+                </div>
+            </div>
+            <div class="row" style="padding:0;">
+                <textarea name="code" class="form-control" rows="15" placeholder="//add your code here" data-codeeditor="true"></textarea>
+            </div>
+        </div>
+        <div class="dfoot">
+            <div class="row text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-default">Reset</button>
+            </div>
+        </div>
+    </div>
+}
+<link href="@this.StaticFile("/static/css/foundation/codemirror-5.2.custom.min.css")" type="text/css" rel="stylesheet" />
+<script src="@this.StaticFile("/static/js/foundation/codemirror-package-5.2.min.js")" type="text/javascript"></script>

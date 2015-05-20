@@ -1,0 +1,64 @@
+﻿@model SDNUOJ.Entity.ContestEntity
+
+@{
+    ViewBag.__Title = "竞赛用户导出";
+}
+
+@using (Html.BeginForm("UserExport", "Contest", new { id = ViewBag.ContestID }, FormMethod.Post, new { @data_verify = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>竞赛用户导出说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页将指定竞赛允许参与的用户导出为使用Tab分隔的文本文件。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">竞赛用户导出</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>竞赛ID</td>
+                <td><input name="id" type="text" readonly="readonly" class="textbox" value="@ViewBag.ContestID" data-emptyinfo="您没有输入竞赛ID，请重新输入！" /></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top;"><span class="star">*</span>导出内容</td>
+                <td>
+                    <select name="maskcode" multiple="multiple" class="listbox">
+                        <option value="1">Contest ID</option>
+                        <option value="2" selected="selected">User Name</option>
+                        <option value="4" selected="selected">Real Name</option>
+                        <option value="8">Register Time</option>
+                        <option value="16">Enabled</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="star">*</span>是否包含标题行</td>
+                <td>
+                    <input type="radio" id="rad-withtitle" name="withtitle" value="1" checked="checked" /><label for="rad-withtitle">包含</label>
+                    <input type="radio" id="rad-withouttitle" name="withtitle" value="0" /><label for="rad-withouttitle">不包含</label>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">导出</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

@@ -1,0 +1,96 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.SolutionEntity>
+
+@{
+    var Contest = ViewData["Contest"] as SDNUOJ.Entity.ContestEntity;
+    
+    ViewBag.__Title = "Contest Status";
+    ViewBag.__ContestPageTitle = "Contest Status";
+    ViewBag.__Type = "status";
+}
+
+<div class="row search-bar" style="border-top:0 !important;">
+    @using (Html.BeginForm("List", "Status", new { area = "Contest", cid = Contest.ContestID }, FormMethod.Get, new { @class = "form-search" }))
+    {
+        <div class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
+            <span>PID:</span>
+            <input name="pid" type="text" class="form-control input-tiny" value="@(ViewBag.ProblemID >= 0 ? ViewBag.ProblemID.ToString() : "")" />
+        </div>
+        <div class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
+            <span>User Name:</span>
+            <input name="name" type="text" class="form-control input-short" value="@ViewBag.UserName" />
+        </div>
+        <div class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
+            <span>Language:</span>
+            <select name="lang" class="form-control input-short">
+                <option value="">All</option>
+                @foreach (var Lang in ViewBag.Languages)
+                {
+                    <option value="@Lang.Value" @(String.Equals(ViewBag.Language, Lang.Value.ToString()) ? " selected=\"selected\"" : "")>@Lang.Key</option>
+                }
+            </select>
+        </div>
+        <div class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
+            <span>Result:</span>
+            <select name="type" class="form-control input-middle">
+                <option value="">All</option>
+                <option value="0" @(String.Equals(ViewBag.SearchType, "0") ? " selected=\"selected\"" : "")>Pending</option>
+                <option value="1" @(String.Equals(ViewBag.SearchType, "1") ? " selected=\"selected\"" : "")>Rejudge Pending</option>
+                <option value="2" @(String.Equals(ViewBag.SearchType, "2") ? " selected=\"selected\"" : "")>Judging</option>
+                <option value="3" @(String.Equals(ViewBag.SearchType, "3") ? " selected=\"selected\"" : "")>Compile Error</option>
+                <option value="4" @(String.Equals(ViewBag.SearchType, "4") ? " selected=\"selected\"" : "")>Runtime Error</option>
+                <option value="5" @(String.Equals(ViewBag.SearchType, "5") ? " selected=\"selected\"" : "")>Time Limit Exceeded</option>
+                <option value="6" @(String.Equals(ViewBag.SearchType, "6") ? " selected=\"selected\"" : "")>Memory Limit Exceeded</option>
+                <option value="7" @(String.Equals(ViewBag.SearchType, "7") ? " selected=\"selected\"" : "")>Output Limit Exceeded</option>
+                <option value="8" @(String.Equals(ViewBag.SearchType, "8") ? " selected=\"selected\"" : "")>Wrong Answer</option>
+                <option value="9" @(String.Equals(ViewBag.SearchType, "9") ? " selected=\"selected\"" : "")>Presentation Error</option>
+                <option value="10" @(String.Equals(ViewBag.SearchType, "10") ? " selected=\"selected\"" : "")>Accepted</option>
+            </select>
+        </div>
+        <div class="visible-xs-inline-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
+            <button type="submit" class="btn btn-default">Search</button>
+        </div>
+    }
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-nofoot">
+        <thead>
+            <tr>
+                <th class="td-statusid text-center">RunID</th>
+                <th class="td-statususername text-center">User Name</th>
+                <th class="td-statuspid text-center">PID</th>
+                <th class="text-center">Result</th>
+                <th class="td-statuscosttime text-center">Time</th>
+                <th class="td-statuscostmemory text-center">Memory</th>
+                <th class="td-statuscodelen text-center">Code Length</th>
+                <th class="td-statuslang text-center">Language</th>
+                <th class="td-statustime text-center">Submit Time</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var Item in Model)
+        {
+            <tr>
+                <td class="text-center">@Item.SolutionID</td>
+                <td class="text-center">@Html.ActionLink(Item.UserName, "Info", "User", new { area = "", id = Item.UserName }, null)</td>
+                <td class="text-center">@Html.ActionLink(Item.ContestProblemID.ToString(), "Show", "Problem", new { area = "Contest", id = Item.ContestProblemID }, null)</td>
+                <td class="text-center"><span class="label status_@Item.Result">@((Item.Result == SDNUOJ.Entity.ResultType.CompileError || Item.Result == SDNUOJ.Entity.ResultType.RuntimeError) ? Html.ActionLink(Item.ResultString, "Info", "Solution", new { area = "", id = Item.SolutionID }, null) : Html.Raw(Item.ResultString))</span></td>
+                <td class="text-center">@(Item.TimeCost)MS</td>
+                <td class="text-center">@(Item.MemoryCost)KB</td>
+                <td class="text-center">@(Item.CodeLength)B</td>
+                <td class="text-center"><span id="lang_@(SDNUOJ.Configuration.ConfigurationManager.AllowSourceView ? "default" : "none")_@(Item.SolutionID)_@(Item.UserName)" class=" status-language">@Item.LanguageType</span></td>
+                <td class="text-center">@Item.SubmitTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            </tr>
+        }
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="9" class="text-center">No judge status</td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div class="page-bottom row text-center">
+    @RenderPage("~/Views/Shared/_SimplePager.cshtml")
+</div>

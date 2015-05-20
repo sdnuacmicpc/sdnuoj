@@ -1,0 +1,93 @@
+﻿@model SDNUOJ.Utilities.PagedList<SDNUOJ.Entity.UserMailEntity>
+
+@{
+    ViewBag.__Title = "Mail Box";
+    ViewBag.__Type = "mailbox";
+}
+
+<div class="page-title row text-center">
+    <h2>Mail Box</h2>
+</div>
+
+@using (Html.BeginForm("Delete", "Mail", FormMethod.Post, new { @id = "form-mailbox-delete" }))
+{
+    @Html.AntiForgeryToken()
+    <input name="page" type="hidden" value="@ViewBag.PageIndex" />
+    <table class="table table-striped table-hover table-nohead table-nofoot">
+        <thead>
+            <tr>
+                <th class="text-center" style="width:60px; vertical-align:middle;">
+                    <input type="checkbox" data-selectall-name="mailid" />No.
+                </th>
+                <th colspan="2">
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-newmail">New</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        @for (Int32 i = 0; i < Model.Count; i++)
+        {
+            var Item = Model[i];
+            <tr>
+                <td class="text-center"><input type="checkbox" name="mailid" value="@Item.MailID" />@(Model.PageSize * (ViewBag.PageIndex - 1) + i + 1)</td>
+                <td style="width:15%">@Html.ActionLink(Item.FromUserName, "Info", "User", new { id = Item.FromUserName }, null)</td>
+                <td>@Html.Raw((Item.MailID > 0 && !Item.IsRead) ? "<span class=\"label label-danger\">NEW</span>&nbsp;" : "")<a href="@Url.Action("Detail", "Mail", new { id = Item.MailID })">@Html.Raw(Item.Title)@*!TIP:Mail.Title添加时已Encode*@</a></td>
+            </tr>
+        }
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="3" class="text-center">No Mail</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<div class="page-bottom row text-center">
+    @RenderPage("~/Views/Shared/_Pager.cshtml")
+</div>
+
+<div class="modal fade" id="modal-newmail" tabindex="-1" role="dialog" aria-labelledby="label-newmail" aria-hidden="true">
+@using (Html.BeginForm("Send", "Mail", FormMethod.Post, new { @class = "form-horizontal", @data_verify = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="label-newmail">New Mail</h4>
+            </div>
+            <div class="modal-body">
+                <div class="dtable dtable-striped dtable-nofoot">
+                    <div class="dbody">
+                        <div class="row">
+                            <label for="title" class="col-sm-2 control-label"><span class="star">*</span> Title</label>
+                            <div class="col-sm-9">
+                                <input id="title" name="title" type="text" maxlength="100" class="form-control" value="@(String.IsNullOrEmpty(ViewBag.Title) ? "" : "Re: " + ViewBag.Title)" required="required" placeholder="Mail title" data-emptyinfo="Mail title can not be NULL!" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="title" class="col-sm-2 control-label"><span class="star">*</span> To</label>
+                            <div class="col-sm-9">
+                                <input id="tousername" name="tousername" type="text" maxlength="20" class="form-control" value="@ViewBag.ToName" required="required" placeholder="Username" data-emptyinfo="To User name can not be NULL!" data-regex="^\w+$" data-invalidinfo="To User name is INVALID!" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="content" class="col-sm-2 control-label"><span class="star">*</span> Content</label>
+                            <div class="col-sm-9">
+                                <textarea id="content" name="content" class="form-control" rows="6" required="required" placeholder="Your content" data-emptyinfo="Mail content can not be NULL!"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+        </div>
+    </div>
+}
+</div>

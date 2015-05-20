@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.__Title = "竞赛用户添加";
+}
+
+@using (Html.BeginForm("UserAdd", "Contest", FormMethod.Post, new { @data_verify = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>竞赛用户添加说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页为指定竞赛添加用户，用户名必须已经注册，用户添加后自动生效。<br />
+                    2. 如果指定竞赛已经存在指定用户，则之前的将会被删除。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">竞赛用户添加</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>竞赛ID</td>
+                <td><input name="id" type="text" readonly="readonly" class="textbox" value="@ViewBag.ContestID" data-emptyinfo="您没有输入竞赛ID，请重新输入！" /></td>
+            </tr>
+            <tr>
+                <td style="width:25%; vertical-align:top;">
+                    <span class="star">*</span>竞赛用户名对照表<br />
+                    <span class="supplementary">
+                        每行一个用户名与真实姓名，用空格或Tab分隔<br />
+                        如：username 真实姓名<br />
+                        真实姓名可以省略
+                    </span>
+                </td>
+                <td>
+                    <textarea name="usernames" class="textarea" data-emptyinfo="您没有输入竞赛用户名对照表，请重新输入！"></textarea>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">提交</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

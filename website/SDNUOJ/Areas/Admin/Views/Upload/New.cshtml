@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.__Title = "上传新文件";
+}
+
+@using (Html.BeginForm("New", "Upload", FormMethod.Post, new { @enctype = "multipart/form-data", @data_confirm = "true", @data_verify = "true", @data_waiting = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>上传新文件说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页上传任意扩展名的文件，文件上传后会自动修改名称。<br />
+                    2. 上传后系统会提示当前文件的下载地址，或在上传文件管理中查看。<br />
+                    3. 本系统只允许上传以下扩展名的文件：zip、rar、7z、bmp、jpg、png、gif、txt、doc、docx、xls、xlsx、ppt、pptx、pdf。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">上传新文件</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>文件路径</td>
+                <td><input name="file" type="file" value="" class="uploadbox" onpaste="return false;" onkeydown="return false;" data-emptyinfo="您没有选择要上传的文件，请重新选择！" data-regex="\.(zip|rar|7z|bmp|jpg|png|gif|txt|doc|docx|xls|xlsx|ppt|pptx|pdf)$" data-invalidinfo="您选择的文件类型有误，请重新选择！" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">上传</button>
+                    <button type="reset">重置</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

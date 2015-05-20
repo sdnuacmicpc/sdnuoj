@@ -1,0 +1,61 @@
+﻿@model SDNUOJ.Entity.ContestEntity
+
+@{
+    ViewBag.__Title = "竞赛结果导出";
+}
+
+@using (Html.BeginForm("Export", "Contest", new { id = ViewBag.ContestID }, FormMethod.Post, new { @data_verify = "true" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th>竞赛结果导出说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="supplementary">
+                    1. 您可以在本页将指定竞赛的结果导出为Excel 97-2003(.xls)格式文件。<br />
+                    2. 您可以使用用户注册的真实姓名或手动设置对照表，否则将显示原始的用户名。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <table class="table-main">
+        <thead>
+            <tr>
+                <th colspan="2">竞赛结果导出</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width:25%;"><span class="star">*</span>竞赛ID</td>
+                <td><input name="id" type="text" readonly="readonly" class="textbox" value="@ViewBag.ContestID" data-emptyinfo="您没有输入竞赛ID，请重新输入！" /></td>
+            </tr>
+            <tr>
+                <td><span class="star">*</span>显示用户真实姓名</td>
+                <td>
+                    <input type="radio" id="rad-disablerealname" name="enablerealname" value="0" checked="checked" data-hidetarget="tr-usernames" /><label for="rad-disablerealname">禁用</label>
+                    <input type="radio" id="rad-enablerealname" name="enablerealname" value="1" data-hidetarget="tr-usernames" /><label for="rad-enablerealname">使用用户注册信息</label>
+                    <input type="radio" id="rad-customrealname" name="enablerealname" value="2" data-showtarget="tr-usernames" /><label for="rad-customrealname">自定义</label>
+                </td>
+            </tr>
+            <tr id="tr-usernames" class="collapsed">
+                <td style="vertical-align:top;">
+                    <span class="star">*</span>用户名对照表<br />
+                    <span class="supplementary">每行一个用户名与真实姓名，用空格或Tab分隔<br />如：username 真实姓名</span>
+                </td>
+                <td><textarea name="usernames" class="textarea" data-emptyinfo="您没有输入用户姓名对照表，请重新输入！"></textarea></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button type="submit">导出</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}

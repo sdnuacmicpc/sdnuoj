@@ -1,0 +1,112 @@
+﻿@{
+    Int32 recordCount = ViewBag.RecordCount;
+    Int32 pageSize = ViewBag.PageSize;
+    Int32 pageCount = ViewBag.PageCount;
+    Int32 pageIndex = ViewBag.PageIndex;
+    Int32 lastPageIndex = pageIndex > 1 ? pageIndex - 1 : 1;
+    Int32 nextPageIndex = pageIndex < pageCount ? pageIndex + 1 : pageCount;
+
+    Int32 sideCount = 4;//一边显示几个页码
+    Int32 minCount = sideCount * 2 + 3;//总共多少时不显示点
+    
+    RouteData routeData = ViewContext.RouteData.Route.GetRouteData(this.Context);
+    String action = routeData.Values["action"] as String;
+    String controller = routeData.Values["controller"] as String;
+}
+
+@functions {
+    private RouteValueDictionary GetRouteValues(RouteData routeData, String id)
+    {
+        RouteValueDictionary dict = new RouteValueDictionary(routeData.Values);
+        dict["id"] = id;
+
+        return dict;
+    }
+    
+    private MvcHtmlString GetPageLink(String controller, String action, RouteData routeData, Int32 currentIndex, Int32 idx)
+    {
+        if (idx == currentIndex)
+        {
+            return new MvcHtmlString(String.Format("<span class=\"current-page\">{0}</span> ", idx.ToString()));
+        }
+        else
+        {
+            return new MvcHtmlString(String.Format("<a href=\"{0}{1}\">{2}</a> ", Url.Action(action, controller, GetRouteValues(routeData, idx.ToString())), Request.Url.Query, idx.ToString()));
+        }
+    }
+}
+
+<table class="pager">
+    <tr>
+        <td>
+        @if (pageIndex > 1)
+        {
+            <a href="@Url.Action(action, controller, GetRouteValues(routeData, "1"))@Request.Url.Query">首页</a>
+            <a href="@Url.Action(action, controller, GetRouteValues(routeData, lastPageIndex.ToString()))@Request.Url.Query">上一页</a>
+        }
+        else
+        {
+            <span>首页</span>
+            <span>上一页</span>
+        }
+
+        @if (pageCount <= minCount)
+        {
+            for (Int32 i = 1; i <= pageCount; i++)
+            {
+                @GetPageLink(controller, action, routeData, pageIndex, i);
+                @:
+            }
+        }
+        else
+        {
+            Int32 startIndex = (((pageIndex - sideCount - 1) > 1) ? pageIndex - sideCount : 2);
+            Int32 endIndex = (((pageIndex + sideCount + 1) < pageCount) ? pageIndex + sideCount : pageCount - 1);
+
+            @GetPageLink(controller, action, routeData, pageIndex, 1);
+
+            if ((pageIndex - sideCount - 1) > 1)
+            {
+                @:...
+            }
+            
+            for (Int32 i = startIndex; i <= endIndex; i++)
+            {
+                @GetPageLink(controller, action, routeData, pageIndex, i);//添加中间页码
+                @:
+            }
+
+            if ((pageIndex + sideCount + 1) < pageCount)
+            {
+                @:...
+            }
+
+            @GetPageLink(controller, action, routeData, pageIndex, pageCount);
+        }
+
+        @if (pageIndex < pageCount)
+        {
+            <a href="@Url.Action(action, controller, GetRouteValues(routeData, nextPageIndex.ToString()))@Request.Url.Query">下一页</a>
+            <a href="@Url.Action(action, controller, GetRouteValues(routeData, pageCount.ToString()))@Request.Url.Query">末页</a>
+        }
+        else
+        {
+            <span>下一页</span>
+            <span>末页</span>
+        }
+
+        <span>转到</span>
+        <span>第</span><select data-pager="true" data-urltemplate="@(Url.Action(action, controller, GetRouteValues(routeData, "__page__")) + Request.Url.Query)" size="1">
+        @for (Int32 i = 1; i <= pageCount; i++)
+        {
+            <option value="@i.ToString()" @Html.Raw(i == pageIndex ? " selected=\"selected\"" : "")>@i.ToString() / @pageCount.ToString()</option>
+        }
+        </select><span>页</span>
+        </td>
+        <td style="text-align:right;">
+            <span>总记录:</span><span class="supplementary">@recordCount.ToString()</span>&nbsp;
+            <span>每页:</span><span class="supplementary">@pageSize.ToString()</span>&nbsp;
+            <span>总页数:</span><span class="supplementary">@pageCount.ToString()</span>
+        </td>
+    </tr>
+</table>
