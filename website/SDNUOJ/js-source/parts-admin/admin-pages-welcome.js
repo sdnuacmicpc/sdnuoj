@@ -119,7 +119,11 @@ SDNUOJ.admin.pages.welcome = (function () {
 
                             $("#statistic-chart").bind("plothover", function (event, pos, item) {
                                 if (item) {
-                                    var tip = data.result.date + "-" + item.datapoint[0] + " " + item.series.label + ": " + item.datapoint[1];
+                                    var day = item.datapoint[0];
+                                    var cnt_ac = statisticData[1].data[day - 1][1];
+                                    var cnt_total = statisticData[0].data[day - 1][1];
+                                    var tip = data.result.date + "-" + day + " Submission(s):<br/>"
+                                        + "AC / Total: " + cnt_ac + " / " + cnt_total;
                                     $("#statistic-chart-tooltip").html(tip)
                                         .css({ top: item.pageY + 8, left: item.pageX + 8 })
                                         .fadeIn(200);
