@@ -18,3 +18,15 @@
     SDNUOJ.page.foreground.initPage();
     SDNUOJ.page.foreground.contest.initPage();
 })();
+
+var _hmt = _hmt || [];
+(function () {
+    var id = $("#main-container").attr("data-tjid");
+
+    if (id != "") {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?" + id;
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    }
+})();

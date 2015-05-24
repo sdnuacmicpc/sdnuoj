@@ -73,6 +73,7 @@ namespace SDNUOJ.Configuration
         private static String _emailUsername;
         private static String _emailPassword;
         private static String _emailAddresser;
+        private static String _baiduTongjiID;
         private static Boolean _isDebugMode;
         #endregion
 
@@ -438,6 +439,14 @@ namespace SDNUOJ.Configuration
         }
 
         /// <summary>
+        /// 获取百度统计ID
+        /// </summary>
+        public static String BaiduTongjiID
+        {
+            get { return _baiduTongjiID; }
+        }
+
+        /// <summary>
         /// 获取是否是调试模式
         /// </summary>
         public static Boolean IsDebugMode
@@ -503,6 +512,8 @@ namespace SDNUOJ.Configuration
             _emailUsername = col["EmailUsername"];
             _emailPassword = col["EmailPassword"];
             _emailAddresser = col["EmailAddresser"];
+
+            _baiduTongjiID = col["BaiduTongjiID"];
 
             Int32.TryParse(col["ProblemSetStartID"], out _problemSetStartID);
             Int32.TryParse(col["SubmitInterval"], out _submitInterval);
