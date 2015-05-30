@@ -22,3 +22,4 @@ SDNU Online Judge是基于Microsoft .NET Framework开发的高校在线评测系
 12. [explorercanvas](http://code.google.com/p/explorercanvas)
 13. [Respond.js](http://j.mp/respondjs)
 14. [Json2](https://github.com/douglascrockford/JSON-js)
+15. [jquery-placeholder](http://mths.be/placeholder)
