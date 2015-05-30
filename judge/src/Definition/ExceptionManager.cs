@@ -115,8 +115,8 @@ namespace JudgeClient.Definition
         {
             lock (_log_lock)
             {
-                File.AppendAllText(Configuration.Singleton.LogFilePath,
-                    string.Format(ev + "\r\n"));
+                // File.AppendAllText(Configuration.Singleton.LogFilePath,
+                //     string.Format(ev + "\r\n"));
             }
         }
 
