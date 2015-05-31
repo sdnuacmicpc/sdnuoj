@@ -130,7 +130,7 @@ namespace SDNUOJ.Controllers.Core
         public static void UpdateLoginInfomation(UserEntity user)
         {
             user.LastDate = DateTime.Now;
-            user.LastIP = RemoteClient.GetRemoteClientIPv4(HttpContext.Current);
+            user.LastIP = HttpContext.Current.GetRemoteClientIPv4();
 
             UserRepository.Instance.UpdateEntityLoginInfomation(user);
         }
@@ -290,7 +290,7 @@ namespace SDNUOJ.Controllers.Core
                 return false;
             }
 
-            String ip = RemoteClient.GetRemoteClientIPv4(HttpContext.Current);
+            String ip = HttpContext.Current.GetRemoteClientIPv4();
 
             if (!UserIPStatus.CheckLastRegisterTime(ip))
             {

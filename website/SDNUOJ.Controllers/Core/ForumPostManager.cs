@@ -98,7 +98,7 @@ namespace SDNUOJ.Controllers.Core
             post.Deepth = partentPost.Deepth + 1;
             post.ParentPostID = partentPost.PostID;
             post.PostDate = DateTime.Now;
-            post.PostIP = RemoteClient.GetRemoteClientIPv4(HttpContext.Current);
+            post.PostIP = HttpContext.Current.GetRemoteClientIPv4();
 
             Boolean success = ForumPostRepository.Instance.InsertEntity(post) > 0;
 

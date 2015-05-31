@@ -167,7 +167,7 @@ namespace SDNUOJ.Controllers.Core
 
             entity.UserName = UserManager.CurrentUserName;
             entity.SubmitTime = DateTime.Now;
-            entity.SubmitIP = RemoteClient.GetRemoteClientIPv4(HttpContext.Current);
+            entity.SubmitIP = HttpContext.Current.GetRemoteClientIPv4();
 
             Boolean success = SolutionRepository.Instance.InsertEntity(entity) > 0;
 

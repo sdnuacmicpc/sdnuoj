@@ -100,7 +100,7 @@ namespace SDNUOJ.Controllers.Core
             topic.Title = HtmlEncoder.HtmlEncode(topic.Title);
             content = HtmlEncoder.HtmlEncode(content);
 
-            Boolean success = ForumTopicRepository.Instance.InsertEntity(topic, content, RemoteClient.GetRemoteClientIPv4(HttpContext.Current)) > 0;
+            Boolean success = ForumTopicRepository.Instance.InsertEntity(topic, content, HttpContext.Current.GetRemoteClientIPv4()) > 0;
 
             if (success)
             {

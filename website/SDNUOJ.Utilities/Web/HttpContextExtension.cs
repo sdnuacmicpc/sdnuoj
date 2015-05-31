@@ -7,16 +7,16 @@ using SDNUOJ.Utilities.Text.RegularExpressions;
 namespace SDNUOJ.Utilities.Web
 {
     /// <summary>
-    /// 远程客户端类
+    /// Http上下文扩展类
     /// </summary>
-    public static class RemoteClient
+    public static class HttpContextExtension
     {
         /// <summary>
         /// 获取用户IPv4地址
         /// </summary>
         /// <param name="context">Http上下文</param>
         /// <returns>IPv4地址</returns>
-        public static String GetRemoteClientIPv4(HttpContext context)
+        public static String GetRemoteClientIPv4(this HttpContext context)
         {
             if (context == null)
             {
@@ -70,22 +70,6 @@ namespace SDNUOJ.Utilities.Web
             }
 
             return ip;
-        }
-
-        /// <summary>
-        /// 返回用户的Agent
-        /// </summary>
-        /// <param name="context">Http上下文</param>
-        /// <returns>用户的Agent</returns>
-        public static String GetUserAgent(HttpContext context)
-        {
-            if (context == null)
-            {
-                return String.Empty;
-            }
-
-            String userAgent = context.Request.UserAgent;
-            return (String.IsNullOrEmpty(userAgent) ? "Unknown" : userAgent);
         }
     }
 }

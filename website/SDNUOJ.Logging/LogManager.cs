@@ -66,7 +66,7 @@ namespace SDNUOJ.Logging
 
                     log.Properties["type"] = "Login";
                     log.Properties["username"] = userName;
-                    log.Properties["userip"] = RemoteClient.GetRemoteClientIPv4(context);
+                    log.Properties["userip"] = context.GetRemoteClientIPv4();
                     log.Message = "Success";
 
                     logger.Log(log);
@@ -93,7 +93,7 @@ namespace SDNUOJ.Logging
 
                     log.Properties["type"] = "Login";
                     log.Properties["username"] = userName;
-                    log.Properties["userip"] = RemoteClient.GetRemoteClientIPv4(context);
+                    log.Properties["userip"] = context.GetRemoteClientIPv4();
                     log.Message = error;
 
                     logger.Log(log);
@@ -122,7 +122,7 @@ namespace SDNUOJ.Logging
 
                     log.Properties["type"] = "Operation";
                     log.Properties["username"] = userName;
-                    log.Properties["userip"] = RemoteClient.GetRemoteClientIPv4(context);
+                    log.Properties["userip"] = context.GetRemoteClientIPv4();
                     log.Message = message;
 
                     logger.Log(log);

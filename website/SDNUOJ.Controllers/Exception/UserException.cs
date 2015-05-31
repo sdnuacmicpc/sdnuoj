@@ -71,7 +71,7 @@ namespace SDNUOJ.Controllers.Exception
             if (HttpContext.Current != null && HttpContext.Current.Request != null)
             {
                 this._requestURL = HttpContext.Current.Request.RawUrl;
-                this._userIP = RemoteClient.GetRemoteClientIPv4(HttpContext.Current);
+                this._userIP = HttpContext.Current.GetRemoteClientIPv4();
             }
 
             if (HttpContext.Current != null && HttpContext.Current.User != null && HttpContext.Current.User.Identity != null)

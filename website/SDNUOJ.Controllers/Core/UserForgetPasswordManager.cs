@@ -70,7 +70,7 @@ namespace SDNUOJ.Controllers.Core
             {
                 UserName = userName,
                 SubmitDate = DateTime.Now,
-                SubmitIP = RemoteClient.GetRemoteClientIPv4(HttpContext.Current),
+                SubmitIP = HttpContext.Current.GetRemoteClientIPv4(),
                 HashKey = MD5Encrypt.EncryptToHexString(String.Format("{0}-{1}-{2}", userName, DateTime.Now.Ticks.ToString(), rand.Next(DateTime.Now.Millisecond)), true)
             };
 
@@ -152,7 +152,7 @@ namespace SDNUOJ.Controllers.Core
             if (UserManager.InternalResetUserPassword(userName, password))
             {
                 DateTime accessDate = DateTime.Now;
-                String accessIP = RemoteClient.GetRemoteClientIPv4(HttpContext.Current);
+                String accessIP = HttpContext.Current.GetRemoteClientIPv4();
 
                 Boolean success = UserForgetPasswordRepository.Instance.UpdateEntityStatus(hashKey, accessDate, accessIP) > 0;
 
