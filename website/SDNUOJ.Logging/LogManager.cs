@@ -7,7 +7,7 @@ using NLog;
 using SDNUOJ.Configuration;
 using SDNUOJ.Utilities.Web;
 
-namespace SDNUOJ.Controllers.Logging
+namespace SDNUOJ.Logging
 {
     /// <summary>
     /// 日志操作管理器

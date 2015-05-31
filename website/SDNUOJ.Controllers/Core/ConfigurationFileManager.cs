@@ -4,9 +4,9 @@ using System.Collections.Specialized;
 using System.Web;
 
 using SDNUOJ.Controllers.Exception;
-using SDNUOJ.Controllers.Logging;
 using SDNUOJ.Configuration;
 using SDNUOJ.Entity;
+using SDNUOJ.Logging;
 
 namespace SDNUOJ.Controllers.Core
 {

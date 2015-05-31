@@ -5,8 +5,8 @@ using System.Web;
 
 using SDNUOJ.Configuration;
 using SDNUOJ.Controllers.Exception;
-using SDNUOJ.Controllers.Logging;
 using SDNUOJ.Entity;
+using SDNUOJ.Logging;
 using SDNUOJ.Utilities;
 using SDNUOJ.Utilities.Security;
 using SDNUOJ.Utilities.Web;

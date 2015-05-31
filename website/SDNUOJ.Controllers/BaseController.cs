@@ -7,7 +7,7 @@ using System.Web.Routing;
 using SDNUOJ.Configuration;
 using SDNUOJ.Controllers.Core;
 using SDNUOJ.Controllers.Exception;
-using SDNUOJ.Controllers.Logging;
+using SDNUOJ.Logging;
 
 namespace SDNUOJ.Controllers
 {

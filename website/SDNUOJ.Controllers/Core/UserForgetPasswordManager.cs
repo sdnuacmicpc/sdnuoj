@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using System.Web;
 
 using SDNUOJ.Controllers.Exception;
-using SDNUOJ.Controllers.Logging;
 using SDNUOJ.Controllers.Status;
 using SDNUOJ.Configuration;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
+using SDNUOJ.Logging;
 using SDNUOJ.Utilities.Net;
 using SDNUOJ.Utilities.Security;
 using SDNUOJ.Utilities.Text.RegularExpressions;

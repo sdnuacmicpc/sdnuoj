@@ -7,8 +7,8 @@ using System.Web;
 using SDNUOJ.Caching;
 using SDNUOJ.Configuration;
 using SDNUOJ.Controllers.Exception;
-using SDNUOJ.Controllers.Logging;
 using SDNUOJ.Entity;
+using SDNUOJ.Logging;
 using SDNUOJ.Storage.Problem;
 
 namespace SDNUOJ.Controllers.Core
