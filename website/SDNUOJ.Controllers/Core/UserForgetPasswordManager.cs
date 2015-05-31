@@ -79,7 +79,7 @@ namespace SDNUOJ.Controllers.Core
             String mailSubject = ConfigurationManager.OnlineJudgeName + " Password Recovery";
             String mailContent = UserForgetPasswordManager.GetMailContent(userName, url + ufp.HashKey.ToLowerInvariant());
 
-            await MailClient.SendMail(ConfigurationManager.EmailSMTPServer, ConfigurationManager.EmailAddresser, email, mailSubject, mailContent, true, true, ConfigurationManager.EmailUsername, ConfigurationManager.EmailPassword);
+            await MailClient.SendMailAsync(ConfigurationManager.EmailSMTPServer, ConfigurationManager.EmailAddresser, email, mailSubject, mailContent, true, true, ConfigurationManager.EmailUsername, ConfigurationManager.EmailPassword);
 
             if (success)
             {

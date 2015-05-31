@@ -22,7 +22,7 @@ namespace SDNUOJ.Utilities.Net
         /// <param name="isHighPriority">是否高优先级</param>
         /// <param name="userName">SMTP登录用户名</param>
         /// <param name="userPass">SMTP登录密码</param>
-        public static async Task SendMail(String mailServer, String mailFrom, String mailTo, String mailSubject, String mailBody, Boolean isBodyHtml, Boolean isHighPriority, String userName, String userPass)
+        public static async Task SendMailAsync(String mailServer, String mailFrom, String mailTo, String mailSubject, String mailBody, Boolean isBodyHtml, Boolean isHighPriority, String userName, String userPass)
         {
             using (MailMessage message = new MailMessage(mailFrom, mailTo, mailSubject, mailBody))
             {
