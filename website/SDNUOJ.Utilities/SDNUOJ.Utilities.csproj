@@ -55,7 +55,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Web\RemoteClient.cs" />
     <Compile Include="Web\RouteDataExtension.cs" />
-    <Compile Include="Web\ServerVariables.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
