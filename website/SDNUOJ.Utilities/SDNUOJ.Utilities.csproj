@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Net\MailClient.cs" />
+    <Compile Include="NumericExtension.cs" />
     <Compile Include="PagedList.cs" />
     <Compile Include="Security\MD5Encrypt.cs" />
     <Compile Include="Security\PassWordEncrypt.cs" />

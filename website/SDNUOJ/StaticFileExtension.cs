@@ -4,6 +4,8 @@ using System.IO;
 using System.Web;
 using System.Web.Mvc;
 
+using SDNUOJ.Utilities;
+
 namespace SDNUOJ
 {
     /// <summary>
@@ -64,7 +66,9 @@ namespace SDNUOJ
 
             FileInfo fi = new FileInfo(realPath);
 
-            version = Convert.ToString((fi.LastWriteTime.ToUniversalTime() - UNIXEPOCH).Ticks, 16);
+            Int64 seconds = (Int64)(fi.LastWriteTimeUtc - UNIXEPOCH).TotalMilliseconds;
+            version = seconds.ToSixtyTwoRadix();
+
             _fileVersionCache[filePath] = version;
 
             return version;
