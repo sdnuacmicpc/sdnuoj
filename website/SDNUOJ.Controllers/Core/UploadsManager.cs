@@ -117,6 +117,11 @@ namespace SDNUOJ.Controllers.Core
                 throw new NoPermissionException();
             }
 
+            if (String.IsNullOrEmpty(fileName))
+            {
+                return MethodResult.FailedAndLog("Filename can not be NULL!");
+            }
+
             String filePath = Path.Combine(ConfigurationManager.UploadDirectoryPath, fileName);
 
             if (!File.Exists(filePath))
