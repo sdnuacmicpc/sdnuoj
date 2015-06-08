@@ -2,7 +2,7 @@
     ViewBag.__Title = "评测机添加";
 }
 
-@using (Html.BeginForm("Add", "Judger", FormMethod.Post, new { @data_confirm = "true", @data_verify = "true" }))
+@using (Html.BeginForm("Add", "Judger", FormMethod.Post, new { @data_confirm = "true", @data_verify = "true", @data_waiting = "true" }))
 {
     @Html.AntiForgeryToken()
     <table class="table-main">
