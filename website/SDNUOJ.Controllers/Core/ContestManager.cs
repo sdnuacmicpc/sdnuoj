@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
 
 using SDNUOJ.Caching;
 using SDNUOJ.Controllers.Core.Exchange;
@@ -8,9 +7,7 @@ using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
 using SDNUOJ.Entity.Complex;
-using SDNUOJ.Logging;
 using SDNUOJ.Utilities;
-using SDNUOJ.Utilities.Text;
 using SDNUOJ.Utilities.Text.RegularExpressions;
 
 namespace SDNUOJ.Controllers.Core
@@ -163,7 +160,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="entity">竞赛实体</param>
         /// <returns>是否成功增加</returns>
-        public static Boolean AdminInsertContest(ContestEntity entity)
+        public static IMethodResult AdminInsertContest(ContestEntity entity)
         {
             if (!AdminManager.HasPermission(PermissionType.ContestManage))
             {
@@ -172,34 +169,34 @@ namespace SDNUOJ.Controllers.Core
 
             if (String.IsNullOrEmpty(entity.Title))
             {
-                throw new InvalidInputException("Contest title cannot be NULL!");
+                return MethodResult.FailedAndLog("Contest title cannot be NULL!");
             }
 
             if (String.IsNullOrEmpty(entity.Description))
             {
-                throw new InvalidInputException("Contest description cannot be NULL!");
+                return MethodResult.FailedAndLog("Contest description cannot be NULL!");
             }
 
             if (entity.StartTime >= entity.EndTime)
             {
-                throw new InvalidInputException("Start time must be less than end time!");
+                return MethodResult.FailedAndLog("Start time must be less than end time!");
             }
 
             if (entity.ContestType == ContestType.RegisterPrivate || entity.ContestType == ContestType.RegisterPublic)
             {
                 if (!entity.RegisterStartTime.HasValue || !entity.RegisterEndTime.HasValue)
                 {
-                    throw new InvalidInputException("Register time cannot be NULL!");
+                    return MethodResult.FailedAndLog("Register time cannot be NULL!");
                 }
 
                 if (entity.RegisterStartTime >= entity.RegisterEndTime)
                 {
-                    throw new InvalidInputException("Register start time must be less than register end time!");
+                    return MethodResult.FailedAndLog("Register start time must be less than register end time!");
                 }
 
                 if (entity.RegisterEndTime >= entity.StartTime)
                 {
-                    throw new InvalidInputException("Register end time must be less than contest start time!");
+                    return MethodResult.FailedAndLog("Register end time must be less than contest start time!");
                 }
             }
 
@@ -208,14 +205,14 @@ namespace SDNUOJ.Controllers.Core
 
             Boolean success = ContestRepository.Instance.InsertEntity(entity) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Insert Contest, Title = \"{0}\"", entity.Title));
-
-                ContestCache.RemoveContestListCountCache();//删除缓存
+                return MethodResult.FailedAndLog("No contest was added!");
             }
 
-            return success;
+            ContestCache.RemoveContestListCountCache();//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin add contest, title = {0}", entity.Title);
         }
 
         /// <summary>
@@ -223,7 +220,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="entity">对象实体</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateContest(ContestEntity entity)
+        public static IMethodResult AdminUpdateContest(ContestEntity entity)
         {
             if (!AdminManager.HasPermission(PermissionType.ContestManage))
             {
@@ -232,34 +229,34 @@ namespace SDNUOJ.Controllers.Core
 
             if (String.IsNullOrEmpty(entity.Title))
             {
-                throw new InvalidInputException("Contest title cannot be NULL!");
+                return MethodResult.FailedAndLog("Contest title cannot be NULL!");
             }
 
             if (String.IsNullOrEmpty(entity.Description))
             {
-                throw new InvalidInputException("Contest description cannot be NULL!");
+                return MethodResult.FailedAndLog("Contest description cannot be NULL!");
             }
 
             if (entity.StartTime >= entity.EndTime)
             {
-                throw new InvalidInputException("Start time must be less than end time!");
+                return MethodResult.FailedAndLog("Start time must be less than end time!");
             }
 
             if (entity.ContestType == ContestType.RegisterPrivate || entity.ContestType == ContestType.RegisterPublic)
             {
                 if (!entity.RegisterStartTime.HasValue || !entity.RegisterEndTime.HasValue)
                 {
-                    throw new InvalidInputException("Register time cannot be NULL!");
+                    return MethodResult.FailedAndLog("Register time cannot be NULL!");
                 }
 
                 if (entity.RegisterStartTime >= entity.RegisterEndTime)
                 {
-                    throw new InvalidInputException("Register start time must be less than register end time!");
+                    return MethodResult.FailedAndLog("Register start time must be less than register end time!");
                 }
 
                 if (entity.RegisterEndTime >= entity.StartTime)
                 {
-                    throw new InvalidInputException("Register end time must be less than contest start time!");
+                    return MethodResult.FailedAndLog("Register end time must be less than contest start time!");
                 }
             }
 
@@ -267,15 +264,15 @@ namespace SDNUOJ.Controllers.Core
 
             Boolean success = ContestRepository.Instance.UpdateEntity(entity) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Update Contest, ID = {0}", entity.ContestID));
-
-                ContestCache.RemoveContestCache(entity.ContestID);//删除缓存
-                ContestCache.RemoveContestListCountCache();//删除缓存
+                return MethodResult.FailedAndLog("No contest was updated!");
             }
 
-            return success;
+            ContestCache.RemoveContestCache(entity.ContestID);//删除缓存
+            ContestCache.RemoveContestListCountCache();//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin update contest, id = {0}", entity.ContestID.ToString());
         }
 
         /// <summary>
@@ -284,7 +281,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="ids">竞赛ID列表</param>
         /// <param name="isHide">隐藏状态</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateContestIsHide(String ids, Boolean isHide)
+        public static IMethodResult AdminUpdateContestIsHide(String ids, Boolean isHide)
         {
             if (!AdminManager.HasPermission(PermissionType.ContestManage))
             {
@@ -293,29 +290,24 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsNumericIDs(ids))
             {
-                throw new InvalidRequstException(RequestType.Contest);
+                return MethodResult.InvalidRequst(RequestType.Contest);
             }
 
             Boolean success = ContestRepository.Instance.UpdateEntityIsHide(ids, isHide) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin {0} Contest, ID in ({1})", (isHide ? "Hide" : "Unhide"), ids));
-
-                String[] arrids = ids.Split(',');
-
-                for (Int32 i = 0; i < arrids.Length; i++)
-                {
-                    if (String.IsNullOrEmpty(arrids[i])) continue;
-
-                    Int32 id = Convert.ToInt32(arrids[i]);
-                    ContestCache.RemoveContestCache(id);//删除缓存
-                }
-
-                ContestCache.RemoveContestListCountCache();//删除缓存
+                return MethodResult.FailedAndLog("No contest was {0}!", isHide ? "hided" : "unhided");
             }
 
-            return success;
+            ids.ForEachInIDs(',', id =>
+            {
+                ContestCache.RemoveContestCache(id);//删除缓存
+            });
+
+            ContestCache.RemoveContestListCountCache();//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin {1} contest, id = {0}", ids, isHide ? "hide" : "unhide");
         }
 
         /// <summary>
@@ -347,7 +339,7 @@ namespace SDNUOJ.Controllers.Core
             if (!String.IsNullOrEmpty(userrealnames))
             {
                 userdict = new Dictionary<String, String>();
-                String[] nametable = SplitHelper.GetLinesFromString(userrealnames);
+                String[] nametable = userrealnames.Lines();
 
                 for (Int32 i = 0; i < nametable.Length; i++)
                 {

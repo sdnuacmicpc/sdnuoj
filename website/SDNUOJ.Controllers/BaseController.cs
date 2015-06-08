@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -8,6 +10,8 @@ using SDNUOJ.Configuration;
 using SDNUOJ.Controllers.Core;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Logging;
+using SDNUOJ.Utilities.Text;
+using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Controllers
 {
@@ -114,31 +118,20 @@ namespace SDNUOJ.Controllers
 
             if (userException == null || userException.IsNeedLog)
             {
-                String controller = filterContext.RouteData.Values["controller"] as String;
-                String action = filterContext.RouteData.Values["action"] as String;
-
-                LogManager.LogException(exception, controller, action);
+                RouteData routeData = filterContext.RouteData;
+                this.LogException(exception, routeData);
             }
 
             this.StopAndResetWatch();
         }
 
         /// <summary>
-        /// 指定指定方法返回Json结果
+        /// 获取当前用户IP
         /// </summary>
-        /// <param name="action">指定方法</param>
-        /// <returns>执行成功返回成功，执行失败返回失败</returns>
-        protected ActionResult ResultToJson(Action action)
+        /// <returns>当前用户IP地址</returns>
+        protected String GetCurrentUserIP()
         {
-            try
-            {
-                action();
-                return SuccessJson();
-            }
-            catch (System.Exception ex)
-            {
-                return ErrorJson(ex.Message);
-            }
+            return this.Request.GetRemoteClientIPv4();
         }
 
         /// <summary>
@@ -169,7 +162,9 @@ namespace SDNUOJ.Controllers
         {
             return Content(String.Format("{{\"status\":\"fail\",\"result\":\"{0}\"}}", error), "application/json");
         }
+        #endregion
 
+        #region RedirectToMessagePage
         /// <summary>
         /// 显示信息
         /// </summary>
@@ -181,32 +176,414 @@ namespace SDNUOJ.Controllers
             return RedirectToAction("Index", "Info", new
             {
                 area = "",
-                c = HttpUtility.UrlEncode(msg), 
-                s = (type != MessageType.Generic ? type.ToString().ToLowerInvariant() : ""), 
+                c = HttpUtility.UrlEncode(msg),
+                s = (type != MessageType.Generic ? type.ToString().ToLowerInvariant() : ""),
                 b = backurl
             });
-        }
-
-        /// <summary>
-        /// 显示错误信息
-        /// </summary>
-        /// <param name="msg">信息内容</param>
-        protected virtual ActionResult RedirectToErrorMessagePage(String msg)
-        {
-            return RedirectToMessagePage(msg, String.Empty, MessageType.Danger);
         }
 
         /// <summary>
         /// 显示成功信息
         /// </summary>
         /// <param name="msg">信息内容</param>
+        /// <returns>操作后的结果</returns>
         protected virtual ActionResult RedirectToSuccessMessagePage(String msg)
         {
             return RedirectToMessagePage(msg, String.Empty, MessageType.Success);
         }
+
+        /// <summary>
+        /// 显示错误信息
+        /// </summary>
+        /// <param name="msg">信息内容</param>
+        /// <returns>操作后的结果</returns>
+        protected virtual ActionResult RedirectToErrorMessagePage(String msg)
+        {
+            return RedirectToMessagePage(msg, String.Empty, MessageType.Danger);
+        }
+        #endregion
+
+        #region ResultToMessagePage
+        /// <summary>
+        /// 指定方法返回信息页面
+        /// </summary>
+        /// <param name="func">操作方法</param>
+        /// <param name="successInfo">成功后提示的内容</param>
+        /// <returns>操作后的结果</returns>
+        private ActionResult ResultToMessagePage(Func<IMethodResult> func, String successInfo)
+        {
+            IMethodResult result = null;
+
+            try
+            {
+                result = func();
+
+                if (result.IsSuccess)
+                {
+                    return RedirectToSuccessMessagePage(successInfo);
+                }
+                else
+                {
+                    return RedirectToErrorMessagePage(result.Description);
+                }
+            }
+            finally
+            {
+                if (result != null)
+                {
+                    this.LogUserOperation(result);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 指定方法返回信息页面
+        /// </summary>
+        /// <param name="func">操作方法</param>
+        /// <returns>操作后的结果</returns>
+        protected ActionResult ResultToMessagePage(Func<Tuple<IMethodResult, String>> func)
+        {
+            Tuple<IMethodResult, String> result = func();
+
+            return ResultToMessagePage(() => 
+            {
+                return result.Item1;
+            }, result.Item2);
+        }
+
+        /// <summary>
+        /// 指定方法返回信息页面
+        /// </summary>
+        /// <param name="func">操作方法</param>
+        /// <returns>操作后的结果</returns>
+        protected async Task<ActionResult> ResultToMessagePage(Func<Task<Tuple<IMethodResult, String>>> func)
+        {
+            Tuple<IMethodResult, String> result = await func();
+
+            return ResultToMessagePage(() =>
+            {
+                return result.Item1;
+            }, result.Item2);
+        }
+
+        /// <summary>
+        /// 指定方法返回信息页面
+        /// </summary>
+        /// <typeparam name="T">传入参数类型</typeparam>
+        /// <param name="func">操作方法</param>
+        /// <param name="arg">传入参数</param>
+        /// <param name="successInfo">成功后提示的内容</param>
+        /// <returns>操作后的结果</returns>
+        protected ActionResult ResultToMessagePage<T>(Func<T, IMethodResult> func, T arg, String successInfo)
+        {
+            return ResultToMessagePage(() =>
+            {
+                return func(arg);
+            }, successInfo);
+        }
+
+        /// <summary>
+        /// 指定方法返回信息页面
+        /// </summary>
+        /// <typeparam name="T1">传入参数类型</typeparam>
+        /// <typeparam name="T2">传入参数类型</typeparam>
+        /// <param name="func">操作方法</param>
+        /// <param name="arg1">传入参数</param>
+        /// <param name="arg2">传入参数</param>
+        /// <param name="successInfo">成功后提示的内容</param>
+        /// <returns>操作后的结果</returns>
+        protected ActionResult ResultToMessagePage<T1, T2>(Func<T1, T2, IMethodResult> func, T1 arg1, T2 arg2, String successInfo)
+        {
+            return ResultToMessagePage(() =>
+            {
+                return func(arg1, arg2);
+            }, successInfo);
+        }
+
+        /// <summary>
+        /// 指定方法返回信息页面
+        /// </summary>
+        /// <typeparam name="T1">传入参数类型</typeparam>
+        /// <typeparam name="T2">传入参数类型</typeparam>
+        /// <typeparam name="T3">传入参数类型</typeparam>
+        /// <param name="func">操作方法</param>
+        /// <param name="arg1">传入参数</param>
+        /// <param name="arg2">传入参数</param>
+        /// <param name="arg3">传入参数</param>
+        /// <param name="successInfo">成功后提示的内容</param>
+        /// <returns>操作后的结果</returns>
+        protected ActionResult ResultToMessagePage<T1, T2, T3>(Func<T1, T2, T3, IMethodResult> func, T1 arg1, T2 arg2, T3 arg3, String successInfo)
+        {
+            return ResultToMessagePage(() =>
+            {
+                return func(arg1, arg2, arg3);
+            }, successInfo);
+        }
+
+        /// <summary>
+        /// 指定方法返回信息页面
+        /// </summary>
+        /// <typeparam name="T1">传入参数类型</typeparam>
+        /// <typeparam name="T2">传入参数类型</typeparam>
+        /// <typeparam name="T3">传入参数类型</typeparam>
+        /// <typeparam name="T4">传入参数类型</typeparam>
+        /// <param name="func">操作方法</param>
+        /// <param name="arg1">传入参数</param>
+        /// <param name="arg2">传入参数</param>
+        /// <param name="arg3">传入参数</param>
+        /// <param name="arg4">传入参数</param>
+        /// <param name="successInfo">成功后提示的内容</param>
+        /// <returns>操作后的结果</returns>
+        protected ActionResult ResultToMessagePage<T1, T2, T3, T4>(Func<T1, T2, T3, T4, IMethodResult> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4, String successInfo)
+        {
+            return ResultToMessagePage(() =>
+            {
+                return func(arg1, arg2, arg3, arg4);
+            }, successInfo);
+        }
+
+        /// <summary>
+        /// 指定方法返回信息页面
+        /// </summary>
+        /// <typeparam name="T1">传入参数类型</typeparam>
+        /// <typeparam name="T2">传入参数类型</typeparam>
+        /// <typeparam name="T3">传入参数类型</typeparam>
+        /// <typeparam name="T4">传入参数类型</typeparam>
+        /// <typeparam name="T5">传入参数类型</typeparam>
+        /// <param name="func">操作方法</param>
+        /// <param name="arg1">传入参数</param>
+        /// <param name="arg2">传入参数</param>
+        /// <param name="arg3">传入参数</param>
+        /// <param name="arg4">传入参数</param>
+        /// <param name="arg5">传入参数</param>
+        /// <param name="successInfo">成功后提示的内容</param>
+        /// <returns>操作后的结果</returns>
+        protected ActionResult ResultToMessagePage<T1, T2, T3, T4, T5>(Func<T1, T2, T3, T4, T5, IMethodResult> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, String successInfo)
+        {
+            return ResultToMessagePage(() =>
+            {
+                return func(arg1, arg2, arg3, arg4, arg5);
+            }, successInfo);
+        }
+        #endregion
+
+        #region ResultToJson
+        /// <summary>
+        /// 指定方法返回Json结果
+        /// </summary>
+        /// <param name="func">操作方法</param>
+        /// <returns>操作后的结果</returns>
+        private ActionResult ResultToJson(Func<IMethodResult> func)
+        {
+            IMethodResult result = null;
+
+            try
+            {
+                result = func();
+
+                if (result.IsSuccess)
+                {
+                    return SuccessJson();
+                }
+                else
+                {
+                    return ErrorJson(result.Description);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                RouteData routeData = RouteData.Route.GetRouteData(this.HttpContext);
+                this.LogException(ex, routeData);
+
+                return ErrorJson(ex.Message);
+            }
+            finally
+            {
+                if (result != null)
+                {
+                    this.LogUserOperation(result);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 指定方法返回Json结果
+        /// </summary>
+        /// <typeparam name="T">传入参数类型</typeparam>
+        /// <param name="func">操作方法</param>
+        /// <param name="arg">传入参数</param>
+        /// <returns>操作后的结果</returns>
+        protected ActionResult ResultToJson<T>(Func<T, IMethodResult> func, T arg)
+        {
+            return ResultToJson(() =>
+            {
+                return func(arg);
+            });
+        }
+
+        /// <summary>
+        /// 指定方法返回Json结果
+        /// </summary>
+        /// <typeparam name="T">传入参数类型</typeparam>
+        /// <param name="func">操作方法</param>
+        /// <param name="arg">传入参数</param>
+        /// <returns>操作后的结果</returns>
+        protected ActionResult ResultToJson<T>(Func<T, String, String, String, String, String, String, String, IMethodResult> func, T arg)
+        {
+            return ResultToJson(() =>
+            {
+                return func(arg, null, null, null, null, null, null, null);
+            });
+        }
+
+        /// <summary>
+        /// 指定方法返回Json结果
+        /// </summary>
+        /// <typeparam name="T1">传入参数类型</typeparam>
+        /// <typeparam name="T2">传入参数类型</typeparam>
+        /// <param name="func">操作方法</param>
+        /// <param name="arg1">传入参数</param>
+        /// <param name="arg2">传入参数</param>
+        /// <returns>操作后的结果</returns>
+        protected ActionResult ResultToJson<T1, T2>(Func<T1, T2, IMethodResult> func, T1 arg1, T2 arg2)
+        {
+            return ResultToJson(() =>
+            {
+                return func(arg1, arg2);
+            });
+        }
+
+        /// <summary>
+        /// 指定方法返回Json结果
+        /// </summary>
+        /// <typeparam name="T1">传入参数类型</typeparam>
+        /// <typeparam name="T2">传入参数类型</typeparam>
+        /// <typeparam name="T3">传入参数类型</typeparam>
+        /// <param name="func">操作方法</param>
+        /// <param name="arg1">传入参数</param>
+        /// <param name="arg2">传入参数</param>
+        /// <param name="arg3">传入参数</param>
+        /// <returns>操作后的结果</returns>
+        protected ActionResult ResultToJson<T1, T2, T3>(Func<T1, T2, T3, IMethodResult> func, T1 arg1, T2 arg2, T3 arg3)
+        {
+            return ResultToJson(() =>
+            {
+                return func(arg1, arg2, arg3);
+            });
+        }
+
+        /// <summary>
+        /// 指定方法返回Json结果
+        /// </summary>
+        /// <typeparam name="T">传入参数类型</typeparam>
+        /// <param name="func">操作方法</param>
+        /// <param name="func2">操作方法2</param>
+        /// <param name="arg">传入参数</param>
+        /// <returns>操作后的结果</returns>
+        protected ActionResult ResultToSuccessJson<T>(Func<T, IMethodResult> func, Func<T, IMethodResult> func2, T arg)
+        {
+            return ResultToJson(() =>
+            {
+                IMethodResult ret1 = func(arg);
+
+                if (!ret1.IsSuccess)
+                {
+                    return ret1;
+                }
+
+                IMethodResult ret2 = func2(arg);
+
+                if (!ret2.IsSuccess)
+                {
+                    return ret2;
+                }
+
+                if (!ret1.IsWriteLog && !ret2.IsWriteLog)
+                {
+                    return MethodResult.Success();
+                }
+                else if (ret1.IsWriteLog && !ret2.IsWriteLog)
+                {
+                    return ret1;
+                }
+                else if (!ret1.IsWriteLog && ret2.IsWriteLog)
+                {
+                    return ret2;
+                }
+                else
+                {
+                    return MethodResult.SuccessAndLog("{0}; {1}", ret1.Description, ret2.Description);
+                }
+            });
+        }
+        #endregion
+
+        #region Logging
+        /// <summary>
+        /// 记录操作日志
+        /// </summary>
+        /// <param name="result">操作结果</param>
+        /// <param name="username">可选用户名（为空则使用当前用户名）</param>
+        protected void LogUserOperation(IMethodResult result, String username = null)
+        {
+            if (!result.IsWriteLog)
+            {
+                return;
+            }
+
+            RouteData routeData = RouteData.Route.GetRouteData(this.HttpContext);
+            String controller = routeData.Values["controller"] as String;
+            String action = routeData.Values["action"] as String;
+
+            LogContext context = new LogContext()
+            {
+                Level = result.IsSuccess ? LogLevel.Information : LogLevel.Warning,
+                Type = result.IsSuccess ? "success" : "failed",
+                RequestUrl = HttpContext.Request.RawUrl,
+                RefererUrl = (HttpContext.Request.UrlReferrer != null ? HttpContext.Request.UrlReferrer.ToString() : "null"),
+                Controller = controller,
+                Action = action,
+                Message = result.Description,
+                Username = String.IsNullOrEmpty(username) ? UserManager.CurrentUserName : username,
+                UserIP = this.GetCurrentUserIP(),
+                UserAgent = HttpContext.Request.UserAgent,
+                TimeStamp = DateTime.Now,
+            };
+
+            LogManager.LogOperation(context);
+        }
+
+        /// <summary>
+        /// 记录异常日志
+        /// </summary>
+        /// <param name="exception">异常</param>
+        /// <param name="routeData">路由数据</param>
+        private void LogException(System.Exception exception, RouteData routeData)
+        {
+            String controller = routeData.Values["controller"] as String;
+            String action = routeData.Values["action"] as String;
+
+            ExceptionLogContext context = new ExceptionLogContext(exception)
+            {
+                Level = LogLevel.Error,
+                RequestUrl = HttpContext.Request.RawUrl,
+                RefererUrl = (HttpContext.Request.UrlReferrer != null ? HttpContext.Request.UrlReferrer.ToString() : "null"),
+                Controller = controller,
+                Action = action,
+                Username = UserManager.CurrentUserName,
+                UserIP = this.GetCurrentUserIP(),
+                UserAgent = HttpContext.Request.UserAgent,
+                TimeStamp = DateTime.Now,
+            };
+
+            LogManager.LogException(context);
+        }
         #endregion
 
         #region 私有方法
+        /// <summary>
+        /// 停止并重启计时器
+        /// </summary>
         private void StopAndResetWatch()
         {
             if (this._stopWatch.IsRunning)

@@ -7,7 +7,6 @@ using SDNUOJ.Caching;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
-using SDNUOJ.Logging;
 
 namespace SDNUOJ.Controllers.Core
 {
@@ -104,7 +103,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="file">上传文件</param>
         /// <returns>是否保存成功</returns>
-        public static Boolean AdminSaveUploadDataBase(HttpPostedFileBase file)
+        public static IMethodResult AdminSaveUploadDataBase(HttpPostedFileBase file)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -118,32 +117,30 @@ namespace SDNUOJ.Controllers.Core
 
             if (file == null)
             {
-                throw new InvalidInputException("No file uploaded!");
+                return MethodResult.FailedAndLog("No file was uploaded!");
             }
 
             if (String.IsNullOrEmpty(file.FileName))
             {
-                throw new InvalidInputException("Filename can not be NULL!");
+                return MethodResult.FailedAndLog("Filename can not be NULL!");
             }
 
             FileInfo fi = new FileInfo(file.FileName);
             if (!String.Equals(fi.Extension, ".resx", StringComparison.OrdinalIgnoreCase))
             {
-                throw new InvalidInputException("Filename is INVALID!");
+                return MethodResult.FailedAndLog("Filename is INVALID!");
             }
 
             if (file.ContentLength <= 0)
             {
-                throw new InvalidInputException("You can not upload empty file!");
+                return MethodResult.FailedAndLog("You can not upload empty file!");
             }
 
             String newName = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + ".resx";
             String savePath = Path.Combine(DatabaseManager.AccessDataDirectory, newName);
             file.SaveAs(savePath);
 
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Upload Database, Filename = \"{0}\"", newName));
-
-            return true;
+            return MethodResult.SuccessAndLog("Admin upload database, name = {0}", newName);
         }
 
         /// <summary>
@@ -151,7 +148,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="fileName">数据库文件名</param>
         /// <returns>是否压缩成功</returns>
-        public static Boolean AdminCompactDataBase(String fileName)
+        public static IMethodResult AdminCompactDataBase(String fileName)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -168,7 +165,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!File.Exists(sourcePath))
             {
-                throw new InvalidInputException("Database does not exist!");
+                return MethodResult.FailedAndLog("Database does not exist!");
             }
 
             if (DatabaseManager.DataBaseConnectionString.IndexOf("Microsoft.Jet.OLEDB.4.0", StringComparison.InvariantCultureIgnoreCase) > -1)
@@ -189,15 +186,13 @@ namespace SDNUOJ.Controllers.Core
             }
             else
             {
-                throw new OperationFailedException("Your database engine doesn't support database compacting!");
+                return MethodResult.FailedAndLog("Your database engine doesn't support database compacting!");
             }
 
             File.Copy(tempPath, sourcePath, true);
             File.Delete(tempPath);
 
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Compact Database, Filename = \"{0}\"", fileName));
-
-            return true;
+            return MethodResult.SuccessAndLog("Admin compact database, name = {0}", fileName);
         }
 
         /// <summary>
@@ -205,7 +200,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="fileName">数据库文件名</param>
         /// <returns>是否备份成功</returns>
-        public static Boolean AdminBackupDataBase(String fileName)
+        public static IMethodResult AdminBackupDataBase(String fileName)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -222,21 +217,12 @@ namespace SDNUOJ.Controllers.Core
 
             if (String.Equals(sourcePath, destPath, StringComparison.OrdinalIgnoreCase))
             {
-                throw new InvalidInputException("You can not use this filename!");
+                return MethodResult.FailedAndLog("You can not use this filename!");
             }
 
-            try
-            {
-                File.Copy(sourcePath, destPath, true);
+            File.Copy(sourcePath, destPath, true);
 
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Backup Database, Filename = \"{0}\"", fileName));
-
-                return true;
-            }
-            catch
-            {
-                throw;
-            }
+            return MethodResult.SuccessAndLog("Admin backup database, name = {0}", fileName);
         }
 
         /// <summary>
@@ -244,7 +230,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="fileName">数据库文件名</param>
         /// <returns>是否还原成功</returns>
-        public static Boolean AdminRestoreDataBase(String fileName)
+        public static IMethodResult AdminRestoreDataBase(String fileName)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -261,27 +247,18 @@ namespace SDNUOJ.Controllers.Core
 
             if (!File.Exists(sourcePath))
             {
-                throw new InvalidInputException("Database does not exist!");
+                return MethodResult.FailedAndLog("Database does not exist!");
             }
 
             if (String.Equals(destPath, sourcePath, StringComparison.OrdinalIgnoreCase))
             {
-                throw new InvalidInputException("You can not restore the current database!");
+                return MethodResult.FailedAndLog("You can not restore the current database!");
             }
 
-            try
-            {
-                File.Copy(sourcePath, destPath, true);
-                CacheManager.RemoveAll();
+            File.Copy(sourcePath, destPath, true);
+            CacheManager.RemoveAll();
 
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Restore Database, Filename = \"{0}\"", fileName));
-
-                return true;
-            }
-            catch
-            {
-                throw;
-            }
+            return MethodResult.SuccessAndLog("Admin restore database, name = {0}", fileName);
         }
 
         /// <summary>
@@ -289,7 +266,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="did">数据库ID</param>
         /// <returns>是否删除成功</returns>
-        public static Boolean AdminDeleteDataBase(Int32 did)
+        public static IMethodResult AdminDeleteDataBase(Int32 did)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -306,19 +283,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (!File.Exists(filePath))
             {
-                throw new InvalidInputException("Database does not exist!");
+                return MethodResult.FailedAndLog("Database does not exist!");
             }
 
             if (String.Equals(DatabaseManager.AccessDBFullPath, filePath, StringComparison.OrdinalIgnoreCase))
             {
-                throw new InvalidInputException("You can not delete the current database!");
+                return MethodResult.FailedAndLog("You can not delete the current database!");
             }
 
             File.Delete(filePath);
 
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Delete Database, Filename = \"{0}\"", fi.Name));
-
-            return true;
+            return MethodResult.SuccessAndLog("Admin delete database, name = {0}", fi.Name);
         }
 
         /// <summary>

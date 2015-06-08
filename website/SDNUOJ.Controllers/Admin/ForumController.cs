@@ -56,10 +56,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult TopicLock(String ids)
         {
-            return ResultToJson(() =>
-            {
-                ForumTopicManager.AdminUpdateForumTopicLockStatus(ids, true);
-            });
+            return ResultToJson(ForumTopicManager.AdminUpdateForumTopicIsLocked, ids, true);
         }
 
         /// <summary>
@@ -69,10 +66,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult TopicUnlock(String ids)
         {
-            return ResultToJson(() =>
-            {
-                ForumTopicManager.AdminUpdateForumTopicLockStatus(ids, false);
-            });
+            return ResultToJson(ForumTopicManager.AdminUpdateForumTopicIsLocked, ids, false);
         }
 
         /// <summary>
@@ -82,10 +76,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult TopicHide(String ids)
         {
-            return ResultToJson(() =>
-            {
-                ForumTopicManager.AdminUpdateForumTopicHideStatus(ids, true);
-            });
+            return ResultToJson(ForumTopicManager.AdminUpdateForumTopicIsHide, ids, true);
         }
 
         /// <summary>
@@ -95,10 +86,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult TopicShow(String ids)
         {
-            return ResultToJson(() =>
-            {
-                ForumTopicManager.AdminUpdateForumTopicHideStatus(ids, false);
-            });
+            return ResultToJson(ForumTopicManager.AdminUpdateForumTopicIsHide, ids, false);
         }
 
         /// <summary>
@@ -147,10 +135,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult PostHide(String ids)
         {
-            return ResultToJson(() =>
-            {
-                ForumPostManager.AdminUpdateForumPostHideStatus(ids, true);
-            });
+            return ResultToJson(ForumPostManager.AdminUpdateForumPostIsHide, ids, true);
         }
 
         /// <summary>
@@ -160,10 +145,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult PostShow(String ids)
         {
-            return ResultToJson(() =>
-            {
-                ForumPostManager.AdminUpdateForumPostHideStatus(ids, false);
-            });
+            return ResultToJson(ForumPostManager.AdminUpdateForumPostIsHide, ids, false);
         }
     }
 }

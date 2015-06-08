@@ -6,7 +6,7 @@ using SDNUOJ.Caching;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
-using SDNUOJ.Utilities.Text;
+using SDNUOJ.Utilities;
 
 namespace SDNUOJ.Controllers.Core
 {
@@ -84,7 +84,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="cid">竞赛ID</param>
         /// <param name="problemids">题目ID列表</param>
         /// <returns>是否成功设置</returns>
-        public static Boolean AdminSetContestProblemList(Int32 cid, String problemids)
+        public static IMethodResult AdminSetContestProblemList(Int32 cid, String problemids)
         {
             if (!AdminManager.HasPermission(PermissionType.ContestManage))
             {
@@ -96,7 +96,7 @@ namespace SDNUOJ.Controllers.Core
                 problemids = "";
             }
 
-            String[] ids = SplitHelper.GetLinesFromString(problemids);
+            String[] ids = problemids.Lines();
             List<Int32> problemIDs = new List<Int32>();
 
             for (Int32 i = 0; i < ids.Length; i++)
@@ -113,11 +113,18 @@ namespace SDNUOJ.Controllers.Core
 
             try
             {
-                return ContestProblemRepository.Instance.InsertEntities(cid, problemIDs) > 0;
+                Boolean success = ContestProblemRepository.Instance.InsertEntities(cid, problemIDs) > 0;
+
+                if (!success)
+                {
+                    return MethodResult.FailedAndLog("No contest problem was updated!");
+                }
+
+                return MethodResult.SuccessAndLog("Admin add contest problem, cid = {0}, pid = {1}", cid.ToString(), String.Join(",", ids));
             }
             catch (DbException)
             {
-                throw new OperationFailedException("Failed to add these problems, please check whether the problem ids are all correct.");
+                return MethodResult.FailedAndLog("Failed to add these problems, please check whether the problem ids are all correct.");
             }
         }
 

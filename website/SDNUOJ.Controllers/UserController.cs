@@ -6,9 +6,9 @@ using System.Web.Mvc;
 using SDNUOJ.Caching;
 using SDNUOJ.Controllers.Attributes;
 using SDNUOJ.Controllers.Core;
-using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Controllers.Status;
 using SDNUOJ.Entity;
+using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Controllers
 {
@@ -34,13 +34,16 @@ namespace SDNUOJ.Controllers
         [HttpPost]
         public ActionResult Login(FormCollection form)
         {
-            String userName = form["username"];
-            String passWord = form["password"];
-            String result;
+            String username = form["username"];
+            String password = form["password"];
+            String userip = this.GetCurrentUserIP();
 
-            if (!UserManager.TrySignIn(userName, passWord, out result))
+            IMethodResult result = UserManager.SignIn(username, password, userip);
+            this.LogUserOperation(result, username);
+
+            if (!result.IsSuccess)
             {
-                throw new OperationFailedException(result);
+                return RedirectToErrorMessagePage(result.Description);
             }
 
             String returnUrl = form["referer"];
@@ -107,7 +110,6 @@ namespace SDNUOJ.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(FormCollection form)
         {
-            String result;
             UserEntity user = new UserEntity()
             {
                 UserName = form["username"],
@@ -116,14 +118,20 @@ namespace SDNUOJ.Controllers
                 Email = form["email"]
             };
 
-            if (!UserManager.TrySignUp(user, form["password"], form["password2"], form["checkcode"], out result))
+            String userip = this.GetCurrentUserIP();
+            IMethodResult result = UserManager.SignUp(user, form["password"], form["password2"], form["checkcode"], userip);
+
+            if (!result.IsSuccess)
             {
-                throw new OperationFailedException(result);
+                return RedirectToErrorMessagePage(result.Description);
             }
 
-            if (!UserManager.TrySignIn(form["username"], form["password"], out result))
+            result = UserManager.SignIn(form["username"], form["password"], userip);
+            this.LogUserOperation(result, user.UserName);
+
+            if (!result.IsSuccess)
             {
-                throw new OperationFailedException(result);
+                return RedirectToErrorMessagePage(result.Description);
             }
 
             return RedirectToAction("Index", "Home");
@@ -152,7 +160,6 @@ namespace SDNUOJ.Controllers
         [Authorize]
         public ActionResult Control(FormCollection form)
         {
-            String result;
             UserEntity user = new UserEntity()
             {
                 NickName = form["nickname"],
@@ -160,12 +167,7 @@ namespace SDNUOJ.Controllers
                 Email = form["email"]
             };
 
-            if (!UserManager.TryUpdateUserInfo(user, form["password"], form["newpassword"], form["newpassword2"], out result))
-            {
-                throw new OperationFailedException(result);
-            }
-
-            return RedirectToSuccessMessagePage("Your user profile was updated successfully!");
+            return ResultToMessagePage(UserManager.UpdateUserInfo, user, form["password"], form["newpassword"], form["newpassword2"], "Your user profile was updated successfully!");
         }
 
         /// <summary>
@@ -188,14 +190,22 @@ namespace SDNUOJ.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgetPassword(FormCollection form)
         {
-            String link = Url.Action("ResetPassword", "User") + "?rid=";
-
-            if (!await UserForgetPasswordManager.RequestResetUserPassword(form["username"], form["email"], form["checkcode"], link))
+            return await ResultToMessagePage(async () =>
             {
-                throw new OperationFailedException("Failed to send a password reset link to your email address.");
-            }
+                String userip = this.GetCurrentUserIP();
+                String link = Url.Action("ResetPassword", "User") + "?rid=";
 
-            return RedirectToSuccessMessagePage("We have sent a password reset link to your email address, the link is valid for 24 hours.");
+                IMethodResult result = await UserForgetPasswordManager.RequestResetUserPassword(form["username"], form["email"], userip, form["checkcode"], link);
+
+                if (!result.IsSuccess)
+                {
+                    return new Tuple<IMethodResult, String>(result, String.Empty);
+                }
+
+                String successInfo = "We have sent a password reset link to your email address, the link is valid for 24 hours.";
+
+                return new Tuple<IMethodResult, String>(result, successInfo);
+            });
         }
 
         /// <summary>
@@ -223,12 +233,11 @@ namespace SDNUOJ.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ResetPassword(FormCollection form)
         {
-            if (!UserForgetPasswordManager.ResetUserPassword(form["rid"], form["username"], form["password"], form["password2"]))
-            {
-                throw new OperationFailedException("Failed to update your password!");
-            }
+            String userip = this.GetCurrentUserIP();
 
-            return RedirectToSuccessMessagePage("Your password was updated successfully!");
+            return ResultToMessagePage(UserForgetPasswordManager.ResetUserPassword,
+                form["rid"], form["username"], form["password"], form["password2"], userip, 
+                "Your password was updated successfully!");
         }
 
         /// <summary>

@@ -57,7 +57,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="model">对象实体</param>
         /// <returns>是否成功增加</returns>
-        public static Boolean AdminInsertTopicPage(TopicPageEntity entity)
+        public static IMethodResult AdminInsertTopicPage(TopicPageEntity entity)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -66,22 +66,22 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsPageName(entity.PageName))
             {
-                throw new InvalidRequstException(RequestType.TopicPage);
+                return MethodResult.InvalidRequst(RequestType.TopicPage);
             }
 
             if (String.IsNullOrEmpty(entity.Title))
             {
-                throw new InvalidInputException("Page title can not be NULL!");
+                return MethodResult.FailedAndLog("Page title can not be NULL!");
             }
 
             if (String.IsNullOrEmpty(entity.Description))
             {
-                throw new InvalidInputException("Page description can not be NULL!");
+                return MethodResult.FailedAndLog("Page description can not be NULL!");
             }
 
             if (String.IsNullOrEmpty(entity.Content))
             {
-                throw new InvalidInputException("Page content can not be NULL!");
+                return MethodResult.FailedAndLog("Page content can not be NULL!");
             }
 
             entity.CreateUser = UserManager.CurrentUserName;
@@ -90,12 +90,12 @@ namespace SDNUOJ.Controllers.Core
 
             Boolean success = TopicPageRepository.Instance.InsertEntity(entity) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Insert TopicPage, Page Name = \"{0}\"", entity.PageName));
+                return MethodResult.FailedAndLog("No page was added!");
             }
 
-            return success;
+            return MethodResult.SuccessAndLog("Admin add page, name = {0}", entity.PageName);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="entity">对象实体</param>
         /// <param name="oldname">旧的主题页面名</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateTopicPage(TopicPageEntity entity, String oldname)
+        public static IMethodResult AdminUpdateTopicPage(TopicPageEntity entity, String oldname)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -113,35 +113,37 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsPageName(entity.PageName))
             {
-                throw new InvalidRequstException(RequestType.TopicPage);
+                return MethodResult.InvalidRequst(RequestType.TopicPage);
             }
 
             if (String.IsNullOrEmpty(entity.Title))
             {
-                throw new InvalidInputException("Page title can not be NULL!");
+                return MethodResult.FailedAndLog("Page title can not be NULL!");
             }
 
             if (String.IsNullOrEmpty(entity.Description))
             {
-                throw new InvalidInputException("Page description can not be NULL!");
+                return MethodResult.FailedAndLog("Page description can not be NULL!");
             }
 
             if (String.IsNullOrEmpty(entity.Content))
             {
-                throw new InvalidInputException("Page content can not be NULL!");
+                return MethodResult.FailedAndLog("Page content can not be NULL!");
             }
 
             entity.LastDate = DateTime.Now;
 
             Boolean success = TopicPageRepository.Instance.UpdateEntity(entity, oldname) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Update TopicPage, Page Name = {0}", entity.PageName));
-                TopicPageCache.RemoveTopicPageCache(oldname);//更新缓存
+                return MethodResult.FailedAndLog("No page was updated!");
             }
 
-            return success;
+            TopicPageCache.RemoveTopicPageCache(oldname);//更新缓存
+
+            return MethodResult.SuccessAndLog("Admin update page, name = {0}{1}", entity.PageName, 
+                (!String.Equals(oldname, entity.PageName, StringComparison.OrdinalIgnoreCase) ? ", previous = " + oldname : ""));
         }
 
         /// <summary>
@@ -150,7 +152,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="id">主题页面名称</param>
         /// <param name="isHide">隐藏状态</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateTopicPageIsHide(String name, Boolean isHide)
+        public static IMethodResult AdminUpdateTopicPageIsHide(String name, Boolean isHide)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -159,13 +161,14 @@ namespace SDNUOJ.Controllers.Core
 
             Boolean success = TopicPageRepository.Instance.UpdateEntityIsHide(name, isHide) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin {0} TopicPage, Page Name = {1}", (isHide ? "Hide" : "Unhide"), name));
-                TopicPageCache.RemoveTopicPageCache(name);//删除缓存
+                return MethodResult.FailedAndLog("No page was {0}!", isHide ? "hided" : "unhided");
             }
 
-            return success;
+            TopicPageCache.RemoveTopicPageCache(name);//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin {1} page, name = {0}", name, isHide ? "hide" : "unhide");
         }
 
         /// <summary>
@@ -173,30 +176,26 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="ids">逗号分隔的主题页面ID</param>
         /// <returns>是否成功删除</returns>
-        public static Boolean AdminDeleteTopicPages(String names)
+        public static IMethodResult AdminDeleteTopicPages(String names)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
                 throw new NoPermissionException();
             }
 
-            String[] arrnames = names.Split(',');
             Boolean success = TopicPageRepository.Instance.DeleteEntities(names) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Delete TopicPage, Names in ({0})", names));
-
-                for (Int32 i = 0; i < arrnames.Length; i++)
-                {
-                    if (!String.IsNullOrEmpty(arrnames[i]))
-                    {
-                        TopicPageCache.RemoveTopicPageCache(arrnames[i]);//删除缓存
-                    }
-                }
+                return MethodResult.FailedAndLog("No page was deleted!");
             }
 
-            return success;
+            names.ForEachInIDs(',', name => 
+            {
+                TopicPageCache.RemoveTopicPageCache(name);//删除缓存
+            });
+
+            return MethodResult.SuccessAndLog("Admin delete page, name = {0}", names);
         }
 
         /// <summary>

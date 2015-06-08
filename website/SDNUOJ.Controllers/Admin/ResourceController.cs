@@ -4,7 +4,6 @@ using System.Web.Mvc;
 using SDNUOJ.Controllers.Core;
 using SDNUOJ.Entity;
 using SDNUOJ.Utilities;
-using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Areas.Admin.Controllers
 {
@@ -53,14 +52,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 Type = form["type"]
             };
 
-            if (ResourceManager.AdminInsertResource(entity))
-            {
-                return RedirectToSuccessMessagePage("Your have added resource successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to add resource!");
-            }
+            return ResultToMessagePage(ResourceManager.AdminInsertResource, entity, "Your have added resource successfully!");
         }
 
         /// <summary>
@@ -91,14 +83,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 Type = form["type"]
             };
 
-            if (ResourceManager.AdminUpdateResource(entity))
-            {
-                return RedirectToSuccessMessagePage("Your have edited resource successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to edit resource!");
-            }
+            return ResultToMessagePage(ResourceManager.AdminUpdateResource, entity, "Your have edited resource successfully!");
         }
 
         /// <summary>
@@ -108,10 +93,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Delete(String id)
         {
-            return ResultToJson(() =>
-            {
-                ResourceManager.AdminDeleteResources(id);
-            });
+            return ResultToJson(ResourceManager.AdminDeleteResources, id);
         }
     }
 }

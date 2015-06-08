@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Web;
 
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Configuration;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
-using SDNUOJ.Logging;
 using SDNUOJ.Utilities.Text.RegularExpressions;
 
 namespace SDNUOJ.Controllers.Core
@@ -25,7 +23,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="sourceIDs">旧逗号分隔的题目类型ID</param>
         /// <param name="targetIDs">新逗号分隔的题目类型ID</param>
         /// <returns>是否成功设置</returns>
-        public static Boolean AdminUpdateProblemCategoryItems(Int32 problemID, String sourceIDs, String targetIDs)
+        public static IMethodResult AdminUpdateProblemCategoryItems(Int32 problemID, String sourceIDs, String targetIDs)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -34,12 +32,12 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                throw new InvalidRequstException(RequestType.Problem);
+                return MethodResult.InvalidRequst(RequestType.Problem);
             }
 
             if ((!String.IsNullOrEmpty(sourceIDs) && !RegexVerify.IsNumericIDs(sourceIDs)) || (!String.IsNullOrEmpty(targetIDs) && !RegexVerify.IsNumericIDs(targetIDs)))
             {
-                throw new InvalidRequstException(RequestType.ProblemCategory);
+                return MethodResult.InvalidRequst(RequestType.ProblemCategory);
             }
 
             StringBuilder deleteIDs = new StringBuilder();
@@ -78,12 +76,12 @@ namespace SDNUOJ.Controllers.Core
             if (deleteIDs.Length > 0) ret &= (ProblemCategoryItemRepository.Instance.DeleteEntities(problemID, deleteIDs.ToString()) > 0);
             if (insertIDs.Length > 0) ret &= (ProblemCategoryItemRepository.Instance.InsertEntity(problemID, insertIDs.ToString()) > 0);
 
-            if (ret)
+            if (!ret)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Set Problem Category Item, ProblemID = {0}, TypeIDs in ({1})", problemID.ToString(), targetIDs));
+                return MethodResult.FailedAndLog("No problem's category was updated!");
             }
 
-            return ret;
+            return MethodResult.SuccessAndLog("Admin update problem's category, id = {0}, new category = {1}", problemID.ToString(), targetIDs);
         }
 
         /// <summary>

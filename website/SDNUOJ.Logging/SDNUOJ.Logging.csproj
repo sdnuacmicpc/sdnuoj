@@ -37,6 +37,10 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExceptionLogContext.cs" />
+    <Compile Include="LogContext.cs" />
+    <Compile Include="LogLevel.cs" />
+    <Compile Include="LogLevelConverter.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -76,10 +76,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult QuickRejudge(String id)
         {
-            return ResultToJson(() =>
-            {
-                SolutionManager.AdminRejudgeSolution(id, null, null, null, null, null, null, null);
-            });
+            return ResultToJson(SolutionManager.AdminRejudgeSolution, id);
         }
 
         /// <summary>
@@ -144,16 +141,19 @@ namespace SDNUOJ.Areas.Admin.Controllers
             String startDate = (String.IsNullOrEmpty(form["startdate"]) ? String.Empty : String.Format("{0} {1}:{2}:{3}", form["startdate"], form["starthour"], form["startminute"], form["startsecond"]));
             String endDate = (String.IsNullOrEmpty(form["enddate"]) ? String.Empty : String.Format("{0} {1}:{2}:{3}", form["enddate"], form["endhour"], form["endminute"], form["endsecond"]));
 
-            Int32 count = SolutionManager.AdminRejudgeSolution(sids, cid, pid, name, lang, type, startDate, endDate);
+            return ResultToMessagePage(() =>
+            {
+                IMethodResult result = SolutionManager.AdminRejudgeSolution(sids, cid, pid, name, lang, type, startDate, endDate);
 
-            if (count > 0)
-            {
-                return RedirectToSuccessMessagePage(String.Format("{0} solution(s) have been successfully rejudged!", count.ToString()));
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("No solution has been rejudged!");
-            }
+                if (!result.IsSuccess)
+                {
+                    return new Tuple<IMethodResult, String>(result, String.Empty);
+                }
+
+                String successInfo = String.Format("{0} solution(s) have been successfully rejudged!", result.ResultObject.ToString());
+
+                return new Tuple<IMethodResult, String>(result, successInfo);
+            });
         }
     }
 }

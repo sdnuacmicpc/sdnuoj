@@ -49,12 +49,11 @@
     <Compile Include="Text\JsonEncoder.cs" />
     <Compile Include="Text\RegularExpressions\RegexParser.cs" />
     <Compile Include="Text\RegularExpressions\RegexVerify.cs" />
-    <Compile Include="Text\SplitHelper.cs" />
     <Compile Include="TreeNode.cs" />
     <Compile Include="Web\Cookies.cs" />
     <Compile Include="Drawing\CheckCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Web\HttpContextExtension.cs" />
+    <Compile Include="Web\HttpRequestExtension.cs" />
     <Compile Include="Web\RouteDataExtension.cs" />
   </ItemGroup>
   <ItemGroup />

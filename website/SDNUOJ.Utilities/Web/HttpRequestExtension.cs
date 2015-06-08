@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.Web;
 
 using SDNUOJ.Utilities.Text.RegularExpressions;
@@ -9,21 +8,21 @@ namespace SDNUOJ.Utilities.Web
     /// <summary>
     /// Http上下文扩展类
     /// </summary>
-    public static class HttpContextExtension
+    public static class HttpRequestExtension
     {
         /// <summary>
         /// 获取用户IPv4地址
         /// </summary>
-        /// <param name="context">Http上下文</param>
+        /// <param name="request">Http请求</param>
         /// <returns>IPv4地址</returns>
-        public static String GetRemoteClientIPv4(this HttpContext context)
+        public static String GetRemoteClientIPv4(this HttpRequestBase request)
         {
-            if (context == null)
+            if (request == null)
             {
                 return String.Empty;
             }
 
-            String ip = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+            String ip = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
 
             if (RegexVerify.IsIPv4(ip))
             {
@@ -37,12 +36,12 @@ namespace SDNUOJ.Utilities.Web
 
             if (String.IsNullOrEmpty(ip))
             {
-                ip = context.Request.ServerVariables["REMOTE_ADDR"];
+                ip = request.ServerVariables["REMOTE_ADDR"];
             }
 
             if (String.IsNullOrEmpty(ip))
             {
-                ip = context.Request.UserHostAddress;
+                ip = request.UserHostAddress;
             }
 
             if (!String.IsNullOrEmpty(ip) && ip.IndexOf(',') >= 0)//有代理的情况

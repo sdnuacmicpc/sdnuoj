@@ -58,5 +58,96 @@ namespace SDNUOJ.Utilities
 
             return (Enum.TryParse<T>(s, ignoreCase, out value) ? value : defaultValue);
         }
+
+        /// <summary>
+        /// 对字符串中的ID进行遍历操作
+        /// </summary>
+        /// <param name="s">原字符串</param>
+        /// <param name="separator">分隔字符</param>
+        /// <param name="action">遍历操作</param>
+        public static void ForEachInIDs(this String s, Char separator, Action<Int32> action)
+        {
+            if (String.IsNullOrEmpty(s))
+            {
+                return;
+            }
+
+            String[] arr = s.Split(separator);
+
+            for (Int32 i = 0; i < arr.Length; i++)
+            {
+                if (String.IsNullOrEmpty(arr[i]))
+                {
+                    continue;
+                }
+
+                Int32 id = Convert.ToInt32(arr[i]);
+                action(id);
+            }
+        }
+
+        /// <summary>
+        /// 对字符串中的ID进行遍历操作
+        /// </summary>
+        /// <param name="s">原字符串</param>
+        /// <param name="separator">分隔字符</param>
+        /// <param name="action">遍历操作</param>
+        public static void ForEachInIDs(this String s, Char separator, Action<String> action)
+        {
+            if (String.IsNullOrEmpty(s))
+            {
+                return;
+            }
+
+            String[] arr = s.Split(separator);
+
+            for (Int32 i = 0; i < arr.Length; i++)
+            {
+                if (String.IsNullOrEmpty(arr[i]))
+                {
+                    continue;
+                }
+
+                action(arr[i]);
+            }
+        }
+
+        /// <summary>
+        /// 获取分行后的字符串
+        /// </summary>
+        /// <param name="s">原始字符串</param>
+        /// <returns>分行后的字符串</returns>
+        public static String[] Lines(this String s)
+        {
+            if (String.IsNullOrEmpty(s))
+            {
+                return new String[0];
+            }
+
+            String[] lines = s.Replace("\r\n", "\n").Replace('\r', '\n').Split('\n');
+
+            return lines;
+        }
+
+        /// <summary>
+        /// 获取查询优化后的字符串
+        /// </summary>
+        /// <param name="s">原始字符串</param>
+        /// <returns>优化后的字符串</returns>
+        public static String SearchOptimized(this String s)
+        {
+            if (String.IsNullOrEmpty(s))
+            {
+                return s;
+            }
+
+            s = s.Replace('，', ',');
+            s = s.Replace('；', ',');
+            s = s.Replace(';', ',');
+            s = s.Replace(' ', ',');
+            s = s.Replace('\t', ',');
+
+            return s;
+        }
     }
 }

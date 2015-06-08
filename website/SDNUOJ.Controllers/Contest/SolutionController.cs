@@ -7,6 +7,7 @@ using SDNUOJ.Controllers.Attributes;
 using SDNUOJ.Controllers.Core;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Entity;
+using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Areas.Contest.Controllers
 {
@@ -44,7 +45,9 @@ namespace SDNUOJ.Areas.Contest.Controllers
                 throw new InvalidInputException("This contest does not support this programming language.");
             }
 
-            if (!SolutionManager.InsertSolution(entity))
+            String userip = this.GetCurrentUserIP();
+
+            if (!SolutionManager.InsertSolution(entity, userip))
             {
                 throw new OperationFailedException("Failed to submit your solution!");
             }

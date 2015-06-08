@@ -114,11 +114,10 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <param name="form">Form集合</param>
         /// <returns>操作后的结果</returns>
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public ActionResult ConfigSave(FormCollection form)
         {
-            ConfigurationFileManager.SaveToConfig(form);
-
-            return RedirectToSuccessMessagePage("Your have modified configuration successfully!");
+            return ResultToMessagePage(ConfigurationFileManager.SaveToConfig, form, "Your have modified configuration successfully!");
         }
 
         private String GetSystemRunTime()

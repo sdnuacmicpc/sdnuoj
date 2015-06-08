@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Text;
-using System.Web;
 
 using SDNUOJ.Caching;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
-using SDNUOJ.Logging;
 using SDNUOJ.Utilities;
 
 namespace SDNUOJ.Controllers.Core
@@ -113,7 +111,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="cid">竞赛ID</param>
         /// <param name="usernames">竞赛用户</param>
         /// <returns>是否成功添加</returns>
-        public static Int32 AdminInsertContestUsers(Int32 cid, String usernames)
+        public static IMethodResult AdminInsertContestUsers(Int32 cid, String usernames)
         {
             if (!AdminManager.HasPermission(PermissionType.ContestManage))
             {
@@ -122,7 +120,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (String.IsNullOrEmpty(usernames))
             {
-                throw new InvalidRequstException(RequestType.User);
+                return MethodResult.InvalidRequst(RequestType.User);
             }
 
             Dictionary<String, ContestUserEntity> dict = new Dictionary<String, ContestUserEntity>();
@@ -159,17 +157,18 @@ namespace SDNUOJ.Controllers.Core
             {
                 Int32 count = ContestUserRepository.Instance.InsertEntities(cid, names.ToString(), dict);
 
-                if (count > 0)
+                if (count <= 0)
                 {
-                    LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Insert Contest User, Usernames in ({0})", names.ToString()));
-                    ContestUserCache.RemoveContestUserListCache(cid);
+                    return MethodResult.FailedAndLog("No contest user was added!");
                 }
 
-                return count;
+                ContestUserCache.RemoveContestUserListCache(cid);
+
+                return MethodResult.SuccessAndLog<Int32>(count, "Admin add contest user, cid = {0}, username = {1}", cid.ToString(), usernames);
             }
             catch (DbException)
             {
-                throw new OperationFailedException("Failed to add these users, please check whether the names are all correct.");
+                return MethodResult.FailedAndLog("Failed to add these users, please check whether the names are all correct.");
             }
         }
 
@@ -180,7 +179,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="usernames">逗号分隔的用户名</param>
         /// <param name="isEnabled">是否启用</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateContestUsers(Int32 cid, String usernames, Boolean isEnabled)
+        public static IMethodResult AdminUpdateContestUsers(Int32 cid, String usernames, Boolean isEnabled)
         {
             if (!AdminManager.HasPermission(PermissionType.ContestManage))
             {
@@ -189,18 +188,19 @@ namespace SDNUOJ.Controllers.Core
 
             if (String.IsNullOrEmpty(usernames))
             {
-                throw new InvalidInputException("You must select at least one item!");
+                return MethodResult.FailedAndLog("You must select at least one item!");
             }
 
             Boolean success = ContestUserRepository.Instance.UpdateEntityIsEnabled(cid, usernames, isEnabled) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin {0} Contest User, Usernames in ({1})", (isEnabled ? "Enable" : "Disable"), usernames));
-                ContestUserCache.RemoveContestUserListCache(cid);
+                return MethodResult.FailedAndLog("No contest user was {0}!", isEnabled ? "enabled" : "disabled");
             }
 
-            return success;
+            ContestUserCache.RemoveContestUserListCache(cid);
+
+            return MethodResult.SuccessAndLog("Admin {2} contest user, cid = {0}, username = {1}", cid.ToString(), usernames, isEnabled ? "enable" : "disable");
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="cid">竞赛ID</param>
         /// <param name="usernames">逗号分隔的用户名</param>
         /// <returns>是否成功删除</returns>
-        public static Boolean AdminDeleteContestUsers(Int32 cid, String usernames)
+        public static IMethodResult AdminDeleteContestUsers(Int32 cid, String usernames)
         {
             if (!AdminManager.HasPermission(PermissionType.ContestManage))
             {
@@ -218,18 +218,19 @@ namespace SDNUOJ.Controllers.Core
 
             if (String.IsNullOrEmpty(usernames))
             {
-                throw new InvalidInputException("You must select at least one item!");
+                return MethodResult.FailedAndLog("You must select at least one item!");
             }
 
             Boolean success = ContestUserRepository.Instance.DeleteEntities(cid, usernames) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Delete Contest User, Usernames in ({0})", usernames));
-                ContestUserCache.RemoveContestUserListCache(cid);
+                return MethodResult.FailedAndLog("No contest user was deleted!");
             }
 
-            return success;
+            ContestUserCache.RemoveContestUserListCache(cid);
+
+            return MethodResult.SuccessAndLog("Admin delete contest user, cid = {0}, username = {1}", cid.ToString(), usernames);
         }
 
         /// <summary>

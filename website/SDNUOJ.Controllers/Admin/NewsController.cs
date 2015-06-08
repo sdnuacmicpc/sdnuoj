@@ -4,7 +4,6 @@ using System.Web.Mvc;
 using SDNUOJ.Controllers.Core;
 using SDNUOJ.Entity;
 using SDNUOJ.Utilities;
-using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Areas.Admin.Controllers
 {
@@ -53,14 +52,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 Description = form["description"]
             };
 
-            if (NewsManager.AdminInsertNews(entity))
-            {
-                return RedirectToSuccessMessagePage("Your have added news successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to add news!");
-            }
+            return ResultToMessagePage(NewsManager.AdminInsertNews, entity, "Your have added news successfully!");
         }
 
         /// <summary>
@@ -91,14 +83,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 Description = form["description"]
             };
 
-            if (NewsManager.AdminUpdateNews(entity))
-            {
-                return RedirectToSuccessMessagePage("Your have edited news successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to edit news!");
-            }
+            return ResultToMessagePage(NewsManager.AdminUpdateNews, entity, "Your have edited news successfully!");
         }
 
         /// <summary>
@@ -108,10 +93,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Delete(String id)
         {
-            return ResultToJson(() => 
-            {
-                NewsManager.AdminDeleteNews(id);
-            });
+            return ResultToJson(NewsManager.AdminDeleteNews, id);
         }
     }
 }

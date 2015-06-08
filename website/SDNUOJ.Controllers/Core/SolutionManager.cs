@@ -12,7 +12,6 @@ using SDNUOJ.Controllers.Status;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
 using SDNUOJ.Entity.Complex;
-using SDNUOJ.Logging;
 using SDNUOJ.Utilities;
 using SDNUOJ.Utilities.Security;
 using SDNUOJ.Utilities.Text;
@@ -126,8 +125,9 @@ namespace SDNUOJ.Controllers.Core
         /// 增加一条提交
         /// </summary>
         /// <param name="entity">对象实体</param>
+        /// <param name="userip">用户IP</param>
         /// <returns>是否成功增加</returns>
-        public static Boolean InsertSolution(SolutionEntity entity)
+        public static Boolean InsertSolution(SolutionEntity entity, String userip)
         {
             if (!UserManager.IsUserLogined)
             {
@@ -167,7 +167,7 @@ namespace SDNUOJ.Controllers.Core
 
             entity.UserName = UserManager.CurrentUserName;
             entity.SubmitTime = DateTime.Now;
-            entity.SubmitIP = HttpContext.Current.GetRemoteClientIPv4();
+            entity.SubmitIP = userip;
 
             Boolean success = SolutionRepository.Instance.InsertEntity(entity) > 0;
 
@@ -555,7 +555,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="startDate">开始时间</param>
         /// <param name="endDate">结束时间</param>
         /// <returns>是否成功重测</returns>
-        public static Int32 AdminRejudgeSolution(String sids, String cid, String pid, String name, String lang, String type, String startDate, String endDate)
+        public static IMethodResult AdminRejudgeSolution(String sids, String cid, String pid, String name, String lang, String type, String startDate, String endDate)
         {
             if (!AdminManager.HasPermission(PermissionType.SolutionManage))
             {
@@ -572,18 +572,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (noCondition)
             {
-                throw new InvalidInputException("You must set at least one condition!");
+                return MethodResult.FailedAndLog("You must set at least one condition!");
             }
 
             Int32 result = SolutionRepository.Instance.UpdateEntityToRejudge(solutionIDs, contestID, problemID, userName, languageType, resultType, dtStart, dtEnd);
 
-            if (result > 0)
+            if (result <= 0)
             {
-                String condition = String.Format("SIDs in ({0}),CID={2},PID={1},Name={3},Lang={4},Type={5},Start={6},End={7}", solutionIDs, contestID, problemID, name, languageType, resultType, dtStart, dtEnd);
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Rejudge, Condition=\"{0}\"", condition));
+                return MethodResult.FailedAndLog("No solution was rejudged!");
             }
 
-            return result;
+            return MethodResult.SuccessAndLog<Int32>(result, "Admin rejudge solution, sid = {0}, cid = {2}, pid = {1}, name = {3}, lang = {4}, type = {5}, start = {6}, end = {7}", solutionIDs.ToString(), contestID.ToString(), problemID.ToString(), name, languageType.ToString(), resultType.ToString(), dtStart.ToString(), dtEnd.ToString());
         }
 
         /// <summary>
@@ -670,7 +669,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!String.IsNullOrEmpty(sids))
             {
-                solutionIDs = SplitHelper.GetOptimizedString(sids);
+                solutionIDs = sids.SearchOptimized();
 
                 if (!RegexVerify.IsNumericIDs(solutionIDs))
                 {

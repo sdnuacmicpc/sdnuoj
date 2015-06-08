@@ -69,14 +69,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 MemoryLimit = form["memorylimit"].ToInt32(32768)
             };
 
-            if (ProblemManager.AdminInsertProblem(entity))
-            {
-                return RedirectToSuccessMessagePage("Your have added problem successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to add problem!");
-            }
+            return ResultToMessagePage(ProblemManager.AdminInsertProblem, entity, "Your have added problem successfully!");
         }
 
         /// <summary>
@@ -115,14 +108,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 MemoryLimit = form["memorylimit"].ToInt32(32768)
             };
 
-            if (ProblemManager.AdminUpdateProblem(entity))
-            {
-                return RedirectToSuccessMessagePage("Your have edited problem successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to edit problem!");
-            }
+            return ResultToMessagePage(ProblemManager.AdminUpdateProblem, entity, "Your have edited problem successfully!");
         }
 
         /// <summary>
@@ -147,30 +133,42 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateInput(false)]
         public ActionResult Import(FormCollection form, HttpPostedFileBase file)
         {
-            Dictionary<Int32, Boolean> result = ProblemManager.AdminImportProblem(Request, form["filetype"], form["uploadtype"], form["content"], file);
-
-            if (result != null)
+            return ResultToMessagePage(() =>
             {
-                StringBuilder sb = new StringBuilder();
-                Int32 nodatacount = 0;
+                IMethodResult result = ProblemManager.AdminImportProblem(Request, form["filetype"], form["uploadtype"], form["content"], file);
 
-                foreach (KeyValuePair<Int32, Boolean> pair in result)
+                if (!result.IsSuccess)
+                {
+                    return new Tuple<IMethodResult, String>(result, String.Empty);
+                }
+
+                Dictionary<Int32, Boolean> importedItems = result.ResultObject as Dictionary<Int32, Boolean>;
+                String successInfo = String.Format("{0} problem(s) have benn successfully imported!", importedItems.Count.ToString());
+
+                StringBuilder nodataItems = new StringBuilder();
+                Int32 nodataCount = 0;
+
+                foreach (KeyValuePair<Int32, Boolean> pair in importedItems)
                 {
                     if (!pair.Value)
                     {
-                        sb.Append(sb.Length > 0 ? "," : "").Append(pair.Key.ToString());
-                        nodatacount++;
+                        if (nodataCount > 0)
+                        {
+                            nodataItems.Append(',');
+                        }
+
+                        nodataItems.Append(pair.Key.ToString());
+                        nodataCount++;
                     }
                 }
 
-                return RedirectToSuccessMessagePage(String.Format("{0} problem(s) have benn successfully imported!{1}",
-                    result.Count.ToString(),
-                    nodatacount > 0 ? String.Format("<br/>{0} problem(s) ({1}) have no data or fail to import these data!", nodatacount.ToString(), sb.ToString()) : ""));
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to import problem!");
-            }
+                if (nodataCount > 0)
+                {
+                    successInfo += String.Format("<br/>{0} problem(s) ({1}) have no data or fail to import these data!", nodataCount.ToString(), nodataItems.ToString());
+                }
+
+                return new Tuple<IMethodResult, String>(result, successInfo);
+            });
         }
 
         /// <summary>
@@ -180,10 +178,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Hide(String ids)
         {
-            return ResultToJson(() =>
-            {
-                ProblemManager.AdminUpdateProblemIsHide(ids, true);
-            });
+            return ResultToJson(ProblemManager.AdminUpdateProblemIsHide, ids, true);
         }
 
         /// <summary>
@@ -193,10 +188,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Show(String ids)
         {
-            return ResultToJson(() =>
-            {
-                ProblemManager.AdminUpdateProblemIsHide(ids, false);
-            });
+            return ResultToJson(ProblemManager.AdminUpdateProblemIsHide, ids, false);
         }
 
         /// <summary>
@@ -206,43 +198,10 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Recalculate(Int32 id = -1)
         {
-            return ResultToJson(() =>
-            {
-                ProblemManager.AdminUpdateProblemSolvedCount(id);
-                ProblemManager.AdminUpdateProblemSubmitCount(id);
-            });
-        }
-
-        /// <summary>
-        /// 题目数据删除
-        /// </summary>
-        /// <param name="id">题目ID</param>
-        /// <returns>操作后的结果</returns>
-        public ActionResult DataDelete(Int32 id = -1)
-        {
-            return ResultToJson(() =>
-            {
-                ProblemDataManager.AdminDeleteProblemDataRealPath(id);
-            });
-        }
-
-        /// <summary>
-        /// 题目数据下载
-        /// </summary>
-        /// <param name="id">题目ID</param>
-        /// <returns>操作后的结果</returns>
-        public ActionResult DataDownload(Int32 id = -1)
-        {
-            String dataPath = ProblemDataManager.AdminGetProblemDataRealPath(id);
-
-            if (!String.IsNullOrEmpty(dataPath))
-            {
-                return File(dataPath, "application/zip", id.ToString() + ".zip");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("This problem doesn't have data!");
-            }
+            return ResultToSuccessJson(
+                ProblemManager.AdminUpdateProblemSolvedCount, 
+                ProblemManager.AdminUpdateProblemSubmitCount, 
+                id);
         }
 
         /// <summary>
@@ -291,14 +250,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 Order = form["order"].ToInt32(0)
             };
 
-            if (ProblemCategoryManager.AdminInsertProblemCategory(entity))
-            {
-                return RedirectToSuccessMessagePage("Your have added problem category successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to add problem category!");
-            }
+            return ResultToMessagePage(ProblemCategoryManager.AdminInsertProblemCategory, entity, "Your have added problem category successfully!");
         }
 
         /// <summary>
@@ -328,14 +280,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 Order = form["order"].ToInt32(0)
             };
 
-            if (ProblemCategoryManager.AdminUpdateProblemCategory(entity))
-            {
-                return RedirectToSuccessMessagePage("Your have edited problem category successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to edit problem category!");
-            }
+            return ResultToMessagePage(ProblemCategoryManager.AdminUpdateProblemCategory, entity, "Your have edited problem category successfully!");
         }
 
         /// <summary>
@@ -345,10 +290,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult CategoryDelete(Int32 id)
         {
-            return ResultToJson(() =>
-            {
-                ProblemCategoryManager.AdminDeleteProblemCategory(id);
-            });
+            return ResultToJson(ProblemCategoryManager.AdminDeleteProblemCategory, id);
         }
 
         /// <summary>
@@ -376,14 +318,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CategorySet(Int32 id, FormCollection form)
         {
-            if (ProblemCategoryItemManager.AdminUpdateProblemCategoryItems(id, form["source"], form["target"]))
-            {
-                return RedirectToSuccessMessagePage("Your have updated problem type successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to update problem type!");
-            }
+            return ResultToMessagePage(ProblemCategoryItemManager.AdminUpdateProblemCategoryItems, id, form["source"], form["target"], "Your have updated problem type successfully!");
         }
 
         /// <summary>
@@ -409,14 +344,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateInput(false)]
         public ActionResult DataCreate(Int32 id, FormCollection form)
         {
-            if (ProblemDataManager.AdminSaveProblemData(id, form, Request.Files))
-            {
-                return RedirectToSuccessMessagePage("Your have created problem data successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to create problem data!");
-            }
+            return ResultToMessagePage(ProblemDataManager.AdminSaveProblemData, id, form, Request.Files, "Your have created problem data successfully!");
         }
 
         /// <summary>
@@ -441,13 +369,35 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DataUpload(Int32 id, HttpPostedFileBase file)
         {
-            if (ProblemDataManager.AdminSaveProblemData(id, file))
+            return ResultToMessagePage(ProblemDataManager.AdminSaveProblemData, id, file, "Your have uploaded problem data successfully!");
+        }
+
+        /// <summary>
+        /// 题目数据删除
+        /// </summary>
+        /// <param name="id">题目ID</param>
+        /// <returns>操作后的结果</returns>
+        public ActionResult DataDelete(Int32 id = -1)
+        {
+            return ResultToJson(ProblemDataManager.AdminDeleteProblemDataRealPath, id);
+        }
+
+        /// <summary>
+        /// 题目数据下载
+        /// </summary>
+        /// <param name="id">题目ID</param>
+        /// <returns>操作后的结果</returns>
+        public ActionResult DataDownload(Int32 id = -1)
+        {
+            String dataPath = ProblemDataManager.AdminGetProblemDataRealPath(id);
+
+            if (!String.IsNullOrEmpty(dataPath))
             {
-                return RedirectToSuccessMessagePage("Your have uploaded problem data successfully!");
+                return File(dataPath, "application/zip", id.ToString() + ".zip");
             }
             else
             {
-                return RedirectToErrorMessagePage("Failed to upload problem data!");
+                return RedirectToErrorMessagePage("This problem doesn't have data!");
             }
         }
     }

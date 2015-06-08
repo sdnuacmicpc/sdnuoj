@@ -3,6 +3,7 @@ using System.Web.Mvc;
 
 using SDNUOJ.Controllers.Core.Judge;
 using SDNUOJ.Utilities.Text;
+using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Controllers
 {
@@ -16,10 +17,11 @@ namespace SDNUOJ.Controllers
         {
             String username = Request["username"];
             String password = Request["password"];
+            String userip = HttpContext.Request.GetRemoteClientIPv4();
 
             String error = String.Empty;
 
-            if (JudgeStatusManager.TryJudgeServerLogin(username, password, out error))
+            if (JudgeStatusManager.TryJudgeServerLogin(username, password, userip, out error))
             {
                 return SuccessJson();
             }

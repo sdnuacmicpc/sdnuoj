@@ -66,7 +66,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="problemID">题目ID</param>
         /// <param name="file">上传文件</param>
         /// <returns>是否保存成功</returns>
-        public static Boolean AdminSaveProblemData(Int32 problemID, HttpPostedFileBase file)
+        public static IMethodResult AdminSaveProblemData(Int32 problemID, HttpPostedFileBase file)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -75,33 +75,33 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                throw new InvalidRequstException(RequestType.Problem);
+                return MethodResult.InvalidRequst(RequestType.Problem);
             }
 
             if (file == null)
             {
-                throw new InvalidInputException("No file uploaded!");
+                return MethodResult.FailedAndLog("No file was uploaded!");
             }
 
             if (String.IsNullOrEmpty(file.FileName))
             {
-                throw new InvalidInputException("Filename can not be NULL!");
+                return MethodResult.FailedAndLog("Filename can not be NULL!");
             }
 
             FileInfo fi = new FileInfo(file.FileName);
             if (!".zip".Equals(fi.Extension, StringComparison.OrdinalIgnoreCase))
             {
-                throw new InvalidInputException("Filename is INVALID!");
+                return MethodResult.FailedAndLog("Filename is INVALID!");
             }
 
             if (!String.Equals(problemID.ToString(), Path.GetFileNameWithoutExtension(fi.Name)))
             {
-                throw new InvalidInputException("The problem data should have the same name as the problem ID!");
+                return MethodResult.FailedAndLog("The problem data should have the same name as the problem ID!");
             }
 
             if (file.ContentLength <= 0)
             {
-                throw new InvalidInputException("You can not upload empty file!");
+                return MethodResult.FailedAndLog("You can not upload empty file!");
             }
 
             String fileNewName = problemID.ToString() + ".zip";
@@ -110,9 +110,7 @@ namespace SDNUOJ.Controllers.Core
 
             ProblemDataCache.RemoveProblemDataVersionCache(problemID);
 
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Upload Problem Data, ID = {0}", problemID));
-
-            return true;
+            return MethodResult.SuccessAndLog("Admin upload problem data, id = {0}", problemID.ToString());
         }
 
         /// <summary>
@@ -122,7 +120,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="forms">Request.Forms</param>
         /// <param name="httpFiles">Request.Files</param>
         /// <returns>是否保存成功</returns>
-        public static Boolean AdminSaveProblemData(Int32 problemID, NameValueCollection forms, HttpFileCollectionBase httpFiles)
+        public static IMethodResult AdminSaveProblemData(Int32 problemID, NameValueCollection forms, HttpFileCollectionBase httpFiles)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -131,7 +129,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                throw new InvalidRequstException(RequestType.Problem);
+                return MethodResult.InvalidRequst(RequestType.Problem);
             }
 
             SortedDictionary<String, String> dictData = new SortedDictionary<String, String>();
@@ -144,23 +142,23 @@ namespace SDNUOJ.Controllers.Core
 
                     if (String.IsNullOrEmpty(file.FileName))
                     {
-                        throw new InvalidInputException("Filename can not be NULL!");
+                        return MethodResult.FailedAndLog("Filename can not be NULL!");
                     }
 
                     FileInfo fi = new FileInfo(file.FileName);
                     if (httpFiles.GetKey(i).IndexOf("in", StringComparison.OrdinalIgnoreCase) == 0 && !".in".Equals(fi.Extension, StringComparison.OrdinalIgnoreCase))
                     {
-                        throw new InvalidInputException("Filename is INVALID!");
+                        return MethodResult.FailedAndLog("Filename is INVALID!");
                     }
 
                     if (httpFiles.GetKey(i).IndexOf("out", StringComparison.OrdinalIgnoreCase) == 0 && !".out".Equals(fi.Extension, StringComparison.OrdinalIgnoreCase) && !".ans".Equals(fi.Extension, StringComparison.OrdinalIgnoreCase))
                     {
-                        throw new InvalidInputException("Filename is INVALID!");
+                        return MethodResult.FailedAndLog("Filename is INVALID!");
                     }
 
                     if (file.ContentLength <= 0)
                     {
-                        throw new InvalidInputException("You can not upload empty file!");
+                        return MethodResult.FailedAndLog("You can not upload empty file!");
                     }
 
                     StreamReader sr = new StreamReader(file.InputStream);
@@ -181,12 +179,12 @@ namespace SDNUOJ.Controllers.Core
 
             if (dictData.Count == 0)
             {
-                throw new InvalidInputException("No data added!");
+                return MethodResult.FailedAndLog("No data was added!");
             }
 
             if (dictData.Count % 2 != 0)
             {
-                throw new InvalidInputException("The count of uploaded data is INVALID!");
+                return MethodResult.FailedAndLog("The count of uploaded data is INVALID!");
             }
 
             ProblemDataWriter writer = new ProblemDataWriter();
@@ -200,7 +198,7 @@ namespace SDNUOJ.Controllers.Core
 
                     if (!dictData.TryGetValue(pair.Key.ToLower().Replace("in", "out"), out output))
                     {
-                        throw new InvalidInputException("The count of uploaded data is INVALID!");
+                        return MethodResult.FailedAndLog("The count of uploaded data is INVALID!");
                     }
 
                     writer.WriteData(input, output);
@@ -214,9 +212,7 @@ namespace SDNUOJ.Controllers.Core
 
             ProblemDataCache.RemoveProblemDataVersionCache(problemID);
 
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Create Problem Data, ID = {0}", problemID));
-
-            return true;
+            return MethodResult.SuccessAndLog("Admin create problem data, id = {0}", problemID.ToString());
         }
 
         /// <summary>
@@ -225,39 +221,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="problemID">题目ID</param>
         /// <param name="problemdata">题目数据文件</param>
         /// <returns>是否保存成功</returns>
-        public static Boolean AdminSaveProblemData(Int32 problemID, ProblemData problemdata)
-        {
-            if (!AdminManager.HasPermission(PermissionType.ProblemManage))
-            {
-                throw new NoPermissionException();
-            }
-
-            if (problemID < ConfigurationManager.ProblemSetStartID)
-            {
-                throw new InvalidRequstException(RequestType.Problem);
-            }
-
-            ProblemDataWriter writer = new ProblemDataWriter(problemdata);
-
-            String fileNewName = problemID.ToString() + ".zip";
-            String savePath = Path.Combine(ConfigurationManager.ProblemDataPath, fileNewName);
-            Byte[] data = writer.WriteTo();
-            File.WriteAllBytes(savePath, data);
-
-            ProblemDataCache.RemoveProblemDataVersionCache(problemID);
-
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Upload Problem Data, ID = {0}", problemID));
-
-            return true;
-        }
-
-        /// <summary>
-        /// 保存题目数据文件到磁盘
-        /// </summary>
-        /// <param name="problemID">题目ID</param>
-        /// <param name="problemdata">题目数据文件</param>
-        /// <returns>是否保存成功</returns>
-        public static Boolean AdminSaveProblemData(Int32 problemID, Byte[] problemdata)
+        internal static Boolean InternalAdminSaveProblemData(Int32 problemID, Byte[] problemdata)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -274,8 +238,6 @@ namespace SDNUOJ.Controllers.Core
             File.WriteAllBytes(savePath, problemdata);
 
             ProblemDataCache.RemoveProblemDataVersionCache(problemID);
-
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Upload Problem Data, ID = {0}", problemID));
 
             return true;
         }
@@ -305,7 +267,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="problemID">题目ID</param>
         /// <returns>是否删除成功</returns>
-        public static Boolean AdminDeleteProblemDataRealPath(Int32 problemID)
+        public static IMethodResult AdminDeleteProblemDataRealPath(Int32 problemID)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -314,22 +276,20 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                throw new InvalidRequstException(RequestType.Problem);
+                return MethodResult.InvalidRequst(RequestType.Problem);
             }
 
             String dataPath = ProblemDataManager.GetProblemDataRealPath(problemID);
 
             if (String.IsNullOrEmpty(dataPath))
             {
-                return false;
+                return MethodResult.FailedAndLog("This problem does not have data!");
             }
 
             File.Delete(dataPath);
             ProblemDataCache.RemoveProblemDataVersionCache(problemID);
 
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Delete Problem Data, ID = {0}", problemID));
-
-            return true;
+            return MethodResult.SuccessAndLog("Admin delete problem data, id = {0}", problemID.ToString());
         }
         #endregion
     }

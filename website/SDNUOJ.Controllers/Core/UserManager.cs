@@ -117,22 +117,20 @@ namespace SDNUOJ.Controllers.Core
 
                 return String.Empty;
             }
-            catch (System.Exception eee)
+            catch (System.Exception ex)
             {
-                return eee.Message;
+                return ex.Message;
             }
         }
 
         /// <summary>
         /// 更新用户最后登录信息
         /// </summary>
-        /// <param name="user">用户实体</param>
-        public static void UpdateLoginInfomation(UserEntity user)
+        /// <param name="userName">用户名</param>
+        /// <param name="lastip">最后登录IP</param>
+        public static void UpdateLoginInfomation(String userName, String lastip)
         {
-            user.LastDate = DateTime.Now;
-            user.LastIP = HttpContext.Current.GetRemoteClientIPv4();
-
-            UserRepository.Instance.UpdateEntityLoginInfomation(user);
+            UserRepository.Instance.UpdateEntityLoginInfomation(userName, lastip, DateTime.Now);
         }
 
         /// <summary>
@@ -140,23 +138,21 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="userName">用户名</param>
         /// <param name="passWord">密码</param>
-        /// <param name="error">出错信息</param>
+        /// <param name="userip">用户IP</param>
         /// <returns>返回是否成功登陆，若失败则返回出错信息</returns>
-        public static Boolean TrySignIn(String userName, String passWord, out String error)
+        public static IMethodResult SignIn(String userName, String passWord, String userip)
         {
             UserEntity user = null;
-            error = TryGetUserByUsernameAndPassword(userName, passWord, out user);
+            String error = TryGetUserByUsernameAndPassword(userName, passWord, out user);
 
             if (!String.IsNullOrEmpty(error))
             {
-                LogManager.LogLoginFailed(HttpContext.Current, userName, error);
-                return false;
+                return MethodResult.FailedAndLog(error);
             }
 
             if (AdminManager.InternalCheckPermission(user.Permission, PermissionType.HttpJudge))
             {
-                error = "You can not login a httpjudge account!";
-                return false;
+                return MethodResult.FailedAndLog("You can not login a httpjudge account!");
             }
 
             try
@@ -167,18 +163,14 @@ namespace SDNUOJ.Controllers.Core
                 UserSubmitStatus.InitLastSubmitTime(user.UserName);
                 UserCurrentStatus.SetCurrentUserStatus(user);
 
-                UpdateLoginInfomation(user);
+                UpdateLoginInfomation(userName, userip);
             }
-            catch (System.Exception eee)
+            catch (System.Exception ex)
             {
-                error = eee.Message;
-                return false;
+                return MethodResult.Failed(ex.Message);
             }
 
-            LogManager.LogLoginSuccess(HttpContext.Current, userName);
-
-            error = String.Empty;
-            return true;
+            return MethodResult.SuccessAndLog("User sign in");
         }
 
         /// <summary>
@@ -201,126 +193,108 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="entity">用户实体</param>
         /// <param name="password">密码</param>
-        /// <param name="password">重复密码</param>
+        /// <param name="password2">重复密码</param>
         /// <param name="checkCode">验证码</param>
-        /// <param name="result">出错信息</param>
-        /// <returns>返回是否成功注册，若失败则返回出错信息</returns>
-        public static Boolean TrySignUp(UserEntity entity, String password, String password2, String checkCode, out String error)
+        /// <param name="userip">用户IP</param>
+        /// <returns>执行结果</returns>
+        public static IMethodResult SignUp(UserEntity entity, String password, String password2, String checkCode, String userip)
         {
             if (!CheckCodeStatus.VerifyCheckCode(checkCode))
             {
-                throw new InvalidInputException("The verification code you input didn't match the picture, Please try again!");
+                return MethodResult.Failed("The verification code you input didn't match the picture, Please try again!");
             }
 
             if (String.IsNullOrEmpty(entity.UserName))
             {
-                error = "Username can not be NULL!";
-                return false;
+                return MethodResult.Failed("Username can not be NULL!");
             }
 
             if (!RegexVerify.IsUserName(entity.UserName) || !SQLValidator.IsNonNullANDSafe(entity.UserName))
             {
-                error = "Username can not contain illegal characters!";
-                return false;
+                return MethodResult.Failed("Username can not contain illegal characters!");
             }
 
             if (!KeywordsFilterManager.IsUserNameLegal(entity.UserName))
             {
-                error = "Username can not contain illegal keywords!";
-                return false;
+                return MethodResult.Failed("Username can not contain illegal keywords!");
             }
 
             if (entity.UserName.Length > UserRepository.USERNAME_MAXLEN)
             {
-                error = "Username is too long!";
-                return false;
+                return MethodResult.Failed("Username is too long!");
             }
 
             if (String.IsNullOrEmpty(password))
             {
-                error = "Password can not be NULL!";
-                return false;
+                return MethodResult.Failed("Password can not be NULL!");
             }
 
             if (!String.Equals(password, password2))
             {
-                error = "Two passwords are not match!";
-                return false;
+                return MethodResult.Failed("Two passwords are not match!");
             }
 
             if (String.IsNullOrEmpty(entity.Email))
             {
-                error = "Email address can not be NULL!";
-                return false;
+                return MethodResult.Failed("Email address can not be NULL!");
             }
 
             if (!RegexVerify.IsEmail(entity.Email))
             {
-                error = "Email address is INVALID!";
-                return false;
+                return MethodResult.Failed("Email address is INVALID!");
             }
 
             if (entity.Email.Length > UserRepository.EMAIL_MAXLEN)
             {
-                error = "Email address is too long!";
-                return false;
+                return MethodResult.Failed("Email address is too long!");
             }
 
             if (!String.IsNullOrEmpty(entity.NickName) && entity.NickName.Length > UserRepository.NICKNAME_MAXLEN)
             {
-                error = "Nick Name is too long!";
-                return false;
+                return MethodResult.Failed("Nick Name is too long!");
             }
 
             if (!KeywordsFilterManager.IsUserNameLegal(entity.NickName))
             {
-                error = "Nick Name can not contain illegal keywords!";
-                return false;
+                return MethodResult.Failed("Nick Name can not contain illegal keywords!");
             }
 
             if (!String.IsNullOrEmpty(entity.School) && entity.School.Length > UserRepository.SCHOOL_MAXLEN)
             {
-                error = "School Name is too long!";
-                return false;
+                return MethodResult.Failed("School Name is too long!");
             }
 
             if (UserRepository.Instance.ExistsEntity(entity.UserName))
             {
-                error = String.Format("The username \"{0}\" has already existed!", entity.UserName);
-                return false;
+                return MethodResult.Failed("The username \"{0}\" has already existed!", entity.UserName);
             }
 
-            String ip = HttpContext.Current.GetRemoteClientIPv4();
-
-            if (!UserIPStatus.CheckLastRegisterTime(ip))
+            if (!UserIPStatus.CheckLastRegisterTime(userip))
             {
-                throw new InvalidInputException(String.Format("You can only register one user from single ip in {0} seconds!", ConfigurationManager.RegisterInterval.ToString()));
+                return MethodResult.Failed("You can only register one user from single ip in {0} seconds!", ConfigurationManager.RegisterInterval.ToString());
             }
 
             entity.PassWord = PassWordEncrypt.Encrypt(entity.UserName, password);
             entity.NickName = HtmlEncoder.HtmlEncode(entity.NickName);
             entity.Permission = PermissionType.None;
-            entity.CreateIP = ip;
+            entity.CreateIP = userip;
             entity.CreateDate = DateTime.Now;
 
             try
             {
                 if (UserRepository.Instance.InsertEntity(entity) == 0)
                 {
-                    error = "User Registration Failed!";
-                    return false;
+                    return MethodResult.Failed("User Registration Failed!");
                 }
             }
-            catch (System.Exception eee)
+            catch (System.Exception ex)
             {
-                error = eee.Message;
-                return false;
+                return MethodResult.Failed(ex.Message);
             }
 
             UserCache.RemoveRanklistUserCountCache();//删除缓存
 
-            error = String.Empty;
-            return true;
+            return MethodResult.SuccessAndLog("User sign up");
         }
         #endregion
 
@@ -332,14 +306,13 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="currentPassword">当前密码</param>
         /// <param name="newPassword">新密码</param>
         /// <param name="newPassword2">重复新密码</param>
-        /// <param name="error">出错信息</param>
-        /// <returns>返回是否成功更新，若失败则返回出错信息</returns>
-        public static Boolean TryUpdateUserInfo(UserEntity entity, String currentPassword, String newPassword, String newPassword2, out String error)
+        /// <param name="result">执行结果</param>
+        /// <returns>执行结果</returns>
+        public static IMethodResult UpdateUserInfo(UserEntity entity, String currentPassword, String newPassword, String newPassword2)
         {
             if (String.IsNullOrEmpty(currentPassword))
             {
-                error = "Current password can not be NULL!";
-                return false;
+                return MethodResult.Failed("Current password can not be NULL!");
             }
             else
             {
@@ -350,44 +323,37 @@ namespace SDNUOJ.Controllers.Core
 
             if (!String.Equals(newPassword, newPassword2))
             {
-                error = "Two new passwords are not match!";
-                return false;
+                return MethodResult.Failed("Two new passwords are not match!");
             }
 
             if (String.IsNullOrEmpty(entity.Email))
             {
-                error = "Email address can not be NULL!";
-                return false;
+                return MethodResult.Failed("Email address can not be NULL!");
             }
 
             if (!RegexVerify.IsEmail(entity.Email))
             {
-                error = "Email address is INVALID!";
-                return false;
+                return MethodResult.Failed("Email address is INVALID!");
             }
 
             if (entity.Email.Length > UserRepository.EMAIL_MAXLEN)
             {
-                error = "Email address is too long!";
-                return false;
+                return MethodResult.Failed("Email address is too long!");
             }
 
             if (!String.IsNullOrEmpty(entity.NickName) && entity.NickName.Length > UserRepository.NICKNAME_MAXLEN)
             {
-                error = "Nick Name is too long!";
-                return false;
+                return MethodResult.Failed("Nick Name is too long!");
             }
 
             if (!KeywordsFilterManager.IsUserNameLegal(entity.NickName))
             {
-                error = "Nick Name can not contain illegal keywords!";
-                return false;
+                return MethodResult.Failed("Nick Name can not contain illegal keywords!");
             }
 
             if (!String.IsNullOrEmpty(entity.School) && entity.School.Length > UserRepository.SCHOOL_MAXLEN)
             {
-                error = "School Name is too long!";
-                return false;
+                return MethodResult.Failed("School Name is too long!");
             }
 
             if (!String.IsNullOrEmpty(newPassword))
@@ -397,22 +363,17 @@ namespace SDNUOJ.Controllers.Core
 
             try
             {
-                if (UserRepository.Instance.UpdateEntityForUser(entity, currentPassword) == 0)
+                if (UserRepository.Instance.UpdateEntityForUser(entity, currentPassword) <= 0)
                 {
-                    error = "Current password is wrong!";
-                    return false;
+                    return MethodResult.Failed("Current password is wrong!");
                 }
             }
-            catch (System.Exception eee)
+            catch (System.Exception ex)
             {
-                error = eee.Message;
-                return false;
+                return MethodResult.Failed(ex.Message);
             }
 
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, "Update User Info");
-
-            error = String.Empty;
-            return true;
+            return MethodResult.SuccessAndLog("User update info");
         }
         #endregion
 
@@ -580,7 +541,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="userName">用户名</param>
         /// <param name="passWord">新密码</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminResetUserPassword(String userName, String passWord)
+        public static IMethodResult AdminResetUserPassword(String userName, String passWord)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -589,12 +550,12 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsUserName(userName))
             {
-                throw new InvalidRequstException(RequestType.User);
+                return MethodResult.InvalidRequst(RequestType.User);
             }
 
             if (String.IsNullOrEmpty(passWord))
             {
-                throw new InvalidInputException("New password can not be NULL!");
+                return MethodResult.FailedAndLog("New password can not be NULL!");
             }
             else
             {
@@ -603,40 +564,12 @@ namespace SDNUOJ.Controllers.Core
 
             Boolean success = UserRepository.Instance.UpdateEntityPassword(userName, passWord) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Set User Password, Username = \"{0}\"", userName));
+                return MethodResult.FailedAndLog("No user's password was reset!");
             }
 
-            return success;
-        }
-
-        /// <summary>
-        /// 更新指定ID的用户的用户权限
-        /// </summary>
-        /// <param name="userNames">用户名</param>
-        /// <param name="permission">权限类型</param>
-        /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdatePermision(String userName, PermissionType permission)
-        {
-            if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
-            {
-                throw new NoPermissionException();
-            }
-
-            if (!RegexVerify.IsUserName(userName))
-            {
-                throw new InvalidRequstException(RequestType.User);
-            }
-
-            Boolean success = UserRepository.Instance.UpdateEntityPermision(userName, permission) > 0;
-
-            if (success)
-            {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Set User Permission, Username = \"{0}\", Permission = {1}", userName, ((Int32)permission).ToString()));
-            }
-
-            return success;
+            return MethodResult.SuccessAndLog("User reset password, name = {0}", userName);
         }
 
         /// <summary>
@@ -645,7 +578,36 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="userNames">用户名</param>
         /// <param name="permissions">权限类型</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdatePermision(String userName, String permissions)
+        public static IMethodResult AdminUpdatePermision(String userName, String permissions)
+        {
+            if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
+            {
+                throw new NoPermissionException();
+            }
+
+            if (!RegexVerify.IsUserName(userName))
+            {
+                return MethodResult.InvalidRequst(RequestType.User);
+            }
+
+            PermissionType permission = AdminManager.GetPermission(permissions);
+            Boolean success = UserRepository.Instance.UpdateEntityPermision(userName, permission) > 0;
+
+            if (!success)
+            {
+                return MethodResult.FailedAndLog("No user's permission was updated!");
+            }
+
+            return MethodResult.SuccessAndLog("Admin update permission, name = {0}, permission = {1}", userName, ((Int32)permission).ToString());
+        }
+
+        /// <summary>
+        /// 更新指定ID的用户的用户权限
+        /// </summary>
+        /// <param name="userNames">用户名</param>
+        /// <param name="permission">权限类型</param>
+        /// <returns>是否成功更新</returns>
+        internal static Boolean InternalAdminUpdatePermision(String userName, PermissionType permission)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -657,15 +619,7 @@ namespace SDNUOJ.Controllers.Core
                 throw new InvalidRequstException(RequestType.User);
             }
 
-            PermissionType permission = AdminManager.GetPermission(permissions);
-            Boolean success = UserRepository.Instance.UpdateEntityPermision(userName, permission) > 0;
-
-            if (success)
-            {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Set User Permission, Username = \"{0}\", Permission = {1}", userName, ((Int32)permission).ToString()));
-            }
-
-            return success;
+            return UserRepository.Instance.UpdateEntityPermision(userName, permission) > 0;
         }
 
         /// <summary>
@@ -674,7 +628,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="userNames">用户名</param>
         /// <param name="isLocked">是否锁定</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateUserLocked(String userNames, Boolean isLocked)
+        public static IMethodResult AdminUpdateUserIsLocked(String userNames, Boolean isLocked)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -683,17 +637,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (String.IsNullOrEmpty(userNames))
             {
-                throw new InvalidRequstException(RequestType.User);
+                return MethodResult.InvalidRequst(RequestType.User);
             }
 
             Boolean success = UserRepository.Instance.UpdateEntityIsLocked(userNames, isLocked) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin {0} User, Username in ({1})", (isLocked ? "Lock" : "Unlock"), userNames));
+                return MethodResult.FailedAndLog("No user was {0}!", isLocked ? "locked" : "unlocked");
             }
 
-            return success;
+            return MethodResult.SuccessAndLog("Admin {1} user, name = {0}", userNames, isLocked ? "lock" : "unlock");
         }
 
         /// <summary>
@@ -701,7 +655,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="userName">用户名</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateSubmitCount(String userName)
+        public static IMethodResult AdminUpdateSubmitCount(String userName)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -710,12 +664,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsUserName(userName))
             {
-                throw new InvalidRequstException(RequestType.User);
+                return MethodResult.InvalidRequst(RequestType.User);
             }
 
             Boolean success = UserRepository.Instance.UpdateEntitySubmitCount(userName) > 0;
 
-            return success;
+            if (!success)
+            {
+                return MethodResult.FailedAndLog("No user's submit count was recalculated!");
+            }
+
+            return MethodResult.SuccessAndLog("Admin update user's submit count, name = {0}", userName);
         }
 
         /// <summary>
@@ -723,7 +682,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="userName">用户名</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateSolvedCount(String userName)
+        public static IMethodResult AdminUpdateSolvedCount(String userName)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -732,12 +691,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsUserName(userName))
             {
-                throw new InvalidRequstException(RequestType.User);
+                return MethodResult.InvalidRequst(RequestType.User);
             }
 
             Boolean success = UserRepository.Instance.UpdateEntitySolvedCount(userName) > 0;
 
-            return success;
+            if (!success)
+            {
+                return MethodResult.FailedAndLog("No user's solved count was recalculated!");
+            }
+
+            return MethodResult.SuccessAndLog("Admin update user's solved count, name = {0}", userName);
         }
 
         /// <summary>
@@ -769,7 +733,7 @@ namespace SDNUOJ.Controllers.Core
             DateTime regStart = DateTime.MinValue, regEnd = DateTime.MinValue, loginStart = DateTime.MinValue, loginEnd = DateTime.MinValue;
 
             return UserRepository.Instance
-                .GetEntities(SplitHelper.GetOptimizedString(names), nickname, email, school, lastIP,
+                .GetEntities(names.SearchOptimized(), nickname, email, school, lastIP,
                     (!String.IsNullOrEmpty(islocked) ? "1".Equals(islocked, StringComparison.OrdinalIgnoreCase) : new Nullable<Boolean>()),
                     (!String.IsNullOrEmpty(regStartDate) && DateTime.TryParse(regStartDate, out regStart) ? regStart : new Nullable<DateTime>()),
                     (!String.IsNullOrEmpty(regEndDate) && DateTime.TryParse(regEndDate, out regEnd) ? regEnd : new Nullable<DateTime>()),
@@ -859,10 +823,10 @@ namespace SDNUOJ.Controllers.Core
         private static Int32 AdminCountUserList(String names, String nickname, String email, String school, String lastIP, String islocked, String regStartDate, String regEndDate, String loginStartDate, String loginEndDate)
         {
             DateTime regStart = DateTime.MinValue, regEnd = DateTime.MinValue, loginStart = DateTime.MinValue, loginEnd = DateTime.MinValue;
-            names = SplitHelper.GetOptimizedString(names);
+            names = names.SearchOptimized();
 
             return UserRepository.Instance
-                .CountEntities(SplitHelper.GetOptimizedString(names), nickname, email, school, lastIP,
+                .CountEntities(names.SearchOptimized(), nickname, email, school, lastIP,
                     (!String.IsNullOrEmpty(islocked) ? "1".Equals(islocked, StringComparison.OrdinalIgnoreCase) : new Nullable<Boolean>()),
                     (!String.IsNullOrEmpty(regStartDate) && DateTime.TryParse(regStartDate, out regStart) ? regStart : new Nullable<DateTime>()),
                     (!String.IsNullOrEmpty(regEndDate) && DateTime.TryParse(regEndDate, out regEnd) ? regEnd : new Nullable<DateTime>()),

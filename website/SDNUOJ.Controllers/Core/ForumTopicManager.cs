@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Web;
 
 using SDNUOJ.Caching;
 using SDNUOJ.Configuration;
@@ -7,11 +6,9 @@ using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Controllers.Status;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
-using SDNUOJ.Logging;
 using SDNUOJ.Utilities;
 using SDNUOJ.Utilities.Text;
 using SDNUOJ.Utilities.Text.RegularExpressions;
-using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Controllers.Core
 {
@@ -40,8 +37,9 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="cid">竞赛ID</param>
         /// <param name="pid">题目ID</param>
         /// <param name="content">主题帖内容</param>
+        /// <param name="postip">发布者IP</param>
         /// <returns>是否成功发布</returns>
-        public static Boolean InsertForumTopic(ForumTopicEntity topic, String cid, String pid, String content)
+        public static Boolean InsertForumTopic(ForumTopicEntity topic, String cid, String pid, String content, String postip)
         {
             if (!UserManager.IsUserLogined)
             {
@@ -100,7 +98,7 @@ namespace SDNUOJ.Controllers.Core
             topic.Title = HtmlEncoder.HtmlEncode(topic.Title);
             content = HtmlEncoder.HtmlEncode(content);
 
-            Boolean success = ForumTopicRepository.Instance.InsertEntity(topic, content, HttpContext.Current.GetRemoteClientIPv4()) > 0;
+            Boolean success = ForumTopicRepository.Instance.InsertEntity(topic, content, postip) > 0;
 
             if (success)
             {
@@ -207,7 +205,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="ids">主题ID列表</param>
         /// <param name="isHide">是否隐藏</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateForumTopicHideStatus(String ids, Boolean isHide)
+        public static IMethodResult AdminUpdateForumTopicIsHide(String ids, Boolean isHide)
         {
             if (!AdminManager.HasPermission(PermissionType.ForumManage))
             {
@@ -216,27 +214,22 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsNumericIDs(ids))
             {
-                throw new InvalidRequstException(RequestType.ForumTopic);
+                return MethodResult.InvalidRequst(RequestType.ForumTopic);
             }
 
             Boolean success = ForumTopicRepository.Instance.UpdateEntityIsHide(ids, isHide) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin {0} Forum Topic, ID in ({1})", (isHide ? "Hide" : "Unhide"), ids));
-
-                String[] arrids = ids.Split(',');
-
-                for (Int32 i = 0; i < arrids.Length; i++)
-                {
-                    if (String.IsNullOrEmpty(arrids[i])) continue;
-
-                    Int32 id = Convert.ToInt32(arrids[i]);
-                    ForumTopicCache.RemoveForumTopicCache(id);//删除缓存
-                }
+                return MethodResult.FailedAndLog("No forum topic was {0}!", isHide ? "hided" : "unhided");
             }
 
-            return success;
+            ids.ForEachInIDs(',', id =>
+            {
+                ForumTopicCache.RemoveForumTopicCache(id);//删除缓存
+            });
+
+            return MethodResult.SuccessAndLog("Admin {1} forum topic, id = {0}", ids, isHide ? "hide" : "unhide");
         }
 
         /// <summary>
@@ -245,7 +238,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="ids">主题ID列表</param>
         /// <param name="isLock">是否锁定</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateForumTopicLockStatus(String ids, Boolean isLock)
+        public static IMethodResult AdminUpdateForumTopicIsLocked(String ids, Boolean isLocked)
         {
             if (!AdminManager.HasPermission(PermissionType.ForumManage))
             {
@@ -254,27 +247,22 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsNumericIDs(ids))
             {
-                throw new InvalidRequstException(RequestType.ForumTopic);
+                return MethodResult.InvalidRequst(RequestType.ForumTopic);
             }
 
-            Boolean success = ForumTopicRepository.Instance.UpdateEntityIsLocked(ids, isLock) > 0;
+            Boolean success = ForumTopicRepository.Instance.UpdateEntityIsLocked(ids, isLocked) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin {0} Forum Topic, ID in ({1})", (isLock ? "Lock" : "Unlock"), ids));
-
-                String[] arrids = ids.Split(',');
-
-                for (Int32 i = 0; i < arrids.Length; i++)
-                {
-                    if (String.IsNullOrEmpty(arrids[i])) continue;
-
-                    Int32 id = Convert.ToInt32(arrids[i]);
-                    ForumTopicCache.RemoveForumTopicCache(id);//删除缓存
-                }
+                return MethodResult.FailedAndLog("No forum topic was {0}!", isLocked ? "locked" : "unlocked");
             }
 
-            return success;
+            ids.ForEachInIDs(',', id =>
+            {
+                ForumTopicCache.RemoveForumTopicCache(id);//删除缓存
+            });
+
+            return MethodResult.SuccessAndLog("Admin {1} forum topic, id = {0}", ids, isLocked ? "lock" : "unlock");
         }
 
         /// <summary>
@@ -305,7 +293,7 @@ namespace SDNUOJ.Controllers.Core
             Int32 rid = -1;
             DateTime dtStart = DateTime.MinValue, dtEnd = DateTime.MinValue;
 
-            ftids = SplitHelper.GetOptimizedString(ftids);
+            ftids = ftids.SearchOptimized();
 
             if (!String.IsNullOrEmpty(ftids) && !RegexVerify.IsNumericIDs(ftids))
             {
@@ -346,7 +334,7 @@ namespace SDNUOJ.Controllers.Core
             Int32 rid = -1;
             DateTime dtStart = DateTime.MinValue, dtEnd = DateTime.MinValue;
 
-            ftids = SplitHelper.GetOptimizedString(ftids);
+            ftids = ftids.SearchOptimized();
 
             if (!String.IsNullOrEmpty(ftids) && !RegexVerify.IsNumericIDs(ftids))
             {

@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
 
 using SDNUOJ.Caching;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
-using SDNUOJ.Logging;
 using SDNUOJ.Utilities;
-using SDNUOJ.Utilities.Text.RegularExpressions;
 
 namespace SDNUOJ.Controllers.Core
 {
@@ -65,57 +62,64 @@ namespace SDNUOJ.Controllers.Core
         /// <summary>
         /// 增加一条题目类型种类
         /// </summary>
-        /// <param name="model">题目类型种类实体</param>
+        /// <param name="entity">题目类型种类实体</param>
         /// <returns>是否成功增加</returns>
-        public static Boolean AdminInsertProblemCategory(ProblemCategoryEntity model)
+        public static IMethodResult AdminInsertProblemCategory(ProblemCategoryEntity entity)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
                 throw new NoPermissionException();
             }
 
-            if (String.IsNullOrEmpty(model.Title))
+            if (String.IsNullOrEmpty(entity.Title))
             {
-                throw new InvalidInputException("Problem category title cannot be NULL!");
+                return MethodResult.FailedAndLog("Problem category title cannot be NULL!");
             }
 
-            Boolean success = ProblemCategoryRepository.Instance.InsertEntity(model) > 0;
+            Boolean success = ProblemCategoryRepository.Instance.InsertEntity(entity) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Insert Problem Category, Title = \"{0}\"", model.Title));
-                ProblemCategoryCache.RemoveProblemCategoryListCache();//删除缓存
+                return MethodResult.FailedAndLog("No problem category was added!");
             }
 
-            return success;
+            ProblemCategoryCache.RemoveProblemCategoryListCache();//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin add problem category, title = {0}", entity.Title);
         }
 
         /// <summary>
         /// 更新一条题目类型种类
         /// </summary>
-        /// <param name="model">题目类型种类实体</param>
+        /// <param name="entity">题目类型种类实体</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateProblemCategory(ProblemCategoryEntity model)
+        public static IMethodResult AdminUpdateProblemCategory(ProblemCategoryEntity entity)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
                 throw new NoPermissionException();
             }
 
-            if (String.IsNullOrEmpty(model.Title))
+            if (entity.TypeID <= 0)
             {
-                throw new InvalidInputException("Problem category title cannot be NULL!");
+                return MethodResult.InvalidRequst(RequestType.ProblemCategory);
             }
 
-            Boolean success = ProblemCategoryRepository.Instance.UpdateEntity(model) > 0;
-
-            if (success)
+            if (String.IsNullOrEmpty(entity.Title))
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Update Problem Category, ID = {0}", model.TypeID));
-                ProblemCategoryCache.RemoveProblemCategoryListCache();//删除缓存
+                return MethodResult.FailedAndLog("Problem category title cannot be NULL!");
             }
 
-            return success;
+            Boolean success = ProblemCategoryRepository.Instance.UpdateEntity(entity) > 0;
+
+            if (!success)
+            {
+                return MethodResult.FailedAndLog("No problem category was updated!");
+            }
+
+            ProblemCategoryCache.RemoveProblemCategoryListCache();//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin update problem category, id = {0}", entity.TypeID.ToString());
         }
 
         /// <summary>
@@ -123,7 +127,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="id">题目类型种类ID</param>
         /// <returns>是否成功删除</returns>
-        public static Boolean AdminDeleteProblemCategory(Int32 id)
+        public static IMethodResult AdminDeleteProblemCategory(Int32 id)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -132,23 +136,24 @@ namespace SDNUOJ.Controllers.Core
             
             if (id <= 0)
             {
-                throw new InvalidRequstException(RequestType.ProblemCategory);
+                return MethodResult.InvalidRequst(RequestType.ProblemCategory);
             }
 
             if (ProblemCategoryItemRepository.Instance.CountEntities(id) > 0)
             {
-                throw new OperationFailedException("This category still has some problems, please remove these problem from this category first!");
+                return MethodResult.FailedAndLog("This category still has some problems, please remove these problem from this category first!");
             }
 
             Boolean success = ProblemCategoryRepository.Instance.DeleteEntity(id) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Delete Problem Category, ID = {0}", id));
-                ProblemCategoryCache.RemoveProblemCategoryListCache();//删除缓存
+                return MethodResult.FailedAndLog("No problem category was deleted!");
             }
 
-            return success;
+            ProblemCategoryCache.RemoveProblemCategoryListCache();//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin delete problem category, id = {0}", id.ToString());
         }
 
         /// <summary>

@@ -18,14 +18,21 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="userName">评测机ID</param>
         /// <returns>是否成功创建</returns>
-        public static Boolean CreateJudgeAccount(String userName)
+        public static IMethodResult CreateJudgeAccount(String userName)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
                 throw new NoPermissionException();
             }
 
-            return UserManager.AdminUpdatePermision(userName, PermissionType.HttpJudge);
+            Boolean success = UserManager.InternalAdminUpdatePermision(userName, PermissionType.HttpJudge);
+
+            if (!success)
+            {
+                return MethodResult.FailedAndLog("No judger was created!");
+            }
+
+            return MethodResult.SuccessAndLog("Admin create judger, name = {0}", userName);
         }
 
         /// <summary>
@@ -33,14 +40,21 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="userName">评测机ID</param>
         /// <returns>是否成功删除</returns>
-        public static Boolean DeleteJudgeAccount(String userName)
+        public static IMethodResult DeleteJudgeAccount(String userName)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
                 throw new NoPermissionException();
             }
 
-            return UserManager.AdminUpdatePermision(userName, PermissionType.None);
+            Boolean success = UserManager.InternalAdminUpdatePermision(userName, PermissionType.None);
+
+            if (!success)
+            {
+                return MethodResult.FailedAndLog("No judger was deleted!");
+            }
+
+            return MethodResult.SuccessAndLog("Admin delete judger, name = {0}", userName);
         }
 
         /// <summary>

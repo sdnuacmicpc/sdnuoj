@@ -71,10 +71,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Lock(String ids)
         {
-            return ResultToJson(() =>
-            {
-                UserManager.AdminUpdateUserLocked(ids, true);
-            });
+            return ResultToJson(UserManager.AdminUpdateUserIsLocked, ids, true);
         }
 
         /// <summary>
@@ -84,10 +81,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Unlock(String ids)
         {
-            return ResultToJson(() =>
-            {
-                UserManager.AdminUpdateUserLocked(ids, false);
-            });
+            return ResultToJson(UserManager.AdminUpdateUserIsLocked, ids, false);
         }
 
         /// <summary>
@@ -97,11 +91,10 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Recalculate(String id)
         {
-            return ResultToJson(() =>
-            {
-                UserManager.AdminUpdateSolvedCount(id);
-                UserManager.AdminUpdateSubmitCount(id);
-            });
+            return ResultToSuccessJson(
+                UserManager.AdminUpdateSolvedCount, 
+                UserManager.AdminUpdateSubmitCount, 
+                id);
         }
 
         /// <summary>
@@ -134,14 +127,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ChangePassword(FormCollection form)
         {
-            if (UserManager.AdminResetUserPassword(form["username"], form["newpassword"]))
-            {
-                return RedirectToSuccessMessagePage("Your have updated user password successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to update user password!");
-            }
+            return ResultToMessagePage(UserManager.AdminResetUserPassword, form["username"], form["newpassword"], "Your have updated user password successfully!");
         }
 
         /// <summary>
@@ -182,14 +168,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult PermissionEdit(FormCollection form)
         {
-            if (UserManager.AdminUpdatePermision(form["username"], form["permission"]))
-            {
-                return RedirectToSuccessMessagePage("Your have updated user permission successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to update user permission!");
-            }
+            return ResultToMessagePage(UserManager.AdminUpdatePermision, form["username"], form["permission"], "Your have updated user permission successfully!");
         }
     }
 }

@@ -47,14 +47,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Compact(FormCollection form)
         {
-            if (DatabaseManager.AdminCompactDataBase(form["filename"]))
-            {
-                return RedirectToSuccessMessagePage("Your have compacted database successfully!");
-            }
-            else
-            {
-                return RedirectToSuccessMessagePage("Failed to compact database!");
-            }
+            return ResultToMessagePage(DatabaseManager.AdminCompactDataBase, form["filename"], "Your have compacted database successfully!");
         }
 
         /// <summary>
@@ -75,14 +68,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Backup(FormCollection form)
         {
-            if (DatabaseManager.AdminBackupDataBase(form["filename"]))
-            {
-                return RedirectToSuccessMessagePage("Your have backuped database successfully!");
-            }
-            else
-            {
-                return RedirectToSuccessMessagePage("Failed to backup database!");
-            }
+            return ResultToMessagePage(DatabaseManager.AdminBackupDataBase, form["filename"], "Your have backuped database successfully!");
         }
 
         /// <summary>
@@ -106,14 +92,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Restore(FormCollection form)
         {
-            if (DatabaseManager.AdminRestoreDataBase(form["filename"]))
-            {
-                return RedirectToSuccessMessagePage("Your have restored database successfully!");
-            }
-            else
-            {
-                return RedirectToSuccessMessagePage("Failed to restore database!");
-            }
+            return ResultToMessagePage(DatabaseManager.AdminRestoreDataBase, form["filename"], "Your have restored database successfully!");
         }
 
         /// <summary>
@@ -134,16 +113,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Upload(HttpPostedFileBase file)
         {
-            String fileNewName = String.Empty;
-
-            if (DatabaseManager.AdminSaveUploadDataBase(file))
-            {
-                return RedirectToSuccessMessagePage("Your have uploaded database successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to upload database!");
-            }
+            return ResultToMessagePage(DatabaseManager.AdminSaveUploadDataBase, file, "Your have uploaded database successfully!");
         }
 
         /// <summary>
@@ -153,10 +123,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Delete(Int32 id = -1)
         {
-            return ResultToJson(() =>
-            {
-                DatabaseManager.AdminDeleteDataBase(id);
-            });
+            return ResultToJson(DatabaseManager.AdminDeleteDataBase, id);
         }
 
         /// <summary>

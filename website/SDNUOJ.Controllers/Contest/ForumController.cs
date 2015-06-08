@@ -7,6 +7,7 @@ using SDNUOJ.Controllers.Core;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Entity;
 using SDNUOJ.Utilities;
+using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Areas.Contest.Controllers
 {
@@ -55,10 +56,12 @@ namespace SDNUOJ.Areas.Contest.Controllers
             ContestEntity contest = ViewData["Contest"] as ContestEntity;
             ForumTopicEntity topic = new ForumTopicEntity()
             {
-                Title = form["title"]
+                Title = form["title"],
             };
 
-            if (!ForumTopicManager.InsertForumTopic(topic, contest.ContestID.ToString(), String.Empty, form["content"]))
+            String userip = this.GetCurrentUserIP();
+
+            if (!ForumTopicManager.InsertForumTopic(topic, contest.ContestID.ToString(), String.Empty, form["content"], userip))
             {
                 throw new OperationFailedException("Failed to post your topic!");
             }
@@ -115,9 +118,10 @@ namespace SDNUOJ.Areas.Contest.Controllers
                 Content = form["content"]
             };
 
+            String userip = this.GetCurrentUserIP();
             String link = Url.Action("Topic", "Forum", new { area = "Contest", cid = contest.ContestID, id = post.TopicID });
 
-            if (!ForumPostManager.InsertForumPost(reply, topic, post, link))
+            if (!ForumPostManager.InsertForumPost(reply, topic, post, userip, link))
             {
                 throw new OperationFailedException("Failed to post your reply!");
             }

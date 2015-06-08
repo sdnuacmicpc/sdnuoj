@@ -143,12 +143,14 @@
     <Compile Include="Core\Judge\JudgeProblemManager.cs" />
     <Compile Include="Core\Judge\JudgeSolutionManager.cs" />
     <Compile Include="Core\Judge\JudgeStatusManager.cs" />
+    <Compile Include="Core\MethodResult.cs" />
     <Compile Include="Core\NewsManager.cs" />
     <Compile Include="Core\ProblemCategoryItemManager.cs" />
     <Compile Include="Core\ProblemCategoryManager.cs" />
     <Compile Include="Core\ProblemDataManager.cs" />
     <Compile Include="Core\ProblemManager.cs" />
     <Compile Include="Core\RecentContestManager.cs" />
+    <Compile Include="Core\RequestType.cs" />
     <Compile Include="Core\ResourceManager.cs" />
     <Compile Include="Core\SolutionErrorManager.cs" />
     <Compile Include="Core\SolutionManager.cs" />
@@ -164,7 +166,6 @@
     <Compile Include="Exception\NoPermissionException.cs" />
     <Compile Include="Exception\NullResponseException.cs" />
     <Compile Include="Exception\OperationFailedException.cs" />
-    <Compile Include="Exception\RequestType.cs" />
     <Compile Include="Exception\SystemNotOpenException.cs" />
     <Compile Include="Exception\UserException.cs" />
     <Compile Include="Exception\UserUnLoginException.cs" />

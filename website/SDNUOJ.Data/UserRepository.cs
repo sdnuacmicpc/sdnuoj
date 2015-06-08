@@ -174,14 +174,16 @@ namespace SDNUOJ.Data
         /// <summary>
         /// 更新一条数据(只更新最近登陆信息)
         /// </summary>
-        /// <param name="entity">对象实体</param>
+        /// <param name="userName">用户名</param>
+        /// <param name="lastip">最后登录IP</param>
+        /// <param name="lastDate">最后登录时间</param>
         /// <returns>操作影响的记录数</returns>
-        public Int32 UpdateEntityLoginInfomation(UserEntity entity)
+        public Int32 UpdateEntityLoginInfomation(String userName, String lastip, DateTime lastDate)
         {
             return this.Update()
-                .Set(LASTIP, entity.LastIP)
-                .Set(LASTDATE, entity.LastDate)
-                .Where(c => c.Equal(USERNAME, entity.UserName))
+                .Set(LASTIP, lastip)
+                .Set(LASTDATE, lastDate)
+                .Where(c => c.Equal(USERNAME, userName))
                 .Result();
         }
 

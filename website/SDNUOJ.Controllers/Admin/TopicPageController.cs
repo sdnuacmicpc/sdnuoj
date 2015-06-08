@@ -54,14 +54,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 Content = form["content"]
             };
 
-            if (TopicPageManager.AdminInsertTopicPage(entity))
-            {
-                return RedirectToSuccessMessagePage("Your have added topic page successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to add topic page!");
-            }
+            return ResultToMessagePage(TopicPageManager.AdminInsertTopicPage, entity, "Your have added page successfully!");
         }
 
         /// <summary>
@@ -92,14 +85,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 Content = form["content"]
             };
 
-            if (TopicPageManager.AdminUpdateTopicPage(entity, form["oldname"]))
-            {
-                return RedirectToSuccessMessagePage("Your have edited topic page successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to edit topic page!");
-            }
+            return ResultToMessagePage(TopicPageManager.AdminUpdateTopicPage, entity, form["oldname"], "Your have edited page successfully!");
         }
 
         /// <summary>
@@ -109,10 +95,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Hide(String id)
         {
-            return ResultToJson(() =>
-            {
-                TopicPageManager.AdminUpdateTopicPageIsHide(id, true);
-            });
+            return ResultToJson(TopicPageManager.AdminUpdateTopicPageIsHide, id, true);
         }
 
         /// <summary>
@@ -122,10 +105,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Show(String id)
         {
-            return ResultToJson(() =>
-            {
-                TopicPageManager.AdminUpdateTopicPageIsHide(id, false);
-            });
+            return ResultToJson(TopicPageManager.AdminUpdateTopicPageIsHide, id, false);
         }
 
         /// <summary>
@@ -135,10 +115,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Delete(String id)
         {
-            return ResultToJson(() =>
-            {
-                TopicPageManager.AdminDeleteTopicPages(id);
-            });
+            return ResultToJson(TopicPageManager.AdminDeleteTopicPages, id);
         }
     }
 }

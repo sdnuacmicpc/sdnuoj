@@ -6,10 +6,8 @@ using System.Web;
 using SDNUOJ.Configuration;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Entity;
-using SDNUOJ.Logging;
 using SDNUOJ.Utilities;
 using SDNUOJ.Utilities.Security;
-using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Controllers.Core
 {
@@ -27,9 +25,8 @@ namespace SDNUOJ.Controllers.Core
         /// 保存单个文件到磁盘
         /// </summary>
         /// <param name="file">上传的文件</param>
-        /// <param name="fileNewName">文件新名称</param>
         /// <returns>是否保存成功</returns>
-        public static Boolean AdminSaveUploadFile(HttpPostedFileBase file, out String fileNewName)
+        public static IMethodResult AdminSaveUploadFile(HttpPostedFileBase file)
         {
             if (!AdminManager.HasPermission(PermissionType.Administrator))
             {
@@ -38,39 +35,37 @@ namespace SDNUOJ.Controllers.Core
 
             if (file == null)
             {
-                throw new InvalidInputException("No file uploaded");
+                return MethodResult.FailedAndLog("No file was uploaded!");
             }
 
             if (String.IsNullOrEmpty(file.FileName))
             {
-                throw new InvalidInputException("Filename can not be NULL!");
+                return MethodResult.FailedAndLog("Filename can not be NULL!");
             }
             
             FileInfo fi = new FileInfo(file.FileName);
 
             if (!UploadsManager.CheckFileExtension(fi.Extension, ALLOW_EXTENSTIONS))
             {
-                throw new InvalidInputException("Filename is INVALID!");
+                return MethodResult.FailedAndLog("Filename is INVALID!");
             }
 
             if (file.ContentLength <= 0)
             {
-                throw new InvalidInputException("You can not upload empty file!");
+                return MethodResult.FailedAndLog("You can not upload empty file!");
             }
 
-            fileNewName = MD5Encrypt.EncryptToHexString(fi.Name + DateTime.Now.ToString("yyyyMMddHHmmssffff"), true) + fi.Extension;
+            String fileNewName = MD5Encrypt.EncryptToHexString(fi.Name + DateTime.Now.ToString("yyyyMMddHHmmssffff"), true) + fi.Extension;
             String savePath = Path.Combine(ConfigurationManager.UploadDirectoryPath, fileNewName);
 
             if (File.Exists(savePath))
             {
-                throw new InvalidInputException("Filename exists!");
+                return MethodResult.FailedAndLog("Filename exists!");
             }
 
             file.SaveAs(savePath);
 
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Upload File, Filename = \"{0}\"", fi.Name));
-
-            return true;
+            return MethodResult.SuccessAndLog<String>(fileNewName, "Admin upload file, name = {0}, origin = {1}", fileNewName, fi.Name);
         }
 
         /// <summary>
@@ -107,8 +102,6 @@ namespace SDNUOJ.Controllers.Core
 
             File.WriteAllBytes(savePath, fileContent);
 
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Upload File, Filename = \"{0}\"", fi.Name));
-
             return true;
         }
 
@@ -117,7 +110,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="fileName">文件名</param>
         /// <returns>是否删除成功</returns>
-        public static Boolean AdminDeleteUploadFile(String fileName)
+        public static IMethodResult AdminDeleteUploadFile(String fileName)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -128,14 +121,12 @@ namespace SDNUOJ.Controllers.Core
 
             if (!File.Exists(filePath))
             {
-                throw new InvalidInputException("File does not exist!");
+                return MethodResult.FailedAndLog("File does not exist!");
             }
 
             File.Delete(filePath);
 
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Delete File, Filename = \"{0}\"", fileName));
-
-            return true;
+            return MethodResult.SuccessAndLog("Admin delete upload file, name = {0}", fileName);
         }
 
         /// <summary>

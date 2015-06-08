@@ -81,9 +81,11 @@ namespace SDNUOJ.Controllers
             {
                 Title = form["title"]
             };
-            String pid = form["pid"];
 
-            if (!ForumTopicManager.InsertForumTopic(topic, String.Empty, pid, form["content"]))
+            String pid = form["pid"];
+            String userip = this.GetCurrentUserIP();
+
+            if (!ForumTopicManager.InsertForumTopic(topic, String.Empty, pid, form["content"], userip))
             {
                 throw new OperationFailedException("Failed to post your topic!");
             }
@@ -150,9 +152,10 @@ namespace SDNUOJ.Controllers
                 Content = form["content"]
             };
 
+            String userip = this.GetCurrentUserIP();
             String link = Url.Action("Reply", "Forum", new { id = post.PostID });
 
-            if (!ForumPostManager.InsertForumPost(reply, topic, post, link))
+            if (!ForumPostManager.InsertForumPost(reply, topic, post, userip, link))
             {
                 throw new OperationFailedException("Failed to post your reply!");
             }

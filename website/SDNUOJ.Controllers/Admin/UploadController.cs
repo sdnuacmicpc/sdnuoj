@@ -49,18 +49,20 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult New(HttpPostedFileBase file)
         {
-            String fileNewName = String.Empty;
-
-            if (UploadsManager.AdminSaveUploadFile(file, out fileNewName))
+            return ResultToMessagePage(() => 
             {
-                String fileUrl = UploadsManager.AdminPreviewUploadFileUrl(fileNewName);
+                IMethodResult result = UploadsManager.AdminSaveUploadFile(file);
 
-                return RedirectToSuccessMessagePage(String.Format("Your have uploaded file successfully!<br/>Your file url:<a href=\"{0}\" target=\"_blank\">{0}</a>", fileUrl));
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to upload file!");
-            }
+                if (!result.IsSuccess)
+                {
+                    return new Tuple<IMethodResult, String>(result, String.Empty);
+                }
+
+                String fileUrl = UploadsManager.AdminPreviewUploadFileUrl(result.ResultObject.ToString());
+                String successInfo = String.Format("Your have uploaded file successfully!<br/>Your file url:<a href=\"{0}\" target=\"_blank\">{0}</a>", fileUrl);
+
+                return new Tuple<IMethodResult, String>(result, successInfo);
+            });
         }
 
         /// <summary>
@@ -70,10 +72,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Delete(String name)
         {
-            return ResultToJson(() =>
-            {
-                UploadsManager.AdminDeleteUploadFile(name);
-            });
+            return ResultToJson(UploadsManager.AdminDeleteUploadFile, name);
         }
     }
 }

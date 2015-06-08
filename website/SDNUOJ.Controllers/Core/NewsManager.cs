@@ -6,7 +6,6 @@ using SDNUOJ.Caching;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
-using SDNUOJ.Logging;
 using SDNUOJ.Utilities;
 using SDNUOJ.Utilities.Text.RegularExpressions;
 
@@ -130,77 +129,79 @@ namespace SDNUOJ.Controllers.Core
         /// <summary>
         /// 增加一条公告
         /// </summary>
-        /// <param name="model">对象实体</param>
+        /// <param name="entity">对象实体</param>
         /// <returns>是否成功增加</returns>
-        public static Boolean AdminInsertNews(NewsEntity model)
+        public static IMethodResult AdminInsertNews(NewsEntity entity)
         {
             if (!AdminManager.HasPermission(PermissionType.NewsManage))
             {
                 throw new NoPermissionException();
             }
 
-            if (String.IsNullOrEmpty(model.Title))
+            if (String.IsNullOrEmpty(entity.Title))
             {
-                throw new InvalidInputException("News title can not be NULL!");
+                return MethodResult.FailedAndLog("News title can not be NULL!");
             }
 
-            if (String.IsNullOrEmpty(model.Description))
+            if (String.IsNullOrEmpty(entity.Description))
             {
-                throw new InvalidInputException("News content can not be NULL!");
+                return MethodResult.FailedAndLog("News content can not be NULL!");
             }
 
-            model.PublishDate = DateTime.Now;
-            Boolean success = NewsRepository.Instance.InsertEntity(model) > 0;
+            entity.PublishDate = DateTime.Now;
 
-            if (success)
+            Boolean success = NewsRepository.Instance.InsertEntity(entity) > 0;
+
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Insert News, Title = \"{0}\"", model.Title));
-
-                NewsCache.RemoveLastestNewsListCache();//删除缓存
-                NewsCache.RemoveNewsCountCache();//删除缓存
+                return MethodResult.FailedAndLog("No news was added!");
             }
 
-            return success;
+            NewsCache.RemoveLastestNewsListCache();//删除缓存
+            NewsCache.RemoveNewsCountCache();//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin add news, title = {0}", entity.Title);
         }
 
         /// <summary>
         /// 更新一条公告
         /// </summary>
-        /// <param name="model">对象实体</param>
+        /// <param name="entity">对象实体</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateNews(NewsEntity model)
+        public static IMethodResult AdminUpdateNews(NewsEntity entity)
         {
             if (!AdminManager.HasPermission(PermissionType.NewsManage))
             {
                 throw new NoPermissionException();
             }
 
-            if (String.IsNullOrEmpty(model.Title))
+            if (String.IsNullOrEmpty(entity.Title))
             {
-                throw new InvalidInputException("News title can not be NULL!");
+                return MethodResult.FailedAndLog("News title can not be NULL!");
             }
 
-            if (String.IsNullOrEmpty(model.Description))
+            if (String.IsNullOrEmpty(entity.Description))
             {
-                throw new InvalidInputException("News content can not be NULL!");
+                return MethodResult.FailedAndLog("News content can not be NULL!");
             }
 
-            model.PublishDate = DateTime.Now;
+            entity.PublishDate = DateTime.Now;
 
-            Boolean success = NewsRepository.Instance.UpdateEntity(model) > 0;
+            Boolean success = NewsRepository.Instance.UpdateEntity(entity) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Update News, ID = {0}", model.AnnounceID));
-                NewsCache.SetNewsCache(model);//更新缓存
-
-                if (model.AnnounceID != NewsRepository.DEFAULTID)
-                {
-                    NewsCache.RemoveLastestNewsListCache();//删除缓存
-                }
+                return MethodResult.FailedAndLog("No news was updated!");
             }
 
-            return success;
+            NewsCache.SetNewsCache(entity);//更新缓存
+
+            if (entity.AnnounceID != NewsRepository.DEFAULTID)
+            {
+                NewsCache.RemoveLastestNewsListCache();//删除缓存
+            }
+
+            return MethodResult.SuccessAndLog("Admin update news, id = {0}", entity.AnnounceID.ToString());
         }
 
         /// <summary>
@@ -208,7 +209,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="ids">逗号分隔的公告ID</param>
         /// <returns>是否成功删除</returns>
-        public static Boolean AdminDeleteNews(String ids)
+        public static IMethodResult AdminDeleteNews(String ids)
         {
             if (!AdminManager.HasPermission(PermissionType.NewsManage))
             {
@@ -217,7 +218,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsNumericIDs(ids))
             {
-                throw new InvalidRequstException(RequestType.News);
+                return MethodResult.InvalidRequst(RequestType.News);
             }
 
             String[] arrids = ids.Split(',');
@@ -227,29 +228,25 @@ namespace SDNUOJ.Controllers.Core
             {
                 if (String.Equals(arrids[i], defaultID))
                 {
-                    throw new InvalidInputException("Can not delete the default news!");
+                    return MethodResult.FailedAndLog("Can not delete the default news!");
                 }
             }
 
             Boolean success = NewsRepository.Instance.DeleteEntities(ids) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Delete News, IDs in ({0})", ids));
-
-                for (Int32 i = 0; i < arrids.Length; i++)
-                {
-                    if (String.IsNullOrEmpty(arrids[i])) continue;
-
-                    Int32 id = Convert.ToInt32(arrids[i]);
-                    NewsCache.RemoveNewsCache(id);//删除缓存
-                }
-
-                NewsCache.RemoveLastestNewsListCache();//删除缓存
-                NewsCache.RemoveNewsCountCache();//删除缓存
+                return MethodResult.FailedAndLog("No news was deleted!");
             }
 
-            return success;
+            ids.ForEachInIDs(',', id => 
+            {
+                NewsCache.RemoveNewsCache(id);//删除缓存
+            });
+            NewsCache.RemoveLastestNewsListCache();//删除缓存
+            NewsCache.RemoveNewsCountCache();//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin delete news, id = {0}", ids);
         }
 
         /// <summary>

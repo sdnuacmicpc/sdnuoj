@@ -9,7 +9,6 @@ using SDNUOJ.Controllers.Core.Exchange;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
-using SDNUOJ.Logging;
 using SDNUOJ.Utilities;
 using SDNUOJ.Utilities.Security;
 using SDNUOJ.Utilities.Text;
@@ -186,7 +185,7 @@ namespace SDNUOJ.Controllers.Core
             }
             else if (String.Equals(type, "pid", StringComparison.OrdinalIgnoreCase))
             {
-                content = SplitHelper.GetOptimizedString(content);
+                content = content.SearchOptimized();
 
                 if (!RegexVerify.IsNumericIDs(content))
                 {
@@ -302,135 +301,140 @@ namespace SDNUOJ.Controllers.Core
         /// <summary>
         /// 增加一条题目
         /// </summary>
-        /// <param name="model">题目实体</param>
+        /// <param name="entity">题目实体</param>
         /// <returns>是否成功增加</returns>
-        public static Boolean AdminInsertProblem(ProblemEntity model)
+        public static IMethodResult AdminInsertProblem(ProblemEntity entity)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
                 throw new NoPermissionException();
             }
 
-            if (String.IsNullOrEmpty(model.Title))
+            if (String.IsNullOrEmpty(entity.Title))
             {
-                throw new InvalidInputException("Problem title cannot be NULL!");
+                return MethodResult.FailedAndLog("Problem title cannot be NULL!");
             }
 
-            if (String.IsNullOrEmpty(model.Description))
+            if (String.IsNullOrEmpty(entity.Description))
             {
-                throw new InvalidInputException("Problem description cannot be NULL!");
+                return MethodResult.FailedAndLog("Problem description cannot be NULL!");
             }
 
-            if (String.IsNullOrEmpty(model.Input))
+            if (String.IsNullOrEmpty(entity.Input))
             {
-                throw new InvalidInputException("Problem input cannot be NULL!");
+                return MethodResult.FailedAndLog("Problem input cannot be NULL!");
             }
 
-            if (String.IsNullOrEmpty(model.Output))
+            if (String.IsNullOrEmpty(entity.Output))
             {
-                throw new InvalidInputException("Problem output cannot be NULL!");
+                return MethodResult.FailedAndLog("Problem output cannot be NULL!");
             }
 
-            if (String.IsNullOrEmpty(model.SampleInput))
+            if (String.IsNullOrEmpty(entity.SampleInput))
             {
-                throw new InvalidInputException("Problem sample input cannot be NULL!");
+                return MethodResult.FailedAndLog("Problem sample input cannot be NULL!");
             }
 
-            if (String.IsNullOrEmpty(model.SampleOutput))
+            if (String.IsNullOrEmpty(entity.SampleOutput))
             {
-                throw new InvalidInputException("Problem sample output cannot be NULL!");
+                return MethodResult.FailedAndLog("Problem sample output cannot be NULL!");
             }
 
-            if (model.TimeLimit <= 0)
+            if (entity.TimeLimit <= 0)
             {
-                throw new InvalidInputException("Time limit must not be less or equal than zero!");
+                return MethodResult.FailedAndLog("Time limit must not be less or equal than zero!");
             }
 
-            if (model.MemoryLimit <= 0)
+            if (entity.MemoryLimit <= 0)
             {
-                throw new InvalidInputException("Memory limit must not be less or equal than zero!");
+                return MethodResult.FailedAndLog("Memory limit must not be less or equal than zero!");
             }
 
-            model.IsHide = true;
-            model.LastDate = DateTime.Now;
-            Boolean success = ProblemRepository.Instance.InsertEntity(model) > 0;
+            entity.IsHide = true;
+            entity.LastDate = DateTime.Now;
+            Boolean success = ProblemRepository.Instance.InsertEntity(entity) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Insert Problem, Title = \"{0}\"", model.Title));
-
-                ProblemCache.IncreaseProblemSetCountCache();//更新缓存
-                ProblemCache.IncreaseProblemIDMaxCache();//更新缓存
-                ProblemCache.RemoveProblemSetCache(GetProblemPageIndex(model.ProblemID));//删除缓存
+                return MethodResult.FailedAndLog("No problem was added!");
             }
 
-            return success;
+            ProblemCache.IncreaseProblemSetCountCache();//更新缓存
+            ProblemCache.IncreaseProblemIDMaxCache();//更新缓存
+            ProblemCache.RemoveProblemSetCache(GetProblemPageIndex(entity.ProblemID));//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin add problem, title = {0}", entity.Title);
         }
 
         /// <summary>
         /// 更新题目信息
         /// </summary>
-        /// <param name="model">对象实体</param>
+        /// <param name="entity">对象实体</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateProblem(ProblemEntity model)
+        public static IMethodResult AdminUpdateProblem(ProblemEntity entity)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
                 throw new NoPermissionException();
             }
 
-            if (String.IsNullOrEmpty(model.Title))
+            if (entity.ProblemID < ConfigurationManager.ProblemSetStartID)
             {
-                throw new InvalidInputException("Problem title cannot be NULL!");
+                return MethodResult.InvalidRequst(RequestType.Problem);
             }
 
-            if (String.IsNullOrEmpty(model.Description))
+            if (String.IsNullOrEmpty(entity.Title))
             {
-                throw new InvalidInputException("Problem description cannot be NULL!");
+                return MethodResult.FailedAndLog("Problem title cannot be NULL!");
             }
 
-            if (String.IsNullOrEmpty(model.Input))
+            if (String.IsNullOrEmpty(entity.Description))
             {
-                throw new InvalidInputException("Problem input cannot be NULL!");
+                return MethodResult.FailedAndLog("Problem description cannot be NULL!");
             }
 
-            if (String.IsNullOrEmpty(model.Output))
+            if (String.IsNullOrEmpty(entity.Input))
             {
-                throw new InvalidInputException("Problem output cannot be NULL!");
+                return MethodResult.FailedAndLog("Problem input cannot be NULL!");
             }
 
-            if (String.IsNullOrEmpty(model.SampleInput))
+            if (String.IsNullOrEmpty(entity.Output))
             {
-                throw new InvalidInputException("Problem sample input cannot be NULL!");
+                return MethodResult.FailedAndLog("Problem output cannot be NULL!");
             }
 
-            if (String.IsNullOrEmpty(model.SampleOutput))
+            if (String.IsNullOrEmpty(entity.SampleInput))
             {
-                throw new InvalidInputException("Problem sample output cannot be NULL!");
+                return MethodResult.FailedAndLog("Problem sample input cannot be NULL!");
             }
 
-            if (model.TimeLimit <= 0)
+            if (String.IsNullOrEmpty(entity.SampleOutput))
             {
-                throw new InvalidInputException("Time limit must not be less or equal than zero!");
+                return MethodResult.FailedAndLog("Problem sample output cannot be NULL!");
             }
 
-            if (model.MemoryLimit <= 0)
+            if (entity.TimeLimit <= 0)
             {
-                throw new InvalidInputException("Memory limit must not be less or equal than zero!");
+                return MethodResult.FailedAndLog("Time limit must not be less or equal than zero!");
             }
 
-            model.LastDate = DateTime.Now;
-            Boolean success = ProblemRepository.Instance.UpdateEntity(model) > 0;
-
-            if (success)
+            if (entity.MemoryLimit <= 0)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Update Problem, ID = {0}", model.ProblemID));
-
-                ProblemCache.RemoveProblemCache(model.ProblemID);//删除缓存
-                ProblemCache.RemoveProblemSetCache(GetProblemPageIndex(model.ProblemID));
+                return MethodResult.FailedAndLog("Memory limit must not be less or equal than zero!");
             }
 
-            return success;
+            entity.LastDate = DateTime.Now;
+            Boolean success = ProblemRepository.Instance.UpdateEntity(entity) > 0;
+
+            if (!success)
+            {
+                return MethodResult.FailedAndLog("No problem was updated!");
+            }
+
+            ProblemCache.RemoveProblemCache(entity.ProblemID);//删除缓存
+            ProblemCache.RemoveProblemSetCache(GetProblemPageIndex(entity.ProblemID));
+
+            return MethodResult.SuccessAndLog("Admin update problem, id = {0}", entity.ProblemID.ToString());
         }
 
         /// <summary>
@@ -442,7 +446,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="content">文件内容</param>
         /// <param name="file">上传文件</param>
         /// <returns>题目数据是否插入成功集合（全部失败时为null）</returns>
-        public static Dictionary<Int32, Boolean> AdminImportProblem(HttpRequestBase request, String fileType, String uploadType, String content, HttpPostedFileBase file)
+        public static IMethodResult AdminImportProblem(HttpRequestBase request, String fileType, String uploadType, String content, HttpPostedFileBase file)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -451,14 +455,14 @@ namespace SDNUOJ.Controllers.Core
 
             if (!String.Equals("1", fileType))
             {
-                throw new InvalidInputException("File type is INVALID!");
+                return MethodResult.FailedAndLog("File type is INVALID!");
             }
 
             if (String.Equals("1", uploadType))//从文件上传
             {
                 if (file == null)
                 {
-                    throw new InvalidInputException("No file is uploaded!");
+                    return MethodResult.FailedAndLog("No file was uploaded!");
                 }
 
                 StreamReader sr = new StreamReader(file.InputStream);
@@ -472,9 +476,14 @@ namespace SDNUOJ.Controllers.Core
             List<Dictionary<String, Byte[]>> images = null;
             Dictionary<String, Byte[]> imagefiles = new Dictionary<String, Byte[]>();
 
-            if (!ProblemImport.TryImportFreeProblemSet(content, out problems, out datas, out images) || problems == null || problems.Count < 1)
+            if (!ProblemImport.TryImportFreeProblemSet(content, out problems, out datas, out images))
             {
-                throw new InvalidInputException("File content is INVALID!");
+                return MethodResult.FailedAndLog("File content is INVALID!");
+            }
+
+            if (problems == null || problems.Count == 0)
+            {
+                return MethodResult.FailedAndLog("No problem was imported!");
             }
 
             //处理题目及图片路径
@@ -515,7 +524,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (pids == null || pids.Count == 0)
             {
-                return null;
+                return MethodResult.FailedAndLog("Failed to import problem!");
             }
 
             //保存题目数据
@@ -528,13 +537,11 @@ namespace SDNUOJ.Controllers.Core
                     continue;
                 }
 
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Import Problem, Problem ID = {0}, Title = \"{1}\"", pids[i], problems[i].Title));
-
                 try
                 {
                     if (datas[i] != null)
                     {
-                        ProblemDataManager.AdminSaveProblemData(pids[i], datas[i]);
+                        ProblemDataManager.InternalAdminSaveProblemData(pids[i], datas[i]);
                         dataadded[pids[i]] = true;
                     }
                 }
@@ -558,7 +565,7 @@ namespace SDNUOJ.Controllers.Core
                 catch { }
             }
 
-            return dataadded;
+            return MethodResult.SuccessAndLog<Dictionary<Int32, Boolean>>(dataadded, "Admin import problem, id = {0}", String.Join(",", pids));
         }
 
         /// <summary>
@@ -567,7 +574,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="ids">题目ID列表</param>
         /// <param name="isHide">隐藏状态</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateProblemIsHide(String ids, Boolean isHide)
+        public static IMethodResult AdminUpdateProblemIsHide(String ids, Boolean isHide)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -576,28 +583,23 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsNumericIDs(ids))
             {
-                throw new InvalidRequstException(RequestType.Problem);
+                return MethodResult.InvalidRequst(RequestType.Problem);
             }
 
             Boolean success = ProblemRepository.Instance.UpdateEntityIsHide(ids, isHide) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin {0} Problem, ID in ({1})", (isHide ? "Hide" : "Unhide"), ids));
-
-                String[] arrids = ids.Split(',');
-
-                for (Int32 i = 0; i < arrids.Length; i++)
-                {
-                    if (String.IsNullOrEmpty(arrids[i])) continue;
-
-                    Int32 id = Convert.ToInt32(arrids[i]);
-                    ProblemCache.RemoveProblemCache(id);//删除缓存
-                    ProblemCache.RemoveProblemSetCache(GetProblemPageIndex(id));//删除缓存
-                }
+                return MethodResult.FailedAndLog("No problem was {0}!", isHide ? "hided" : "unhided");
             }
 
-            return success;
+            ids.ForEachInIDs(',', id => 
+            {
+                ProblemCache.RemoveProblemCache(id);//删除缓存
+                ProblemCache.RemoveProblemSetCache(GetProblemPageIndex(id));//删除缓存
+            });
+
+            return MethodResult.SuccessAndLog("Admin {1} problem, id = {0}", ids, isHide ? "hide" : "unhide");
         }
 
         /// <summary>
@@ -605,7 +607,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="problemID">题目ID</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateProblemSubmitCount(Int32 problemID)
+        public static IMethodResult AdminUpdateProblemSubmitCount(Int32 problemID)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -614,18 +616,20 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                throw new InvalidRequstException(RequestType.Problem);
+                return MethodResult.InvalidRequst(RequestType.Problem);
             }
 
             Boolean success = ProblemRepository.Instance.UpdateEntitySubmitCount(problemID) > 0;
 
-            if (success)
+            if (!success)
             {
-                ProblemCache.RemoveProblemCache(problemID);//删除缓存
-                ProblemCache.RemoveProblemSetCache(GetProblemPageIndex(problemID));//删除缓存
+                return MethodResult.FailedAndLog("No problem's submit count was recalculated!");
             }
 
-            return success;
+            ProblemCache.RemoveProblemCache(problemID);//删除缓存
+            ProblemCache.RemoveProblemSetCache(GetProblemPageIndex(problemID));//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin update problem's submit count, id = {0}", problemID.ToString());
         }
 
         /// <summary>
@@ -633,7 +637,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="problemID">题目ID</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateProblemSolvedCount(Int32 problemID)
+        public static IMethodResult AdminUpdateProblemSolvedCount(Int32 problemID)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -642,18 +646,20 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                throw new InvalidRequstException(RequestType.Problem);
+                return MethodResult.InvalidRequst(RequestType.Problem);
             }
 
             Boolean success = ProblemRepository.Instance.UpdateEntitySolvedCount(problemID) > 0;
 
-            if (success)
+            if (!success)
             {
-                ProblemCache.RemoveProblemCache(problemID);//删除缓存
-                ProblemCache.RemoveProblemSetCache(GetProblemPageIndex(problemID));//删除缓存
+                return MethodResult.FailedAndLog("No problem's solved count was recalculated!");
             }
 
-            return success;
+            ProblemCache.RemoveProblemCache(problemID);//删除缓存
+            ProblemCache.RemoveProblemSetCache(GetProblemPageIndex(problemID));//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin update problem's solved count, id = {0}", problemID.ToString());
         }
 
         /// <summary>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SDNUOJ.Controllers.Exception
+namespace SDNUOJ.Controllers.Core
 {
     /// <summary>
     /// 请求项目类型

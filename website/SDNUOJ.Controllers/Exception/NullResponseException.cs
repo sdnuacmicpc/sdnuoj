@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
+using SDNUOJ.Controllers.Core;
+
 namespace SDNUOJ.Controllers.Exception
 {
     /// <summary>

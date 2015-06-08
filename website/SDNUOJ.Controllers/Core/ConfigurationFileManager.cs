@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Web;
 
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Configuration;
 using SDNUOJ.Entity;
-using SDNUOJ.Logging;
 
 namespace SDNUOJ.Controllers.Core
 {
@@ -36,16 +34,19 @@ namespace SDNUOJ.Controllers.Core
         /// 保存配置到配置文件
         /// </summary>
         /// <param name="col">配置信息</param>
-        public static void SaveToConfig(NameValueCollection col)
+        public static IMethodResult SaveToConfig(NameValueCollection col)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
                 throw new NoPermissionException();
             }
 
-            LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Update Web.Config"));
+            if (!ConfigurationManager.SaveToConfig(col))
+            {
+                return MethodResult.FailedAndLog("The configuration has not been modified!");
+            }
 
-            ConfigurationManager.SaveToConfig(col);
+            return MethodResult.SuccessAndLog("Admin update web.config");
         }
     }
 }

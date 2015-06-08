@@ -565,7 +565,8 @@ namespace SDNUOJ.Configuration
         /// 保存配置到配置文件
         /// </summary>
         /// <param name="col">配置信息</param>
-        public static void SaveToConfig(NameValueCollection col)
+        /// <returns>是否保存成功</returns>
+        public static Boolean SaveToConfig(NameValueCollection col)
         {
             System.Configuration.Configuration config = WebConfigurationManager.OpenWebConfiguration(HttpRuntime.AppDomainAppVirtualPath);
             Boolean isChanged = false;
@@ -583,6 +584,12 @@ namespace SDNUOJ.Configuration
             {
                 config.Save();
                 ConfigurationManager.InitConfig();
+
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
         #endregion

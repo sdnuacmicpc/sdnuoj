@@ -14,9 +14,10 @@ namespace SDNUOJ.Controllers.Core.Judge
         /// </summary>
         /// <param name="serverID">评测机ID</param>
         /// <param name="secretKey">评测机密钥</param>
+        /// <param name="userip">用户IP</param>
         /// <param name="error">错误信息</param>
         /// <returns>是否登录成功</returns>
-        public static Boolean TryJudgeServerLogin(String serverID, String secretKey, out String error)
+        public static Boolean TryJudgeServerLogin(String serverID, String secretKey, String userip, out String error)
         {
             if (!ConfigurationManager.EnableJudgerInterface)
             {
@@ -40,7 +41,7 @@ namespace SDNUOJ.Controllers.Core.Judge
 
             try
             {
-                UserManager.UpdateLoginInfomation(user);
+                UserManager.UpdateLoginInfomation(serverID, userip);
                 UserCurrentStatus.SetCurrentUserStatus(user);
                 JudgeOnlineStatus.SetJudgeStatus(serverID);
             }

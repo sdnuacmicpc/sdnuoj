@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
 
 using SDNUOJ.Caching;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
-using SDNUOJ.Logging;
 using SDNUOJ.Utilities;
 
 namespace SDNUOJ.Controllers.Core
@@ -93,7 +91,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="entity">对象实体</param>
         /// <returns>是否成功增加</returns>
-        public static Boolean AdminInsertResource(ResourceEntity entity)
+        public static IMethodResult AdminInsertResource(ResourceEntity entity)
         {
             if (!AdminManager.HasPermission(PermissionType.ResourceManage))
             {
@@ -102,28 +100,29 @@ namespace SDNUOJ.Controllers.Core
 
             if (String.IsNullOrEmpty(entity.Title))
             {
-                throw new InvalidInputException("Resource title can not be NULL!");
+                return MethodResult.FailedAndLog("Resource title can not be NULL!");
             }
 
             if (String.IsNullOrEmpty(entity.Url))
             {
-                throw new InvalidInputException("Resource url can not be NULL!");
+                return MethodResult.FailedAndLog("Resource url can not be NULL!");
             }
 
             if (String.IsNullOrEmpty(entity.Type))
             {
-                throw new InvalidInputException("Resource type can not be NULL!");
+                return MethodResult.FailedAndLog("Resource type can not be NULL!");
             }
 
             Boolean success = ResourceRepository.Instance.InsertEntity(entity) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Insert Resource, Title = \"{0}\"", entity.Title));
-                ResourceCache.RemoveResourceListCache();//删除缓存
+                return MethodResult.FailedAndLog("No resource was added!");
             }
 
-            return success;
+            ResourceCache.RemoveResourceListCache();//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin add resource, title = {0}", entity.Title);
         }
 
         /// <summary>
@@ -131,7 +130,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="entity">对象实体</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateResource(ResourceEntity entity)
+        public static IMethodResult AdminUpdateResource(ResourceEntity entity)
         {
             if (!AdminManager.HasPermission(PermissionType.ResourceManage))
             {
@@ -140,28 +139,29 @@ namespace SDNUOJ.Controllers.Core
 
             if (String.IsNullOrEmpty(entity.Title))
             {
-                throw new InvalidInputException("Resource title can not be NULL!");
+                return MethodResult.FailedAndLog("Resource title can not be NULL!");
             }
 
             if (String.IsNullOrEmpty(entity.Url))
             {
-                throw new InvalidInputException("Resource url can not be NULL!");
+                return MethodResult.FailedAndLog("Resource url can not be NULL!");
             }
 
             if (String.IsNullOrEmpty(entity.Type))
             {
-                throw new InvalidInputException("Resource type can not be NULL!");
+                return MethodResult.FailedAndLog("Resource type can not be NULL!");
             }
 
             Boolean success = ResourceRepository.Instance.UpdateEntity(entity) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Update Resource, ID = {0}", entity.ResourceID));
-                ResourceCache.RemoveResourceListCache();//删除缓存
+                return MethodResult.FailedAndLog("No resource was updated!");
             }
 
-            return success;
+            ResourceCache.RemoveResourceListCache();//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin update resource, id = {0}", entity.ResourceID.ToString());
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="ids">逗号分隔的实体ID</param>
         /// <returns>是否成功删除</returns>
-        public static Boolean AdminDeleteResources(String ids)
+        public static IMethodResult AdminDeleteResources(String ids)
         {
             if (!AdminManager.HasPermission(PermissionType.ResourceManage))
             {
@@ -178,13 +178,14 @@ namespace SDNUOJ.Controllers.Core
 
             Boolean success = ResourceRepository.Instance.DeleteEntities(ids) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin Delete Resource, IDs in ({0})", ids));
-                ResourceCache.RemoveResourceListCache();//删除缓存
+                return MethodResult.FailedAndLog("No resource was deleted!");
             }
 
-            return success;
+            ResourceCache.RemoveResourceListCache();//删除缓存
+
+            return MethodResult.SuccessAndLog("Admin delete resource, id = {0}", ids);
         }
 
         /// <summary>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
 
 using SDNUOJ.Caching;
 using SDNUOJ.Configuration;
@@ -8,11 +7,9 @@ using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Controllers.Status;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
-using SDNUOJ.Logging;
 using SDNUOJ.Utilities;
 using SDNUOJ.Utilities.Text;
 using SDNUOJ.Utilities.Text.RegularExpressions;
-using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Controllers.Core
 {
@@ -31,10 +28,11 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="post">帖子实体</param>
         /// <param name="topic">主题实体</param>
-        /// <param name="partentPost">回复的帖子实体</param>
-        /// <param name="url">当前页面地址</param>
+        /// <param name="parentPost">回复的帖子实体</param>
+        /// <param name="postip">发布者IP</param>
+        /// <param name="link">当前页面地址</param>
         /// <returns>是否成功增加</returns>
-        public static Boolean InsertForumPost(ForumPostEntity post, ForumTopicEntity topic, ForumPostEntity partentPost, String link)
+        public static Boolean InsertForumPost(ForumPostEntity post, ForumTopicEntity topic, ForumPostEntity parentPost, String postip, String link)
         {
             if (!UserManager.IsUserLogined)
             {
@@ -71,12 +69,12 @@ namespace SDNUOJ.Controllers.Core
                 throw new InvalidInputException("Reply content can not contain illegal keywords!");
             }
 
-            if (partentPost.Deepth + 1 < ForumPostRepository.DEEPTH_MIN)
+            if (parentPost.Deepth + 1 < ForumPostRepository.DEEPTH_MIN)
             {
                 throw new InvalidInputException("Reply deepth is INVALID!");
             }
 
-            if (partentPost.Deepth + 1 > ForumPostRepository.DEEPTH_MAX)
+            if (parentPost.Deepth + 1 > ForumPostRepository.DEEPTH_MAX)
             {
                 throw new InvalidInputException("Reply deepth is too deep!");
             }
@@ -91,18 +89,18 @@ namespace SDNUOJ.Controllers.Core
                 throw new InvalidInputException(String.Format("You can not submit post more than twice in {0} seconds!", ConfigurationManager.SubmitInterval.ToString()));
             }
 
-            post.TopicID = partentPost.TopicID;
+            post.TopicID = parentPost.TopicID;
             post.Title = HtmlEncoder.HtmlEncode(post.Title);
             post.Content = HtmlEncoder.HtmlEncode(post.Content);
             post.UserName = UserManager.CurrentUserName;
-            post.Deepth = partentPost.Deepth + 1;
-            post.ParentPostID = partentPost.PostID;
+            post.Deepth = parentPost.Deepth + 1;
+            post.ParentPostID = parentPost.PostID;
             post.PostDate = DateTime.Now;
-            post.PostIP = HttpContext.Current.GetRemoteClientIPv4();
+            post.PostIP = postip;
 
             Boolean success = ForumPostRepository.Instance.InsertEntity(post) > 0;
 
-            if (success && !String.Equals(partentPost.UserName, post.UserName))
+            if (success && !String.Equals(parentPost.UserName, post.UserName))
             {
                 if (ConfigurationManager.ReplyPostMailNotification)
                 {
@@ -112,10 +110,10 @@ namespace SDNUOJ.Controllers.Core
                         String url = ConfigurationManager.DomainUrl + ((link[0] == '/') ? link.Substring(1) : link);
 
                         mail.FromUserName = ConfigurationManager.SystemAccount;
-                        mail.ToUserName = partentPost.UserName;
+                        mail.ToUserName = parentPost.UserName;
                         mail.Title = "Your post has new reply!";
                         mail.Content =
-                            String.Format("Your post \"{0}\" has new reply, <br/>", partentPost.Title) +
+                            String.Format("Your post \"{0}\" has new reply, <br/>", parentPost.Title) +
                             String.Format("Please visit <a href=\"{0}\" target=\"_blank\">{0}</a>", url);
 
                         UserMailManager.InternalSendUserMail(mail);
@@ -354,7 +352,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="ids">帖子ID列表</param>
         /// <param name="isHide">是否隐藏</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean AdminUpdateForumPostHideStatus(String ids, Boolean isHide)
+        public static IMethodResult AdminUpdateForumPostIsHide(String ids, Boolean isHide)
         {
             if (!AdminManager.HasPermission(PermissionType.ForumManage))
             {
@@ -363,27 +361,22 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsNumericIDs(ids))
             {
-                throw new InvalidRequstException(RequestType.ForumPost);
+                return MethodResult.InvalidRequst(RequestType.ForumPost);
             }
 
             Boolean success = ForumPostRepository.Instance.UpdateEntityIsHide(ids, isHide) > 0;
 
-            if (success)
+            if (!success)
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Admin {0} Forum Post, ID in ({1})", (isHide ? "Hide" : "Unhide"), ids));
-
-                String[] arrids = ids.Split(',');
-
-                for (Int32 i = 0; i < arrids.Length; i++)
-                {
-                    if (String.IsNullOrEmpty(arrids[i])) continue;
-
-                    Int32 id = Convert.ToInt32(arrids[i]);
-                    ForumPostCache.RemoveForumPostCache(id);//删除缓存
-                }
+                return MethodResult.FailedAndLog("No forum post was {0}!", isHide ? "hided" : "unhided");
             }
 
-            return success;
+            ids.ForEachInIDs(',', id =>
+            {
+                ForumPostCache.RemoveForumPostCache(id);//删除缓存
+            });
+
+            return MethodResult.SuccessAndLog("Admin {1} forum post, id = {0}", ids, isHide ? "hide" : "unhide");
         }
 
         /// <summary>
@@ -412,8 +405,8 @@ namespace SDNUOJ.Controllers.Core
 
             DateTime dtStart = DateTime.MinValue, dtEnd = DateTime.MinValue;
 
-            fpids = SplitHelper.GetOptimizedString(fpids);
-            ftids = SplitHelper.GetOptimizedString(ftids);
+            fpids = fpids.SearchOptimized();
+            ftids = ftids.SearchOptimized();
 
             if (!String.IsNullOrEmpty(fpids) && !RegexVerify.IsNumericIDs(fpids))
             {
@@ -451,8 +444,8 @@ namespace SDNUOJ.Controllers.Core
         {
             DateTime dtStart = DateTime.MinValue, dtEnd = DateTime.MinValue;
 
-            fpids = SplitHelper.GetOptimizedString(fpids);
-            ftids = SplitHelper.GetOptimizedString(ftids);
+            fpids = fpids.SearchOptimized();
+            ftids = ftids.SearchOptimized();
 
             if (!String.IsNullOrEmpty(fpids) && !RegexVerify.IsNumericIDs(fpids))
             {

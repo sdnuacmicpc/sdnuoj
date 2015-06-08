@@ -39,14 +39,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Add(FormCollection form)
         {
-            if (JudgeServerManager.CreateJudgeAccount(form["username"]))
-            {
-                return RedirectToSuccessMessagePage("Your have created judger successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to create judger!");
-            }
+            return ResultToMessagePage(JudgeServerManager.CreateJudgeAccount, form["username"], "Your have created judger successfully!");
         }
 
         /// <summary>
@@ -56,10 +49,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Delete(String id)
         {
-            return ResultToJson(() =>
-            {
-                JudgeServerManager.DeleteJudgeAccount(id);
-            });
+            return ResultToJson(JudgeServerManager.DeleteJudgeAccount, id);
         }
     }
 }

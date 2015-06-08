@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Controllers.Status;
 using SDNUOJ.Configuration;
 using SDNUOJ.Data;
 using SDNUOJ.Entity;
-using SDNUOJ.Logging;
 using SDNUOJ.Utilities.Net;
 using SDNUOJ.Utilities.Security;
 using SDNUOJ.Utilities.Text.RegularExpressions;
-using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Controllers.Core
 {
@@ -27,41 +24,42 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="userName">用户名</param>
         /// <param name="email">电子邮箱</param>
+        /// <param name="userip">用户IP</param>
         /// <param name="checkCode">验证码</param>
         /// <param name="link">找回密码链接</param>
         /// <returns>是否可以申请</returns>
-        public static async Task<Boolean> RequestResetUserPassword(String userName, String email, String checkCode, String link)
+        public static async Task<IMethodResult> RequestResetUserPassword(String userName, String email, String userip, String checkCode, String link)
         {
             if (!CheckCodeStatus.VerifyCheckCode(checkCode))
             {
-                throw new InvalidInputException("The verification code you input didn't match the picture, Please try again!");
+                return MethodResult.Failed("The verification code you input didn't match the picture, Please try again!");
             }
 
             if (!RegexVerify.IsUserName(userName))
             {
-                throw new InvalidRequstException(RequestType.User);
+                return MethodResult.InvalidRequst(RequestType.User);
             }
 
             if (!RegexVerify.IsEmail(email))
             {
-                throw new InvalidInputException("Email address is INVALID!");
+                return MethodResult.Failed("Email address is INVALID!");
             }
 
             UserEntity user = UserManager.InternalGetUserByNameAndEmail(userName, email);
 
             if (user == null)
             {
-                throw new InvalidInputException(String.Format("The username \"{0}\" doesn't exist or the email is wrong!", userName));
+                return MethodResult.Failed("The username \"{0}\" doesn't exist or the email is wrong!", userName);
             }
 
             if (user.IsLocked)
             {
-                throw new OperationFailedException("The user is locked, please contact the administrator!");
+                return MethodResult.Failed("The user is locked, please contact the administrator!");
             }
 
             if (String.IsNullOrEmpty(user.Email) || "NULL".Equals(user.Email, StringComparison.OrdinalIgnoreCase))
             {
-                throw new OperationFailedException("The user has no email, please contact the administrator!");
+                return MethodResult.Failed("The user has no email, please contact the administrator!");
             }
 
             Random rand = new Random(DateTime.Now.Millisecond);
@@ -70,23 +68,31 @@ namespace SDNUOJ.Controllers.Core
             {
                 UserName = userName,
                 SubmitDate = DateTime.Now,
-                SubmitIP = HttpContext.Current.GetRemoteClientIPv4(),
+                SubmitIP = userip,
                 HashKey = MD5Encrypt.EncryptToHexString(String.Format("{0}-{1}-{2}", userName, DateTime.Now.Ticks.ToString(), rand.Next(DateTime.Now.Millisecond)), true)
             };
 
             Boolean success = UserForgetPasswordRepository.Instance.InsertEntity(ufp) > 0;
+
+            if (!success)
+            {
+                return MethodResult.Failed("Failed to process your request!");
+            }
+
             String url = ConfigurationManager.DomainUrl + ((link[0] == '/') ? link.Substring(1) : link);
             String mailSubject = ConfigurationManager.OnlineJudgeName + " Password Recovery";
             String mailContent = UserForgetPasswordManager.GetMailContent(userName, url + ufp.HashKey.ToLowerInvariant());
 
-            await MailClient.SendMailAsync(ConfigurationManager.EmailSMTPServer, ConfigurationManager.EmailAddresser, email, mailSubject, mailContent, true, true, ConfigurationManager.EmailUsername, ConfigurationManager.EmailPassword);
-
-            if (success)
+            try
             {
-                LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Request Reset Password"));
+                await MailClient.SendMailAsync(ConfigurationManager.EmailSMTPServer, ConfigurationManager.EmailAddresser, email, mailSubject, mailContent, true, true, ConfigurationManager.EmailUsername, ConfigurationManager.EmailPassword);
+            }
+            catch
+            {
+                return MethodResult.Failed("Failed to send a password reset link to your email address.");
             }
 
-            return success;
+            return MethodResult.SuccessAndLog("User forget password, name = {0}", userName);
         }
 
         /// <summary>
@@ -129,44 +135,39 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="hashKey">哈希KEY</param>
         /// <param name="password">新密码</param>
         /// <param name="password2">确认新密码</param>
+        /// <param name="userip">用户IP</param>
         /// <returns>是否成功重置密码</returns>
-        public static Boolean ResetUserPassword(String hashKey, String userName, String password, String password2)
+        public static IMethodResult ResetUserPassword(String hashKey, String userName, String password, String password2, String userip)
         {
             if (String.IsNullOrEmpty(password))
             {
-                throw new InvalidInputException("Password can not be NULL!");
+                return MethodResult.Failed("Password can not be NULL!");
             }
 
             if (!String.Equals(password, password2, StringComparison.OrdinalIgnoreCase))
             {
-                throw new InvalidInputException("Two passwords are not match!");
+                return MethodResult.Failed("Two passwords are not match!");
             }
 
             String realUserName = UserForgetPasswordManager.GetUserName(hashKey);
 
             if (!String.Equals(userName, realUserName, StringComparison.OrdinalIgnoreCase))
             {
-                throw new InvalidInputException("Username is INVALID!");
+                return MethodResult.Failed("Username is INVALID!");
             }
 
-            if (UserManager.InternalResetUserPassword(userName, password))
+            Boolean success = UserManager.InternalResetUserPassword(userName, password);
+
+            if (!success)
             {
-                DateTime accessDate = DateTime.Now;
-                String accessIP = HttpContext.Current.GetRemoteClientIPv4();
-
-                Boolean success = UserForgetPasswordRepository.Instance.UpdateEntityStatus(hashKey, accessDate, accessIP) > 0;
-
-                if (success)
-                {
-                    LogManager.LogOperation(HttpContext.Current, UserManager.CurrentUserName, String.Format("Reset Password"));
-                }
-
-                return success;
+                return MethodResult.Failed("Failed to reset your password!");
             }
-            else
-            {
-                return false;
-            }
+
+            DateTime accessDate = DateTime.Now;
+            String accessIP = userip;
+            UserForgetPasswordRepository.Instance.UpdateEntityStatus(hashKey, accessDate, accessIP);
+
+            return MethodResult.SuccessAndLog("User reset password, name = {0}, rid = {1}", userName, hashKey);
         }
         #endregion
 

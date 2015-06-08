@@ -70,14 +70,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 SupportLanguage = form["supportlangs"]
             };
 
-            if (ContestManager.AdminInsertContest(entity))
-            {
-                return RedirectToSuccessMessagePage("Your have added contest successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to add contest!");
-            }
+            return ResultToMessagePage(ContestManager.AdminInsertContest, entity, "Your have added contest successfully!");
         }
 
         /// <summary>
@@ -116,14 +109,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 SupportLanguage = form["supportlangs"]
             };
 
-            if (ContestManager.AdminUpdateContest(entity))
-            {
-                return RedirectToSuccessMessagePage("Your have edited contest successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to edit contest!");
-            }
+            return ResultToMessagePage(ContestManager.AdminUpdateContest, entity, "Your have edited contest successfully!");
         }
 
         /// <summary>
@@ -133,10 +119,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Hide(String ids)
         {
-            return ResultToJson(() =>
-            {
-                ContestManager.AdminUpdateContestIsHide(ids, true);
-            });
+            return ResultToJson(ContestManager.AdminUpdateContestIsHide, ids, true);
         }
 
         /// <summary>
@@ -146,10 +129,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Show(String ids)
         {
-            return ResultToJson(() =>
-            {
-                ContestManager.AdminUpdateContestIsHide(ids, false);
-            });
+            return ResultToJson(ContestManager.AdminUpdateContestIsHide, ids, false);
         }
 
         /// <summary>
@@ -214,14 +194,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ProblemEdit(Int32 id, FormCollection form)
         {
-            if (ContestProblemManager.AdminSetContestProblemList(id, form["problemids"]))
-            {
-                return RedirectToSuccessMessagePage("Your have edited contest problem list successfully!");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to edit contest problem list!");
-            }
+            return ResultToMessagePage(ContestProblemManager.AdminSetContestProblemList, id, form["problemids"], "Your have edited contest problem list successfully!");
         }
 
         /// <summary>
@@ -265,16 +238,19 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult UserAdd(Int32 id, FormCollection form)
         {
-            Int32 count = ContestUserManager.AdminInsertContestUsers(id, form["usernames"]);
+            return ResultToMessagePage(() =>
+            {
+                IMethodResult result = ContestUserManager.AdminInsertContestUsers(id, form["usernames"]);
 
-            if (count > 0)
-            {
-                return RedirectToSuccessMessagePage(String.Format("{0} contest user(s) have been successfully added!", count.ToString()));
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("Failed to add contest users!");
-            }
+                if (!result.IsSuccess)
+                {
+                    return new Tuple<IMethodResult, String>(result, String.Empty);
+                }
+
+                String successInfo = String.Format("{0} contest user(s) have been successfully added!", result.ResultObject.ToString());
+
+                return new Tuple<IMethodResult, String>(result, successInfo);
+            });
         }
 
         /// <summary>
@@ -313,10 +289,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult UserEnable(Int32 id, String ids)
         {
-            return ResultToJson(() =>
-            {
-                ContestUserManager.AdminUpdateContestUsers(id, ids, true);
-            });
+            return ResultToJson(ContestUserManager.AdminUpdateContestUsers, id, ids, true);
         }
 
         /// <summary>
@@ -327,10 +300,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult UserDisable(Int32 id, String ids)
         {
-            return ResultToJson(() =>
-            {
-                ContestUserManager.AdminUpdateContestUsers(id, ids, false);
-            });
+            return ResultToJson(ContestUserManager.AdminUpdateContestUsers, id, ids, false);
         }
 
         /// <summary>
@@ -341,10 +311,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult UserDelete(Int32 id, String ids)
         {
-            return ResultToJson(() =>
-            {
-                ContestUserManager.AdminDeleteContestUsers(id, ids);
-            });
+            return ResultToJson(ContestUserManager.AdminDeleteContestUsers, id, ids);
         }
     }
 }
