@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 
+using Ionic.Zlib;
 using Ionic.Zip;
 
 namespace SDNUOJ.Storage.Problem
@@ -53,7 +54,7 @@ namespace SDNUOJ.Storage.Problem
         {
             MemoryStream ms = new MemoryStream();
             ZipFile zip = new ZipFile();
-            zip.CompressionLevel = Ionic.Zlib.CompressionLevel.BestCompression;
+            zip.CompressionLevel = CompressionLevel.BestCompression;
 
             for (Int32 i = 0; i < this._data.DataCount; i++)
             {

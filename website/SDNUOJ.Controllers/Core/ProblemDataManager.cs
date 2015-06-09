@@ -49,7 +49,7 @@ namespace SDNUOJ.Controllers.Core
                     try
                     {
                         ProblemDataReader reader = new ProblemDataReader(filePath);
-                        version = reader.ReadLastModified();
+                        version = reader.LastModified;
                     }
                     catch { }
                 }
