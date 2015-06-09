@@ -31,11 +31,6 @@ namespace SDNUOJ.Areas.Admin.Controllers
             PagedList<ForumTopicEntity> list = ForumTopicManager.AdminGetForumTopicList(id,
                 ftids, username, title, type, relativeid, islocked, ishide, startdate, enddate);
 
-            ViewBag.PageSize = list.PageSize;
-            ViewBag.RecordCount = list.RecordCount;
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
             ViewBag.TopicIDs = ftids;
             ViewBag.UserName = username;
             ViewBag.Title = title;
@@ -46,7 +41,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
             ViewBag.StartDate = startdate;
             ViewBag.EndDate = enddate;
 
-            return View(list);
+            return ViewWithPager(list, id);
         }
 
         /// <summary>
@@ -110,11 +105,6 @@ namespace SDNUOJ.Areas.Admin.Controllers
             PagedList<ForumPostEntity> list = ForumPostManager.AdminGetForumPostList(id,
                 fpids, ftids, username, title, content, ishide, startdate, enddate, postip);
 
-            ViewBag.PageSize = list.PageSize;
-            ViewBag.RecordCount = list.RecordCount;
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
             ViewBag.PostIDs = fpids;
             ViewBag.TopicIDs = ftids;
             ViewBag.UserName = username;
@@ -125,7 +115,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
             ViewBag.EndDate = enddate;
             ViewBag.PostIP = postip;
 
-            return View(list);
+            return ViewWithPager(list, id);
         }
 
         /// <summary>

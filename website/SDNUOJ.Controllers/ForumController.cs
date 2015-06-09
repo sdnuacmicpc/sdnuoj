@@ -24,10 +24,7 @@ namespace SDNUOJ.Controllers
         {
             PagedList<TreeNode<ForumPostEntity>> list = ForumPostManager.GetPostTreeList(id, String.Empty);
 
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
-            return View("Main", list);
+            return ViewWithPager("Main", list, id);
         }
 
         /// <summary>
@@ -46,11 +43,9 @@ namespace SDNUOJ.Controllers
 
             PagedList<TreeNode<ForumPostEntity>> list = ForumPostManager.GetPostTreeList(id, pid);
 
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
             ViewBag.ProblemID = pid;
 
-            return View("Main", list);
+            return ViewWithPager("Main", list, id);
         }
 
         /// <summary>

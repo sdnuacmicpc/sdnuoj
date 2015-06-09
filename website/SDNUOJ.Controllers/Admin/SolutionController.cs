@@ -43,11 +43,6 @@ namespace SDNUOJ.Areas.Admin.Controllers
             PagedList<SolutionEntity> list = SolutionManager.AdminGetSolutionList(id,
                 sids, cid, pid, username, lang, type, startFullDate, endFullDate, order);
 
-            ViewBag.PageSize = list.PageSize;
-            ViewBag.RecordCount = list.RecordCount;
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
             ViewBag.Languages = LanguageManager.AllSupportLanguages;
 
             ViewBag.Order = order;
@@ -66,7 +61,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
             ViewBag.EndMinute = endminute;
             ViewBag.EndSecond = endsecond;
 
-            return View(list);
+            return ViewWithPager(list, id);
         }
 
         /// <summary>

@@ -24,10 +24,7 @@ namespace SDNUOJ.Areas.Contest.Controllers
             ContestEntity contest = ViewData["Contest"] as ContestEntity;
             PagedList<ForumTopicEntity> list = ForumTopicManager.GetForumTopicList(id, contest.ContestID.ToString(), String.Empty);
 
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
-            return View(list);
+            return ViewWithPager(list, id);
         }
 
         /// <summary>

@@ -22,12 +22,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         {
             PagedList<ProblemEntity> list = ProblemManager.AdminGetProblemList(id);
 
-            ViewBag.PageSize = list.PageSize;
-            ViewBag.RecordCount = list.RecordCount;
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
-            return View(list);
+            return ViewWithPager(list, id);
         }
 
         /// <summary>
@@ -213,12 +208,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         {
             PagedList<ProblemCategoryEntity> list = ProblemCategoryManager.AdminGetProblemCategoryList(id);
 
-            ViewBag.PageSize = list.PageSize;
-            ViewBag.RecordCount = list.RecordCount;
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
-            return View(list);
+            return ViewWithPager(list, id);
         }
 
         /// <summary>

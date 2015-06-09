@@ -21,10 +21,7 @@ namespace SDNUOJ.Controllers
         {
             PagedList<UserEntity> list = UserManager.GetUserRanklist(id);
 
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
-            return View(list);
+            return ViewWithPager(list, id);
         }
     }
 }

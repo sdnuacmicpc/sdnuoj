@@ -19,10 +19,7 @@ namespace SDNUOJ.Controllers
         {
             PagedList<NewsEntity> list = NewsManager.GetNewsList(id);
 
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
-            return View(list);
+            return ViewWithPager(list, id);
         }
 
         /// <summary>

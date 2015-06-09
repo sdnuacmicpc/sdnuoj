@@ -34,11 +34,6 @@ namespace SDNUOJ.Areas.Admin.Controllers
                 names, nickname, email, school, lastip, islocked,
                 regstartdate, regenddate, loginstartdate, loginenddate, order);
 
-            ViewBag.PageSize = list.PageSize;
-            ViewBag.RecordCount = list.RecordCount;
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
             ViewBag.Order = order;
             ViewBag.Names = names;
             ViewBag.NickName = nickname;
@@ -51,7 +46,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
             ViewBag.LoginStartDate = loginstartdate;
             ViewBag.LoginEndDate = loginenddate;
 
-            return View(list);
+            return ViewWithPager(list, id);
         }
 
         /// <summary>
@@ -139,12 +134,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         {
             PagedList<UserEntity> list = UserManager.AdminGetPermissionUsers(id);
 
-            ViewBag.PageSize = list.PageSize;
-            ViewBag.RecordCount = list.RecordCount;
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
-            return View(list);
+            return ViewWithPager(list, id);
         }
 
         /// <summary>

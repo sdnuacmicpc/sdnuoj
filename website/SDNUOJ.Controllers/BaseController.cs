@@ -10,6 +10,7 @@ using SDNUOJ.Configuration;
 using SDNUOJ.Controllers.Core;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Logging;
+using SDNUOJ.Utilities;
 using SDNUOJ.Utilities.Text;
 using SDNUOJ.Utilities.Web;
 
@@ -123,6 +124,54 @@ namespace SDNUOJ.Controllers
             }
 
             this.StopAndResetWatch();
+        }
+
+        /// <summary>
+        /// 返回带有导航的页面
+        /// </summary>
+        /// <typeparam name="T">返回类型</typeparam>
+        /// <param name="list">内容列表</param>
+        /// <param name="pageIndex">页面索引</param>
+        /// <returns>操作后的结果</returns>
+        protected virtual ActionResult ViewWithPager<T>(PagedList<T> list, Int32 pageIndex)
+        {
+            ViewBag.PageCount = list.PageCount;
+            ViewBag.PageIndex = pageIndex;
+
+            return View(list);
+        }
+
+        /// <summary>
+        /// 返回带有导航的页面
+        /// </summary>
+        /// <typeparam name="T">返回类型</typeparam>
+        /// <param name="viewName">视图名称</param>
+        /// <param name="list">内容列表</param>
+        /// <param name="pageIndex">页面索引</param>
+        /// <returns>操作后的结果</returns>
+        protected virtual ActionResult ViewWithPager<T>(String viewName, PagedList<T> list, Int32 pageIndex)
+        {
+            ViewBag.PageCount = list.PageCount;
+            ViewBag.PageIndex = pageIndex;
+
+            return View(viewName, list);
+        }
+
+        /// <summary>
+        /// 返回带有导航的页面
+        /// </summary>
+        /// <typeparam name="T">返回类型</typeparam>
+        /// <typeparam name="TAnother">另一个对象类型</typeparam>
+        /// <param name="list">内容列表</param>
+        /// <param name="obj">另一个对象</param>
+        /// <param name="pageIndex">页面索引</param>
+        /// <returns>操作后的结果</returns>
+        protected virtual ActionResult ViewWithPager<T, TAnother>(PagedList<T> list, TAnother obj, Int32 pageIndex)
+        {
+            ViewBag.PageCount = list.PageCount;
+            ViewBag.PageIndex = pageIndex;
+
+            return View(new Tuple<TAnother, PagedList<T>>(obj, list));
         }
 
         /// <summary>

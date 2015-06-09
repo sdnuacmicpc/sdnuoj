@@ -24,12 +24,10 @@ namespace SDNUOJ.Controllers
         {
             PagedList<UserMailEntity> list = UserMailManager.GetUserMails(id);
 
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
             ViewBag.Title = title;
             ViewBag.ToName = name;
 
-            return View(list);
+            return ViewWithPager(list, id);
         }
 
         /// <summary>

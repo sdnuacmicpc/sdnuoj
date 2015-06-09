@@ -29,15 +29,12 @@ namespace SDNUOJ.Areas.Contest.Controllers
 
             PagedList<SolutionEntity> list = SolutionManager.GetSolutionList(id, contest.ContestID, pid, name, lang, type, null);
 
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
             ViewBag.ProblemID = pid;
             ViewBag.UserName = name;
             ViewBag.Language = lang;
             ViewBag.SearchType = type;
 
-            return View(list);
+            return ViewWithPager(list, id);
         }
     }
 }

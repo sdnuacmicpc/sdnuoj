@@ -24,10 +24,7 @@ namespace SDNUOJ.Controllers
         {
             PagedList<ProblemEntity> list = ProblemManager.GetProblemSet(id);
 
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
-            return View(list);
+            return ViewWithPager(list, id);
         }
 
         /// <summary>
@@ -90,18 +87,15 @@ namespace SDNUOJ.Controllers
             String reallang = lang.ToByte(LanguageType.Null.ID).ToString();
             String realorder = order.ToInt32(-1).ToString();
 
-            PagedList<SolutionEntity> list = SolutionManager.GetSolutionList(id, -1, pid, null, reallang, ((Byte)ResultType.Accepted).ToString(), realorder);
-
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
             Dictionary<String, Byte> langs = LanguageManager.MainSubmitSupportLanguages;
             ViewBag.Languages = langs;
+
+            PagedList<SolutionEntity> list = SolutionManager.GetSolutionList(id, -1, pid, null, reallang, ((Byte)ResultType.Accepted).ToString(), realorder);
 
             ViewBag.Language = lang;
             ViewBag.Order = order;
 
-            return View(new Tuple<ProblemStatistic, PagedList<SolutionEntity>>(ps, list));
+            return ViewWithPager(list, ps, id);
         }
 
         /// <summary>

@@ -61,19 +61,17 @@ namespace SDNUOJ.Areas.Contest.Controllers
 
             String reallang = lang.ToByte(LanguageType.Null.ID).ToString();
             String realorder = order.ToInt32(-1).ToString();
-            PagedList<SolutionEntity> list = SolutionManager.GetSolutionList(id, contest.ContestID, pid, null, reallang, ((Byte)ResultType.Accepted).ToString(), realorder);
-
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
 
             Dictionary<String, Byte> langs = LanguageManager.GetSupportLanguages(contest.SupportLanguage);
             ViewBag.Languages = langs;
+
+            PagedList<SolutionEntity> list = SolutionManager.GetSolutionList(id, contest.ContestID, pid, null, reallang, ((Byte)ResultType.Accepted).ToString(), realorder);
 
             ViewBag.ContestProblemID = pid.ToString();
             ViewBag.Language = lang;
             ViewBag.Order = order;
 
-            return View(new Tuple<ProblemStatistic, PagedList<SolutionEntity>>(ps, list));
+            return ViewWithPager(list, ps, id);
         }
 
         /// <summary>

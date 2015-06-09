@@ -19,12 +19,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         {
             PagedList<ResourceEntity> list = ResourceManager.AdminGetResourceList(id);
 
-            ViewBag.PageSize = list.PageSize;
-            ViewBag.RecordCount = list.RecordCount;
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
-            return View(list);
+            return ViewWithPager(list, id);
         }
 
         /// <summary>

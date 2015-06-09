@@ -24,10 +24,7 @@ namespace SDNUOJ.Controllers
         {
             PagedList<ContestEntity> list = ContestManager.GetContestList(id, false);
 
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
-            return View("Index", list);
+            return ViewWithPager("Index", list, id);
         }
 
         /// <summary>
@@ -40,10 +37,7 @@ namespace SDNUOJ.Controllers
         {
             PagedList<ContestEntity> list = ContestManager.GetContestList(id, true);
 
-            ViewBag.PageCount = list.PageCount;
-            ViewBag.PageIndex = id;
-
-            return View("Index", list);
+            return ViewWithPager("Index", list, id);
         }
 
         /// <summary>
