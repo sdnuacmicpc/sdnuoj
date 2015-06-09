@@ -209,7 +209,7 @@ namespace SDNUOJ.Controllers
         /// <returns>错误信息Json</returns>
         protected ActionResult ErrorJson(String error)
         {
-            return Content(String.Format("{{\"status\":\"fail\",\"result\":\"{0}\"}}", error), "application/json");
+            return Content(String.Format("{{\"status\":\"fail\",\"result\":\"{0}\"}}", JsonEncoder.JsonEncode(error)), "application/json");
         }
         #endregion
 
