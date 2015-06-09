@@ -532,7 +532,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="dateTime">所在月日期</param>
         /// <param name="ACOnly">是否仅有AC题目</param>
         /// <returns>提交统计信息</returns>
-        public static IDictionary<Int32, Int32> GetMonthlySubmitStatus(DateTime dateTime, Boolean ACOnly)
+        public static IDictionary<Int32, Int32> AdminGetMonthlySubmitStatus(DateTime dateTime, Boolean ACOnly)
         {
             if (!AdminManager.HasPermission(PermissionType.Administrator))
             {

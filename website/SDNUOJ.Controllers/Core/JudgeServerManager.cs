@@ -18,7 +18,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="userName">评测机ID</param>
         /// <returns>是否成功创建</returns>
-        public static IMethodResult CreateJudgeAccount(String userName)
+        public static IMethodResult AdminCreateJudgeAccount(String userName)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -40,7 +40,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="userName">评测机ID</param>
         /// <returns>是否成功删除</returns>
-        public static IMethodResult DeleteJudgeAccount(String userName)
+        public static IMethodResult AdminDeleteJudgeAccount(String userName)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {

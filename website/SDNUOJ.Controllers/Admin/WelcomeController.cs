@@ -48,8 +48,8 @@ namespace SDNUOJ.Areas.Admin.Controllers
             try
             {
                 DateTime date = (String.IsNullOrEmpty(year) || String.IsNullOrEmpty(month) ? DateTime.Today : DateTime.Parse(String.Format("{0}-{1}-1", year, month)));
-                IDictionary<Int32, Int32> submits = SolutionManager.GetMonthlySubmitStatus(date, false);
-                IDictionary<Int32, Int32> accepteds = SolutionManager.GetMonthlySubmitStatus(date, true);
+                IDictionary<Int32, Int32> submits = SolutionManager.AdminGetMonthlySubmitStatus(date, false);
+                IDictionary<Int32, Int32> accepteds = SolutionManager.AdminGetMonthlySubmitStatus(date, true);
                 Int32 maxDay = new DateTime(date.Year, date.Month, 1).AddMonths(1).AddDays(-1).Day;
 
                 for (Int32 i = 1; i <= maxDay; i++)

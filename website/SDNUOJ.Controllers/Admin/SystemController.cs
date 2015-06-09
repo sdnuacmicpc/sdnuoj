@@ -105,7 +105,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Config()
         {
-            return View(ConfigurationFileManager.GetConfigPairList());
+            return View(ConfigurationFileManager.AdminGetConfigPairList());
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateInput(false)]
         public ActionResult ConfigSave(FormCollection form)
         {
-            return ResultToMessagePage(ConfigurationFileManager.SaveToConfig, form, "Your have modified configuration successfully!");
+            return ResultToMessagePage(ConfigurationFileManager.AdminSaveToConfig, form, "Your have modified configuration successfully!");
         }
 
         private String GetSystemRunTime()

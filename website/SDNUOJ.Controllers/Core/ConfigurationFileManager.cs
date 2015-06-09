@@ -17,7 +17,7 @@ namespace SDNUOJ.Controllers.Core
         /// 获取配置信息
         /// </summary>
         /// <returns>配置信息</returns>
-        public static List<KeyValuePair<String, String>> GetConfigPairList()
+        public static List<KeyValuePair<String, String>> AdminGetConfigPairList()
         {
             NameValueCollection col = ConfigurationManager.GetConfigCollection();
             List<KeyValuePair<String, String>> list = new List<KeyValuePair<String, String>>();
@@ -34,7 +34,7 @@ namespace SDNUOJ.Controllers.Core
         /// 保存配置到配置文件
         /// </summary>
         /// <param name="col">配置信息</param>
-        public static IMethodResult SaveToConfig(NameValueCollection col)
+        public static IMethodResult AdminSaveToConfig(NameValueCollection col)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
