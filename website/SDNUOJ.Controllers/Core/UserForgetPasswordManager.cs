@@ -96,37 +96,37 @@ namespace SDNUOJ.Controllers.Core
         }
 
         /// <summary>
-        /// 获取用户名
+        /// 获取用户忘记密码请求
         /// </summary>
         /// <param name="hashKey">哈希KEY</param>
         /// <returns>是否可以重置密码</returns>
-        public static String GetUserName(String hashKey)
+        public static UserForgetPasswordEntity GetUserForgetRequest(String hashKey)
         {
             if (!SQLValidator.IsNonNullANDSafe(hashKey))
             {
                 throw new InvalidRequstException(RequestType.UserForgetPassword);
             }
 
-            UserForgetPasswordEntity ufp = UserForgetPasswordRepository.Instance.GetEntity(hashKey);
+            UserForgetPasswordEntity entity = UserForgetPasswordRepository.Instance.GetEntity(hashKey);
 
-            if (ufp == null)
+            if (entity == null)
             {
                 throw new NullResponseException(RequestType.UserForgetPassword);
             }
 
-            if (!String.IsNullOrEmpty(ufp.AccessIP))
+            if (!String.IsNullOrEmpty(entity.AccessIP))
             {
                 throw new InvalidRequstException(RequestType.UserForgetPassword);
             }
 
-            TimeSpan ts = DateTime.Now - ufp.SubmitDate;
+            TimeSpan ts = DateTime.Now - entity.SubmitDate;
 
             if (ts.TotalHours >= 24)
             {
                 throw new InvalidRequstException(RequestType.UserForgetPassword);
             }
 
-            return ufp.UserName;
+            return entity;
         }
 
         /// <summary>
@@ -149,7 +149,8 @@ namespace SDNUOJ.Controllers.Core
                 return MethodResult.Failed("Two passwords are not match!");
             }
 
-            String realUserName = UserForgetPasswordManager.GetUserName(hashKey);
+            UserForgetPasswordEntity request = UserForgetPasswordManager.GetUserForgetRequest(hashKey);
+            String realUserName = request.UserName;
 
             if (!String.Equals(userName, realUserName, StringComparison.OrdinalIgnoreCase))
             {

@@ -216,11 +216,7 @@ namespace SDNUOJ.Controllers
         [Function(PageType.ForgetPassword)]
         public ActionResult ResetPassword(String rid)
         {
-            UserForgetPasswordManager.GetUserName(rid);
-
-            ViewBag.RequestID = rid;
-
-            return View();
+            return View(UserForgetPasswordManager.GetUserForgetRequest(rid));
         }
 
         /// <summary>
