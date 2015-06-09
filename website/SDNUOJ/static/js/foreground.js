@@ -1110,6 +1110,10 @@ SDNUOJ.pages.mailbox = (function () {
 
                 return true;
             });
+
+            $("button[data-loading-text]").click(function (e) {
+                $(this).button("loading");
+            });
         }
     };
 })();
@@ -1127,6 +1131,10 @@ SDNUOJ.pages.mail = (function () {
                 }
 
                 return true;
+            });
+
+            $("button[data-loading-text]").click(function (e) {
+                $(this).button("loading");
             });
         }
     };
