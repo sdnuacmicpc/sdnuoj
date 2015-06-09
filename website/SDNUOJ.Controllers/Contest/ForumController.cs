@@ -60,7 +60,7 @@ namespace SDNUOJ.Areas.Contest.Controllers
 
             if (!ForumTopicManager.InsertForumTopic(topic, contest.ContestID.ToString(), String.Empty, form["content"], userip))
             {
-                throw new OperationFailedException("Failed to post your topic!");
+                return RedirectToErrorMessagePage("Failed to post your topic!");
             }
 
             return RedirectToAction("List", "Forum", new { area = "Contest", cid = contest.ContestID });
@@ -79,7 +79,7 @@ namespace SDNUOJ.Areas.Contest.Controllers
 
             if (topic.Type != ForumTopicType.Contest || topic.RelativeID != contest.ContestID)
             {
-                throw new OperationFailedException("This contest does not have this topic!");
+                return RedirectToErrorMessagePage("This contest does not have this topic!");
             }
 
             List<ForumPostEntity> list = ForumPostManager.GetForumPostList(topic, false);
@@ -106,7 +106,7 @@ namespace SDNUOJ.Areas.Contest.Controllers
 
             if (topic.Type != ForumTopicType.Contest || topic.RelativeID != contest.ContestID)
             {
-                throw new OperationFailedException("This contest does not have this topic!");
+                return RedirectToErrorMessagePage("This contest does not have this topic!");
             }
 
             ForumPostEntity reply = new ForumPostEntity()
@@ -120,7 +120,7 @@ namespace SDNUOJ.Areas.Contest.Controllers
 
             if (!ForumPostManager.InsertForumPost(reply, topic, post, userip, link))
             {
-                throw new OperationFailedException("Failed to post your reply!");
+                return RedirectToErrorMessagePage("Failed to post your reply!");
             }
 
             return RedirectToAction("Topic", "Forum", new { area = "Contest", cid = contest.ContestID, id = post.TopicID });

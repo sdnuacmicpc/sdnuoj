@@ -7,7 +7,6 @@ using SDNUOJ.Controllers.Core;
 using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Entity;
 using SDNUOJ.Utilities;
-using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Controllers
 {
@@ -82,7 +81,7 @@ namespace SDNUOJ.Controllers
 
             if (!ForumTopicManager.InsertForumTopic(topic, String.Empty, pid, form["content"], userip))
             {
-                throw new OperationFailedException("Failed to post your topic!");
+                return RedirectToErrorMessagePage("Failed to post your topic!");
             }
 
             if (String.IsNullOrEmpty(pid))
@@ -108,7 +107,7 @@ namespace SDNUOJ.Controllers
 
             if (topic.Type == ForumTopicType.Contest)
             {
-                throw new InvalidInputException("This topic is not in the main disscus board!");
+                return RedirectToErrorMessagePage("This topic is not in the main disscus board!");
             }
 
             post.RelativeType = (topic.Type == ForumTopicType.Problem ? topic.Type : ForumTopicType.Default);
@@ -138,7 +137,7 @@ namespace SDNUOJ.Controllers
 
             if (topic.Type == ForumTopicType.Contest)
             {
-                throw new InvalidInputException("This topic is not in the main disscus board!");
+                return RedirectToErrorMessagePage("This topic is not in the main disscus board!");
             }
 
             ForumPostEntity reply = new ForumPostEntity()
@@ -152,7 +151,7 @@ namespace SDNUOJ.Controllers
 
             if (!ForumPostManager.InsertForumPost(reply, topic, post, userip, link))
             {
-                throw new OperationFailedException("Failed to post your reply!");
+                return RedirectToErrorMessagePage("Failed to post your reply!");
             }
 
             return RedirectToAction("Reply", "Forum", new { id = post.PostID });

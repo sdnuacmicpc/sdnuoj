@@ -3,7 +3,6 @@ using System.Web.Mvc;
 
 using SDNUOJ.Controllers.Attributes;
 using SDNUOJ.Controllers.Core;
-using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Entity;
 using SDNUOJ.Utilities;
 
@@ -79,7 +78,7 @@ namespace SDNUOJ.Controllers
             }
             else
             {
-                throw new OperationFailedException(result);
+                return RedirectToErrorMessagePage(result);
             }
         }
 

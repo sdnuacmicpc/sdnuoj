@@ -165,7 +165,6 @@
     <Compile Include="Exception\InvalidRequstException.cs" />
     <Compile Include="Exception\NoPermissionException.cs" />
     <Compile Include="Exception\NullResponseException.cs" />
-    <Compile Include="Exception\OperationFailedException.cs" />
     <Compile Include="Exception\SystemNotOpenException.cs" />
     <Compile Include="Exception\UserException.cs" />
     <Compile Include="Exception\UserUnLoginException.cs" />

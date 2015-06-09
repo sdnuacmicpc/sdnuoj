@@ -4,10 +4,8 @@ using System.Web.Mvc;
 
 using SDNUOJ.Controllers.Attributes;
 using SDNUOJ.Controllers.Core;
-using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Entity;
 using SDNUOJ.Utilities;
-using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Controllers
 {
@@ -68,7 +66,7 @@ namespace SDNUOJ.Controllers
         {
             if (!ContestUserManager.RegisterCurrentUser(id, form["realname"]))
             {
-                throw new OperationFailedException("Contest Registration Failed!");
+                return RedirectToErrorMessagePage("Contest Registration Failed!");
             }
 
             return RedirectToSuccessMessagePage("Your have register this contest successfully!");

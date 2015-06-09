@@ -5,9 +5,7 @@ using System.Web.Mvc;
 using SDNUOJ.Configuration;
 using SDNUOJ.Controllers.Attributes;
 using SDNUOJ.Controllers.Core;
-using SDNUOJ.Controllers.Exception;
 using SDNUOJ.Entity;
-using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Areas.Contest.Controllers
 {
@@ -42,14 +40,14 @@ namespace SDNUOJ.Areas.Contest.Controllers
 
             if (!supportLanguages.ContainsValue(entity.LanguageType.ID))
             {
-                throw new InvalidInputException("This contest does not support this programming language.");
+                return RedirectToErrorMessagePage("This contest does not support this programming language.");
             }
 
             String userip = this.GetCurrentUserIP();
 
             if (!SolutionManager.InsertSolution(entity, userip))
             {
-                throw new OperationFailedException("Failed to submit your solution!");
+                return RedirectToErrorMessagePage("Failed to submit your solution!");
             }
 
             return RedirectToAction("List", "Status", new { area = "Contest", cid = contest.ContestID });
