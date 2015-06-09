@@ -25,27 +25,32 @@ SDNUOJ.admin.editor = (function () {
         addEditor: addEditor,
         setAllEditors: function () {
             if ($("textarea[data-editor='true']").length > 0) {
-                $.getScript("/static/js/foundation/tinyeditor.min.js", function () {
-                    var tinyeditor = null;
+                $.ajax("/static/js/foundation/tinyeditor.min.js", {
+                    async: false,
+                    cache: true,
+                    dataType: "script",
+                    success: function () {
+                        var tinyeditor = null;
 
-                    if ("undefined" != typeof (TINY)) {
-                        tinyeditor = TINY.editor;
+                        if ("undefined" != typeof (TINY)) {
+                            tinyeditor = TINY.editor;
+                        }
+
+                        $("textarea[data-editor='true']").each(function () {
+                            var o = $(this);
+                            var style = {};
+
+                            if (o.attr("data-width")) {
+                                style.width = o.attr("data-width");
+                            }
+
+                            if (o.attr("data-height")) {
+                                style.height = o.attr("data-height");
+                            }
+
+                            addEditor(tinyeditor, o.attr("id"), style);
+                        });
                     }
-
-                    $("textarea[data-editor='true']").each(function () {
-                        var o = $(this);
-                        var style = {};
-
-                        if (o.attr("data-width")) {
-                            style.width = o.attr("data-width");
-                        }
-
-                        if (o.attr("data-height")) {
-                            style.height = o.attr("data-height");
-                        }
-                        
-                        addEditor(tinyeditor, o.attr("id"), style);
-                    });
                 });
             }
         },
@@ -295,18 +300,23 @@ SDNUOJ.admin.page = (function () {
             if ($(".datetimepicker").length > 0) {
                 SDNUOJ.util.loader.load("/static/css/foundation/jquery.datetimepicker-2.4.3-mod.min.css");
 
-                $.getScript("/static/js/foundation/jquery.datetimepicker-2.4.3-mod.min.js", function () {
-                    $(".datetimepicker").datetimepicker({
-                        lang: 'zh',
-                        format: 'Y-m-d',
-                        allowBlank: true,
-                        timepicker: false,
-                        scrollMonth: false,
-                        scrollInput: false,
-                        closeOnDateSelect: true,
-                        yearStart: 2012,
-                        yearEnd: new Date().getFullYear() + 1
-                    });
+                $.ajax("/static/js/foundation/jquery.datetimepicker-2.4.3-mod.min.js", {
+                    async: true,
+                    cache: true,
+                    dataType: "script",
+                    success: function () {
+                        $(".datetimepicker").datetimepicker({
+                            lang: 'zh',
+                            format: 'Y-m-d',
+                            allowBlank: true,
+                            timepicker: false,
+                            scrollMonth: false,
+                            scrollInput: false,
+                            closeOnDateSelect: true,
+                            yearStart: 2012,
+                            yearEnd: new Date().getFullYear() + 1
+                        });
+                    }
                 });
             }
         },
