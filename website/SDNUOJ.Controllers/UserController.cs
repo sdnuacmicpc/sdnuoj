@@ -167,7 +167,15 @@ namespace SDNUOJ.Controllers
                 Email = form["email"]
             };
 
-            return ResultToMessagePage(UserManager.UpdateUserInfo, user, form["password"], form["newpassword"], form["newpassword2"], "Your user profile was updated successfully!");
+            IMethodResult result = UserManager.UpdateUserInfo(user, form["password"], form["newpassword"], form["newpassword2"]);
+            this.LogUserOperation(result);
+
+            if (!result.IsSuccess)
+            {
+                return RedirectToErrorMessagePage(result.Description);
+            }
+
+            return RedirectToSuccessMessagePage("Your user profile was updated successfully!");
         }
 
         /// <summary>
@@ -190,22 +198,18 @@ namespace SDNUOJ.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgetPassword(FormCollection form)
         {
-            return await ResultToMessagePage(async () =>
+            String userip = this.GetCurrentUserIP();
+            String link = Url.Action("ResetPassword", "User") + "?rid=";
+
+            IMethodResult result = await UserForgetPasswordManager.RequestResetUserPassword(form["username"], form["email"], userip, form["checkcode"], link);
+            this.LogUserOperation(result);
+
+            if (!result.IsSuccess)
             {
-                String userip = this.GetCurrentUserIP();
-                String link = Url.Action("ResetPassword", "User") + "?rid=";
+                return RedirectToErrorMessagePage(result.Description);
+            }
 
-                IMethodResult result = await UserForgetPasswordManager.RequestResetUserPassword(form["username"], form["email"], userip, form["checkcode"], link);
-
-                if (!result.IsSuccess)
-                {
-                    return new Tuple<IMethodResult, String>(result, String.Empty);
-                }
-
-                String successInfo = "We have sent a password reset link to your email address, the link is valid for 24 hours.";
-
-                return new Tuple<IMethodResult, String>(result, successInfo);
-            });
+            return RedirectToSuccessMessagePage("We have sent a password reset link to your email address, the link is valid for 24 hours.");
         }
 
         /// <summary>
@@ -230,10 +234,15 @@ namespace SDNUOJ.Controllers
         public ActionResult ResetPassword(FormCollection form)
         {
             String userip = this.GetCurrentUserIP();
+            IMethodResult result = UserForgetPasswordManager.ResetUserPassword(form["rid"], form["username"], form["password"], form["password2"], userip);
+            this.LogUserOperation(result);
 
-            return ResultToMessagePage(UserForgetPasswordManager.ResetUserPassword,
-                form["rid"], form["username"], form["password"], form["password2"], userip, 
-                "Your password was updated successfully!");
+            if (!result.IsSuccess)
+            {
+                return RedirectToErrorMessagePage(result.Description);
+            }
+
+            return RedirectToSuccessMessagePage("Your password was updated successfully!");
         }
 
         /// <summary>

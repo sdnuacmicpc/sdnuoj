@@ -86,7 +86,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Recalculate(String id)
         {
-            return ResultToSuccessJson(
+            return ResultToJson(
                 UserManager.AdminUpdateSolvedCount, 
                 UserManager.AdminUpdateSubmitCount, 
                 id);

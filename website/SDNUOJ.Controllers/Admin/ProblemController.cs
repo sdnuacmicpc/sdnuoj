@@ -193,7 +193,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Recalculate(Int32 id = -1)
         {
-            return ResultToSuccessJson(
+            return ResultToJson(
                 ProblemManager.AdminUpdateProblemSolvedCount, 
                 ProblemManager.AdminUpdateProblemSubmitCount, 
                 id);
