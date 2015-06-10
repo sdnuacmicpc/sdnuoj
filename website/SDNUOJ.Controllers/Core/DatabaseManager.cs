@@ -321,6 +321,11 @@ namespace SDNUOJ.Controllers.Core
                 return MethodResult.FailedAndLog("Database does not exist!");
             }
 
+            if (!String.Equals(fi.Extension, ".resx", StringComparison.OrdinalIgnoreCase))
+            {
+                return MethodResult.FailedAndLog("Your can not download this file!");
+            }
+
             return MethodResult.SuccessAndLog<String>(filePath, "Admin download database, name = {0}", fi.Name);
         }
 

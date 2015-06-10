@@ -48,7 +48,7 @@
             <td class="text-center">@((Item.Length / 1024.0).ToString("0.00")) KB</td>
             <td class="text-center">@Html.ActionLink("压缩", "Compact", "Database", new { id = i }, null)</td>
             <td class="text-center">@(!String.Equals(Item.Name, ViewBag.DefaultFileName as String) ? Html.ActionLink("还原", "Restore", "Database", new { id = i }, null) : Html.Raw("还原"))</td>
-            <td class="text-center">@(!String.Equals(Item.Name, ViewBag.DefaultFileName as String) ? Html.ActionLink("下载", "Download", "Database", new { id = i }, null) : Html.Raw("下载"))</td>
+            <td class="text-center">@((!String.Equals(Item.Name, ViewBag.DefaultFileName as String) && String.Equals(Item.Extension, ".resx", StringComparison.OrdinalIgnoreCase)) ? Html.ActionLink("下载", "Download", "Database", new { id = i }, null) : Html.Raw("下载"))</td>
             <td class="text-center">@(!String.Equals(Item.Name, ViewBag.DefaultFileName as String) ? Html.ActionLink("删除", "Delete", "Database", new { id = i }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" }) : Html.Raw("删除"))</td>
         </tr>
     }
