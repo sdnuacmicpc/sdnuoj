@@ -77,7 +77,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         {
             ViewBag.AllSupportedLanguages = LanguageManager.GetAllLanguageNames();
 
-            return View("Edit", ContestManager.AdminGetContest(id));
+            return ResultToView("Edit", ContestManager.AdminGetContest, id);
         }
 
         /// <summary>
@@ -153,16 +153,21 @@ namespace SDNUOJ.Areas.Admin.Controllers
 
             if (String.Equals(form["enablerealname"], "1"))
             {
-                usernames = ContestUserManager.AdminExportContestUserList(id, "2,4", false);
+                IMethodResult result = ContestUserManager.AdminGetContestUserList(id, 0x02 + 0x04, false);
+                
+                if (!result.IsSuccess)
+                {
+                    return RedirectToErrorMessagePage(result.Description);
+                }
+
+                usernames = result.ResultObject as String;
             }
             else if (String.Equals(form["enablerealname"], "2"))
             {
                 usernames = form["usernames"];
             }
 
-            Byte[] data = ContestManager.AdminGetExportRanklist(id, usernames);
-
-            return File(data, "application/vnd.ms-excel", id.ToString() + ".xls");
+            return ResultToFile(ContestManager.AdminGetExportRanklist, id, usernames, id.ToString(), "xls");
         }
 
         /// <summary>
@@ -172,11 +177,9 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Problem(Int32 id = -1)
         {
-            List<ContestProblemEntity> list = ContestProblemManager.AdminGetContestProblemList(id);
-
             ViewBag.ContestID = (id >= 0 ? id.ToString() : "");
 
-            return View(list);
+            return ResultToView(ContestProblemManager.AdminGetContestProblemList, id);
         }
 
         /// <summary>
@@ -266,10 +269,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult UserExport(Int32 id, FormCollection form)
         {
-            String content = ContestUserManager.AdminExportContestUserList(id, form["maskcode"], String.Equals(form["withtitle"], "1"));
-            Byte[] data = Encoding.UTF8.GetBytes(content);
-
-            return File(data, "application/vnd.ms-excel", id.ToString() + ".txt");
+            return ResultToFile(ContestUserManager.AdminExportContestUserList, id, form["maskcode"], String.Equals(form["withtitle"], "1"), id.ToString(), "txt");
         }
 
         /// <summary>

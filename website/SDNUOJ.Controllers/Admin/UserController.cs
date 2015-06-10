@@ -56,7 +56,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Detail(String id)
         {
-            return View(UserManager.AdminGetUserInfo(id));
+            return ResultToView(UserManager.AdminGetUserInfo, id);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Online()
         {
-            return View(UserManager.AdminGetOnlineUserNames());
+            return ResultToView(UserManager.AdminGetOnlineUserNames);
         }
 
         /// <summary>

@@ -17,8 +17,13 @@ namespace SDNUOJ.Controllers.Core
         /// 获取配置信息
         /// </summary>
         /// <returns>配置信息</returns>
-        public static List<KeyValuePair<String, String>> AdminGetConfigPairList()
+        public static IMethodResult AdminGetConfigPairList()
         {
+            if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
+            {
+                throw new NoPermissionException();
+            }
+
             NameValueCollection col = ConfigurationManager.GetConfigCollection();
             List<KeyValuePair<String, String>> list = new List<KeyValuePair<String, String>>();
 
@@ -27,7 +32,7 @@ namespace SDNUOJ.Controllers.Core
                 list.Add(new KeyValuePair<String, String>(key, col[key]));
             }
 
-            return list;
+            return MethodResult.Success(list);
         }
 
         /// <summary>

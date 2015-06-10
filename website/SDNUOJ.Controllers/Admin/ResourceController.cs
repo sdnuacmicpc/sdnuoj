@@ -57,7 +57,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Edit(Int32 id = -1)
         {
-            return View("Edit", ResourceManager.AdminGetResource(id));
+            return ResultToView("Edit", ResourceManager.AdminGetResource, id);
         }
 
         /// <summary>

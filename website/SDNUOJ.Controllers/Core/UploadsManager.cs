@@ -135,28 +135,6 @@ namespace SDNUOJ.Controllers.Core
         }
 
         /// <summary>
-        /// 获取上传文件真实路径
-        /// </summary>
-        /// <param name="fileName">文件名</param>
-        /// <returns>上传文件真实路径</returns>
-        public static String AdminGetUploadFileRealPath(String fileName)
-        {
-            if (!AdminManager.HasPermission(PermissionType.Administrator))
-            {
-                throw new NoPermissionException();
-            }
-
-            String filePath = Path.Combine(ConfigurationManager.UploadDirectoryPath, fileName);
-
-            if (!File.Exists(filePath))
-            {
-                throw new InvalidInputException("File does not exist!");
-            }
-
-            return filePath;
-        }
-
-        /// <summary>
         /// 获取上传文件预览Url
         /// </summary>
         /// <param name="fileName">文件名</param>

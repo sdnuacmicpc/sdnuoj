@@ -380,7 +380,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (entity.ProblemID < ConfigurationManager.ProblemSetStartID)
             {
-                return MethodResult.InvalidRequst(RequestType.Problem);
+                return MethodResult.InvalidRequest(RequestType.Problem);
             }
 
             if (String.IsNullOrEmpty(entity.Title))
@@ -541,7 +541,13 @@ namespace SDNUOJ.Controllers.Core
                 {
                     if (datas[i] != null)
                     {
-                        ProblemDataManager.InternalAdminSaveProblemData(pids[i], datas[i]);
+                        IMethodResult ret = ProblemDataManager.InternalAdminSaveProblemData(pids[i], datas[i]);
+
+                        if (!ret.IsSuccess)
+                        {
+                            return ret;
+                        }
+
                         dataadded[pids[i]] = true;
                     }
                 }
@@ -583,7 +589,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsNumericIDs(ids))
             {
-                return MethodResult.InvalidRequst(RequestType.Problem);
+                return MethodResult.InvalidRequest(RequestType.Problem);
             }
 
             Boolean success = ProblemRepository.Instance.UpdateEntityIsHide(ids, isHide) > 0;
@@ -616,7 +622,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                return MethodResult.InvalidRequst(RequestType.Problem);
+                return MethodResult.InvalidRequest(RequestType.Problem);
             }
 
             Boolean success = ProblemRepository.Instance.UpdateEntitySubmitCount(problemID) > 0;
@@ -646,7 +652,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                return MethodResult.InvalidRequst(RequestType.Problem);
+                return MethodResult.InvalidRequest(RequestType.Problem);
             }
 
             Boolean success = ProblemRepository.Instance.UpdateEntitySolvedCount(problemID) > 0;
@@ -667,7 +673,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="id">题目ID</param>
         /// <returns>题目实体</returns>
-        public static ProblemEntity AdminGetProblem(Int32 id)
+        public static IMethodResult AdminGetProblem(Int32 id)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -676,12 +682,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (id < ConfigurationManager.ProblemSetStartID)
             {
-                throw new InvalidRequstException(RequestType.Problem);
+                return MethodResult.InvalidRequest(RequestType.Problem);
             }
 
-            ProblemEntity problem = ProblemRepository.Instance.GetEntity(id);
+            ProblemEntity entity = ProblemRepository.Instance.GetEntity(id);
 
-            return problem;
+            if (entity == null)
+            {
+                return MethodResult.NotExist(RequestType.Problem);
+            }
+
+            return MethodResult.Success(entity);
         }
 
         /// <summary>

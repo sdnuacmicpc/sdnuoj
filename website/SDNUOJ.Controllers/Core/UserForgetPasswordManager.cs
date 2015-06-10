@@ -37,7 +37,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsUserName(userName))
             {
-                return MethodResult.InvalidRequst(RequestType.User);
+                return MethodResult.InvalidRequest(RequestType.User);
             }
 
             if (!RegexVerify.IsEmail(email))

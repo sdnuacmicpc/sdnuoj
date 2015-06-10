@@ -2,6 +2,7 @@
 
 namespace SDNUOJ.Controllers.Core
 {
+    #region IMethodResult
     /// <summary>
     /// 方法返回接口
     /// </summary>
@@ -32,7 +33,9 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         Object ResultObject { get; }
     }
+    #endregion
 
+    #region IMethodResult<T>
     /// <summary>
     /// 方法返回接口
     /// </summary>
@@ -43,6 +46,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         T Result { get; }
     }
+    #endregion
 
     #region MethodResult
     /// <summary>
@@ -149,16 +153,28 @@ namespace SDNUOJ.Controllers.Core
         }
 
         /// <summary>
-        /// 返回新的非法请求异常结果
+        /// 返回新的非法请求失败结果
         /// </summary>
         /// <param name="type">请求类型</param>
-        /// <returns>非法请求异常结果类</returns>
-        public static InvalidRequstResult InvalidRequst(RequestType type)
+        /// <returns>非法请求失败结果</returns>
+        public static InvalidRequestResult InvalidRequest(RequestType type)
         {
-            return InvalidRequstResult.Create(type);
+            return InvalidRequestResult.Create(type);
+        }
+
+        /// <summary>
+        /// 返回新的无返回失败结果
+        /// </summary>
+        /// <param name="type">请求类型</param>
+        /// <returns>无返回失败结果</returns>
+        public static NotExistResult NotExist(RequestType type)
+        {
+            return NotExistResult.Create(type);
         }
     }
+    #endregion
 
+    #region MethodResult<T>
     /// <summary>
     /// 方法结果类
     /// </summary>
@@ -185,7 +201,8 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="result">执行结果</param>
         /// <param name="description">执行描述</param>
-        protected MethodResult(T result, String description) : base(description)
+        protected MethodResult(T result, String description)
+            : base(description)
         {
             this.Result = result;
         }
@@ -371,25 +388,25 @@ namespace SDNUOJ.Controllers.Core
     }
 
     /// <summary>
-    /// 非法请求异常结果类
+    /// 非法请求失败结果类
     /// </summary>
-    public sealed class InvalidRequstResult : MethodFailedResult
+    public sealed class InvalidRequestResult : MethodFailedResult
     {
         /// <summary>
-        /// 初始化新的非法请求异常结果类
+        /// 初始化新的非法请求失败结果
         /// </summary>
         /// <param name="type">请求类型</param>
-        private InvalidRequstResult(RequestType type)
+        private InvalidRequestResult(RequestType type)
             : base(GetErrorMessage(type) + " is INVALID!", false) { }
 
         /// <summary>
-        /// 返回新的方法失败结果类
+        /// 返回新的非法请求失败结果类
         /// </summary>
         /// <param name="type">请求类型</param>
-        /// <returns>方法失败结果类</returns>
-        public static InvalidRequstResult Create(RequestType type)
+        /// <returns>非法请求失败结果</returns>
+        public static InvalidRequestResult Create(RequestType type)
         {
-            return new InvalidRequstResult(type);
+            return new InvalidRequestResult(type);
         }
 
         #region 静态方法
@@ -411,6 +428,52 @@ namespace SDNUOJ.Controllers.Core
                 case RequestType.TopicPage: return "Page Name";
                 case RequestType.Resource: return "Resource ID";
                 default: return "Request";
+            }
+        }
+        #endregion
+    }
+
+    /// <summary>
+    /// 无返回失败结果类
+    /// </summary>
+    public sealed class NotExistResult : MethodFailedResult
+    {
+        /// <summary>
+        /// 初始化新的无返回失败结果
+        /// </summary>
+        /// <param name="type">请求类型</param>
+        private NotExistResult(RequestType type)
+            : base("No such " + GetErrorMessage(type) + "!", false) { }
+
+        /// <summary>
+        /// 返回新的无返回失败结果
+        /// </summary>
+        /// <param name="type">请求类型</param>
+        /// <returns>无返回失败结果</returns>
+        public static NotExistResult Create(RequestType type)
+        {
+            return new NotExistResult(type);
+        }
+
+        #region 静态方法
+        private static String GetErrorMessage(RequestType type)
+        {
+            switch (type)
+            {
+                case RequestType.User: return "user";
+                case RequestType.Problem: return "problem";
+                case RequestType.ProblemCategory: return "problem category";
+                case RequestType.Contest: return "contest";
+                case RequestType.Solution: return "solution";
+                case RequestType.SolutionError: return "solution error";
+                case RequestType.ForumTopic: return "forum topic";
+                case RequestType.ForumPost: return "forum post";
+                case RequestType.News: return "news";
+                case RequestType.UserMail: return "user mail";
+                case RequestType.UserForgetPassword: return "forget request";
+                case RequestType.TopicPage: return "topic page";
+                case RequestType.Resource: return "resource";
+                default: return "item";
             }
         }
         #endregion

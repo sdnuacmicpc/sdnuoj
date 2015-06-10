@@ -301,7 +301,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="did">数据库ID</param>
         /// <returns>数据库真实路径</returns>
-        public static String AdminGetDataBaseRealPath(Int32 did)
+        public static IMethodResult AdminGetDataBaseDownloadPath(Int32 did)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -318,17 +318,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (!File.Exists(filePath))
             {
-                throw new InvalidInputException("Database does not exist!");
+                return MethodResult.FailedAndLog("Database does not exist!");
             }
 
-            return filePath;
+            return MethodResult.SuccessAndLog<String>(filePath, "Admin download database, name = {0}", fi.Name);
         }
 
         /// <summary>
         /// 获取数据库列表
         /// </summary>
         /// <returns>数据库列表</returns>
-        public static List<FileInfo> AdminGetDataBases()
+        public static IMethodResult AdminGetDataBases()
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -367,7 +367,7 @@ namespace SDNUOJ.Controllers.Core
                 fis.Add(new FileInfo(files[i]));
             }
 
-            return fis;
+            return MethodResult.Success(fis);
         }
 
         /// <summary>

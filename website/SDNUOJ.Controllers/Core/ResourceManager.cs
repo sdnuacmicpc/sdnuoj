@@ -193,7 +193,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="resourceID">实体ID</param>
         /// <returns>对象实体</returns>
-        public static ResourceEntity AdminGetResource(Int32 id)
+        public static IMethodResult AdminGetResource(Int32 id)
         {
             if (!AdminManager.HasPermission(PermissionType.ResourceManage))
             {
@@ -202,17 +202,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (id <= 0)
             {
-                throw new InvalidRequstException(RequestType.Resource);
+                return MethodResult.InvalidRequest(RequestType.Resource);
             }
 
             ResourceEntity entity = ResourceRepository.Instance.GetEntity(id);
 
             if (entity == null)
             {
-                throw new InvalidRequstException(RequestType.Resource);
+                return MethodResult.NotExist(RequestType.Resource);
             }
 
-            return entity;
+            return MethodResult.Success(entity);
         }
 
         /// <summary>

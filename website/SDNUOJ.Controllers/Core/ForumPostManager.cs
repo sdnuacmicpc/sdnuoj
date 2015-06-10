@@ -361,7 +361,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsNumericIDs(ids))
             {
-                return MethodResult.InvalidRequst(RequestType.ForumPost);
+                return MethodResult.InvalidRequest(RequestType.ForumPost);
             }
 
             Boolean success = ForumPostRepository.Instance.UpdateEntityIsHide(ids, isHide) > 0;

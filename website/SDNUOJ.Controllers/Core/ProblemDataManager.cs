@@ -75,7 +75,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                return MethodResult.InvalidRequst(RequestType.Problem);
+                return MethodResult.InvalidRequest(RequestType.Problem);
             }
 
             if (file == null)
@@ -129,7 +129,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                return MethodResult.InvalidRequst(RequestType.Problem);
+                return MethodResult.InvalidRequest(RequestType.Problem);
             }
 
             SortedDictionary<String, String> dictData = new SortedDictionary<String, String>();
@@ -221,7 +221,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="problemID">题目ID</param>
         /// <param name="problemdata">题目数据文件</param>
         /// <returns>是否保存成功</returns>
-        internal static Boolean InternalAdminSaveProblemData(Int32 problemID, Byte[] problemdata)
+        internal static IMethodResult InternalAdminSaveProblemData(Int32 problemID, Byte[] problemdata)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -230,7 +230,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                throw new InvalidRequstException(RequestType.Problem);
+                return MethodResult.InvalidRequest(RequestType.Problem);
             }
 
             String fileNewName = problemID.ToString() + ".zip";
@@ -239,7 +239,7 @@ namespace SDNUOJ.Controllers.Core
 
             ProblemDataCache.RemoveProblemDataVersionCache(problemID);
 
-            return true;
+            return MethodResult.Success();
         }
 
         /// <summary>
@@ -247,7 +247,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="problemID">题目ID</param>
         /// <returns>题目数据物理路径</returns>
-        public static String AdminGetProblemDataRealPath(Int32 problemID)
+        public static IMethodResult AdminGetProblemDataDownloadPath(Int32 problemID)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -256,10 +256,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                throw new InvalidRequstException(RequestType.Problem);
+                return MethodResult.InvalidRequest(RequestType.Problem);
             }
 
-            return ProblemDataManager.GetProblemDataRealPath(problemID);
+            String dataPath = ProblemDataManager.GetProblemDataRealPath(problemID);
+
+            if (String.IsNullOrEmpty(dataPath))
+            {
+                return MethodResult.FailedAndLog("This problem doesn't have data!");
+            }
+
+            return MethodResult.SuccessAndLog<String>(dataPath, "Admin download problem data, id = {0}", problemID.ToString());
         }
 
         /// <summary>
@@ -276,7 +283,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                return MethodResult.InvalidRequst(RequestType.Problem);
+                return MethodResult.InvalidRequest(RequestType.Problem);
             }
 
             String dataPath = ProblemDataManager.GetProblemDataRealPath(problemID);

@@ -105,7 +105,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Config()
         {
-            return View(ConfigurationFileManager.AdminGetConfigPairList());
+            return ResultToView(ConfigurationFileManager.AdminGetConfigPairList);
         }
 
         /// <summary>

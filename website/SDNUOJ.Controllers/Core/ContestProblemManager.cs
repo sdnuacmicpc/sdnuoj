@@ -133,14 +133,16 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="cid">竞赛ID</param>
         /// <returns>竞赛题目列表</returns>
-        public static List<ContestProblemEntity> AdminGetContestProblemList(Int32 cid)
+        public static IMethodResult AdminGetContestProblemList(Int32 cid)
         {
             if (!AdminManager.HasPermission(PermissionType.ContestManage))
             {
                 throw new NoPermissionException();
             }
 
-            return ContestProblemRepository.Instance.GetEntities(cid);
+            List<ContestProblemEntity> list = ContestProblemRepository.Instance.GetEntities(cid);
+
+            return MethodResult.Success(list);
         }
         #endregion
     }

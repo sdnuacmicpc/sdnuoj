@@ -74,7 +74,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Edit(Int32 id = -1)
         {
-            return View("Edit", ProblemManager.AdminGetProblem(id));
+            return ResultToView("Edit", ProblemManager.AdminGetProblem, id);
         }
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult CategoryEdit(Int32 id = -1)
         {
-            return View("CategoryEdit", ProblemCategoryManager.AdminGetProblemCategory(id));
+            return ResultToView("CategoryEdit", ProblemCategoryManager.AdminGetProblemCategory, id);
         }
 
         /// <summary>
@@ -290,12 +290,9 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult CategorySet(Int32 id = -1)
         {
-            List<ProblemCategoryEntity> selected, unselected;
-
-            ViewBag.Source = ProblemCategoryItemManager.AdminGetProblemCategoryItemList(id, out selected, out unselected);
             ViewBag.ProblemID = (id >= 0 ? id.ToString() : "");
 
-            return View(new Tuple<List<ProblemCategoryEntity>, List<ProblemCategoryEntity>>(unselected, selected));
+            return ResultToView(ProblemCategoryItemManager.AdminGetProblemCategoryItemList, id);
         }
 
         /// <summary>
@@ -379,16 +376,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult DataDownload(Int32 id = -1)
         {
-            String dataPath = ProblemDataManager.AdminGetProblemDataRealPath(id);
-
-            if (!String.IsNullOrEmpty(dataPath))
-            {
-                return File(dataPath, "application/zip", id.ToString() + ".zip");
-            }
-            else
-            {
-                return RedirectToErrorMessagePage("This problem doesn't have data!");
-            }
+            return ResultToFilePath(ProblemDataManager.AdminGetProblemDataDownloadPath, id, id.ToString(), "zip");
         }
     }
 }

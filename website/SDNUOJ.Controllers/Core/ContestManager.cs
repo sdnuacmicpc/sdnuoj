@@ -290,7 +290,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsNumericIDs(ids))
             {
-                return MethodResult.InvalidRequst(RequestType.Contest);
+                return MethodResult.InvalidRequest(RequestType.Contest);
             }
 
             Boolean success = ContestRepository.Instance.UpdateEntityIsHide(ids, isHide) > 0;
@@ -316,14 +316,14 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="cid">竞赛ID</param>
         /// <param name="userrealnames">用户姓名对照表</param>
         /// <returns>竞赛排行</returns>
-        public static Byte[] AdminGetExportRanklist(Int32 cid, String userrealnames)
+        public static IMethodResult AdminGetExportRanklist(Int32 cid, String userrealnames)
         {
             if (!AdminManager.HasPermission(PermissionType.ContestManage))
             {
                 throw new NoPermissionException();
             }
 
-            ContestEntity contest = GetContest(cid);
+            ContestEntity contest = ContestManager.GetContest(cid);
             Dictionary<String, String> userdict = null;
             Dictionary<String, RankItem> rank = SolutionRepository.Instance.GetContestRanklist(contest.ContestID, contest.StartTime);
             List<ContestProblemEntity> problemlist = ContestProblemManager.GetContestProblemList(contest.ContestID);
@@ -357,7 +357,9 @@ namespace SDNUOJ.Controllers.Core
                 }
             }
 
-            return ContestResultExport.ExportResultToExcel(contest, problemlist, list, userdict);
+            Byte[] data = ContestResultExport.ExportResultToExcel(contest, problemlist, list, userdict);
+
+            return MethodResult.SuccessAndLog<Byte[]>(data, "Admin export contest result, id = {0}", cid.ToString());
         }
 
         /// <summary>
@@ -365,7 +367,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="id">竞赛ID</param>
         /// <returns>竞赛实体</returns>
-        public static ContestEntity AdminGetContest(Int32 id)
+        public static IMethodResult AdminGetContest(Int32 id)
         {
             if (!AdminManager.HasPermission(PermissionType.ContestManage))
             {
@@ -374,17 +376,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (id < ContestRepository.NONECONTEST)
             {
-                throw new InvalidRequstException(RequestType.Contest);
+                return MethodResult.InvalidRequest(RequestType.Contest);
             }
 
             ContestEntity entity = ContestRepository.Instance.GetEntity(id);
 
             if (entity == null)
             {
-                throw new NullResponseException(RequestType.Contest);
+                return MethodResult.NotExist(RequestType.Contest);
             }
 
-            return entity;
+            return MethodResult.Success(entity);
         }
 
         /// <summary>

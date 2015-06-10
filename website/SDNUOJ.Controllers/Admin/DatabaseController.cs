@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Web;
 using System.Web.Mvc;
 
@@ -19,11 +17,9 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult List()
         {
-            List<FileInfo> list = DatabaseManager.AdminGetDataBases();
-
             ViewBag.DefaultFileName = DatabaseManager.AccessDBFileName;
 
-            return View(list);
+            return ResultToView(DatabaseManager.AdminGetDataBases);
         }
 
         /// <summary>
@@ -133,9 +129,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult Download(Int32 id = -1)
         {
-            String filePath = DatabaseManager.AdminGetDataBaseRealPath(id);
-
-            return File(filePath, "application/msaccess", Path.GetFileName(filePath));
+            return ResultToFilePath(DatabaseManager.AdminGetDataBaseDownloadPath, id);
         }
     }
 }

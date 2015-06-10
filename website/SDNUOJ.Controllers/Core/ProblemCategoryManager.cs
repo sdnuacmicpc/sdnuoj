@@ -102,7 +102,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (entity.TypeID <= 0)
             {
-                return MethodResult.InvalidRequst(RequestType.ProblemCategory);
+                return MethodResult.InvalidRequest(RequestType.ProblemCategory);
             }
 
             if (String.IsNullOrEmpty(entity.Title))
@@ -136,7 +136,7 @@ namespace SDNUOJ.Controllers.Core
             
             if (id <= 0)
             {
-                return MethodResult.InvalidRequst(RequestType.ProblemCategory);
+                return MethodResult.InvalidRequest(RequestType.ProblemCategory);
             }
 
             if (ProblemCategoryItemRepository.Instance.CountEntities(id) > 0)
@@ -161,7 +161,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="id">题目类型种类ID</param>
         /// <returns>题目类型种类实体</returns>
-        public static ProblemCategoryEntity AdminGetProblemCategory(Int32 id)
+        public static IMethodResult AdminGetProblemCategory(Int32 id)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -170,17 +170,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (id <= 0)
             {
-                throw new InvalidRequstException(RequestType.ProblemCategory);
+                return MethodResult.InvalidRequest(RequestType.ProblemCategory);
             }
 
             ProblemCategoryEntity entity = ProblemCategoryRepository.Instance.GetEntity(id);
 
             if (entity == null)
             {
-                throw new NullResponseException(RequestType.ProblemCategory);
+                return MethodResult.NotExist(RequestType.ProblemCategory);
             }
 
-            return entity;
+            return MethodResult.Success(entity);
         }
 
         /// <summary>

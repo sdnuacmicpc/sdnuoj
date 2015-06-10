@@ -214,7 +214,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsNumericIDs(ids))
             {
-                return MethodResult.InvalidRequst(RequestType.ForumTopic);
+                return MethodResult.InvalidRequest(RequestType.ForumTopic);
             }
 
             Boolean success = ForumTopicRepository.Instance.UpdateEntityIsHide(ids, isHide) > 0;
@@ -247,7 +247,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsNumericIDs(ids))
             {
-                return MethodResult.InvalidRequst(RequestType.ForumTopic);
+                return MethodResult.InvalidRequest(RequestType.ForumTopic);
             }
 
             Boolean success = ForumTopicRepository.Instance.UpdateEntityIsLocked(ids, isLocked) > 0;

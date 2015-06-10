@@ -218,7 +218,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsNumericIDs(ids))
             {
-                return MethodResult.InvalidRequst(RequestType.News);
+                return MethodResult.InvalidRequest(RequestType.News);
             }
 
             String[] arrids = ids.Split(',');
@@ -254,7 +254,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="id">公告ID</param>
         /// <returns>公告实体</returns>
-        public static NewsEntity AdminGetNews(Int32 id)
+        public static IMethodResult AdminGetNews(Int32 id)
         {
             if (!AdminManager.HasPermission(PermissionType.NewsManage))
             {
@@ -263,17 +263,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (id <= 0)
             {
-                throw new InvalidRequstException(RequestType.News);
+                return MethodResult.InvalidRequest(RequestType.News);
             }
 
             NewsEntity entity = NewsRepository.Instance.GetEntity(id);
 
             if (entity == null)
             {
-                throw new NullResponseException(RequestType.News);
+                return MethodResult.NotExist(RequestType.News);
             }
 
-            return entity;
+            return MethodResult.Success(entity);
         }
 
         /// <summary>

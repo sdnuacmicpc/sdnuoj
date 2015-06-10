@@ -550,7 +550,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsUserName(userName))
             {
-                return MethodResult.InvalidRequst(RequestType.User);
+                return MethodResult.InvalidRequest(RequestType.User);
             }
 
             if (String.IsNullOrEmpty(passWord))
@@ -587,7 +587,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsUserName(userName))
             {
-                return MethodResult.InvalidRequst(RequestType.User);
+                return MethodResult.InvalidRequest(RequestType.User);
             }
 
             PermissionType permission = AdminManager.GetPermission(permissions);
@@ -607,7 +607,7 @@ namespace SDNUOJ.Controllers.Core
         /// <param name="userNames">用户名</param>
         /// <param name="permission">权限类型</param>
         /// <returns>是否成功更新</returns>
-        internal static Boolean InternalAdminUpdatePermision(String userName, PermissionType permission)
+        internal static IMethodResult InternalAdminUpdatePermission(String userName, PermissionType permission)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -616,10 +616,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsUserName(userName))
             {
-                throw new InvalidRequstException(RequestType.User);
+                return MethodResult.InvalidRequest(RequestType.User);
             }
 
-            return UserRepository.Instance.UpdateEntityPermision(userName, permission) > 0;
+            Boolean success = UserRepository.Instance.UpdateEntityPermision(userName, permission) > 0;
+
+            if (!success)
+            {
+                return MethodResult.FailedAndLog("Failed to update user's permission!");
+            }
+
+            return MethodResult.Success();
         }
 
         /// <summary>
@@ -637,7 +644,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (String.IsNullOrEmpty(userNames))
             {
-                return MethodResult.InvalidRequst(RequestType.User);
+                return MethodResult.InvalidRequest(RequestType.User);
             }
 
             Boolean success = UserRepository.Instance.UpdateEntityIsLocked(userNames, isLocked) > 0;
@@ -664,7 +671,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsUserName(userName))
             {
-                return MethodResult.InvalidRequst(RequestType.User);
+                return MethodResult.InvalidRequest(RequestType.User);
             }
 
             Boolean success = UserRepository.Instance.UpdateEntitySubmitCount(userName) > 0;
@@ -691,7 +698,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsUserName(userName))
             {
-                return MethodResult.InvalidRequst(RequestType.User);
+                return MethodResult.InvalidRequest(RequestType.User);
             }
 
             Boolean success = UserRepository.Instance.UpdateEntitySolvedCount(userName) > 0;
@@ -702,6 +709,49 @@ namespace SDNUOJ.Controllers.Core
             }
 
             return MethodResult.SuccessAndLog("Admin update user's solved count, name = {0}", userName);
+        }
+
+        /// <summary>
+        /// 获取用户信息
+        /// </summary>
+        /// <param name="userName">用户名</param>
+        /// <returns>用户实体</returns>
+        public static IMethodResult AdminGetUserInfo(String userName)
+        {
+            if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
+            {
+                throw new NoPermissionException();
+            }
+
+            if (!RegexVerify.IsUserName(userName))
+            {
+                return MethodResult.InvalidRequest(RequestType.User);
+            }
+
+            UserEntity entity = UserRepository.Instance.GetEntityWithAllInfo(userName);
+
+            if (entity == null)
+            {
+                return MethodResult.NotExist(RequestType.User);
+            }
+
+            return MethodResult.Success(entity);
+        }
+
+        /// <summary>
+        /// 当前在线用户列表
+        /// </summary>
+        /// <returns>当前在线用户列表</returns>
+        public static IMethodResult AdminGetOnlineUserNames()
+        {
+            if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
+            {
+                throw new NoPermissionException();
+            }
+
+            List<String> list = UserMailCache.GetOnlineUserNames();
+
+            return MethodResult.Success(list);
         }
 
         /// <summary>
@@ -745,33 +795,6 @@ namespace SDNUOJ.Controllers.Core
         }
 
         /// <summary>
-        /// 获取用户信息
-        /// </summary>
-        /// <param name="userName">用户名</param>
-        /// <returns>用户实体</returns>
-        public static UserEntity AdminGetUserInfo(String userName)
-        {
-            if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
-            {
-                throw new NoPermissionException();
-            }
-
-            if (!RegexVerify.IsUserName(userName))
-            {
-                throw new InvalidRequstException(RequestType.User);
-            }
-
-            UserEntity user = UserRepository.Instance.GetEntityWithAllInfo(userName);
-
-            if (user == null)
-            {
-                throw new NullResponseException(RequestType.User);
-            }
-
-            return user;
-        }
-
-        /// <summary>
         /// 获取有权限的用户列表
         /// </summary>
         /// <param name="pageIndex">页面索引</param>
@@ -789,20 +812,6 @@ namespace SDNUOJ.Controllers.Core
             return UserRepository.Instance
                 .GetEntitiesHavePermission(pageIndex, pageSize, recordCount)
                 .ToPagedList(pageSize, recordCount);
-        }
-
-        /// <summary>
-        /// 当前在线用户列表
-        /// </summary>
-        /// <returns>当前在线用户列表</returns>
-        public static List<String> AdminGetOnlineUserNames()
-        {
-            if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
-            {
-                throw new NoPermissionException();
-            }
-
-            return UserMailCache.GetOnlineUserNames();
         }
 
         /// <summary>

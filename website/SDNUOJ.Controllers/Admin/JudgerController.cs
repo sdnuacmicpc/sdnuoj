@@ -16,9 +16,7 @@ namespace SDNUOJ.Areas.Admin.Controllers
         /// <returns>操作后的结果</returns>
         public ActionResult List()
         {
-            List<UserEntity> list = JudgeServerManager.AdminGetJudgers();
-
-            return View(list);
+            return ResultToView(JudgeServerManager.AdminGetJudgers);
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿@model Tuple<List<SDNUOJ.Entity.ProblemCategoryEntity>, List<SDNUOJ.Entity.ProblemCategoryEntity>>
+﻿@model Tuple<String, List<SDNUOJ.Entity.ProblemCategoryEntity>, List<SDNUOJ.Entity.ProblemCategoryEntity>>
 
 @{
     ViewBag.__Title = "题目分类设置";
@@ -41,7 +41,7 @@
                 </td>
                 <td>
                     <select id="select-unchoosed" multiple="multiple" class="listbox-little">
-                    @foreach (var Item in Model.Item1)
+                    @foreach (var Item in Model.Item2)
                     {
                         <option value="@Item.TypeID">@Item.Title</option>
                     }
@@ -53,7 +53,7 @@
                     <button type="button" data-convert-type="-2">↑↑</button>
                     <br />
                     <select id="select-choosed" multiple="multiple" class="listbox-little">
-                    @foreach (var Item in Model.Item2)
+                    @foreach (var Item in Model.Item3)
                     {
                         <option value="@Item.TypeID">@Item.Title</option>
                     }
@@ -64,8 +64,8 @@
         <tfoot>
             <tr>
                 <td class="text-center" colspan="2">
-                    <input name="source" type="hidden" value="@ViewBag.Source" />
-                    <input id="txt-target" name="target" type="hidden" value="@ViewBag.Source" />
+                    <input name="source" type="hidden" value="@Model.Item1" />
+                    <input id="txt-target" name="target" type="hidden" value="@Model.Item1" />
                     <button type="submit">提交</button>
                     <button type="reset">重置</button>
                 </td>

@@ -66,7 +66,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsPageName(entity.PageName))
             {
-                return MethodResult.InvalidRequst(RequestType.TopicPage);
+                return MethodResult.InvalidRequest(RequestType.TopicPage);
             }
 
             if (String.IsNullOrEmpty(entity.Title))
@@ -113,7 +113,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsPageName(entity.PageName))
             {
-                return MethodResult.InvalidRequst(RequestType.TopicPage);
+                return MethodResult.InvalidRequest(RequestType.TopicPage);
             }
 
             if (String.IsNullOrEmpty(entity.Title))
@@ -203,7 +203,7 @@ namespace SDNUOJ.Controllers.Core
         /// </summary>
         /// <param name="id">主题页面ID</param>
         /// <returns>主题页面实体</returns>
-        public static TopicPageEntity AdminGetTopicPage(String name)
+        public static IMethodResult AdminGetTopicPage(String name)
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -212,17 +212,17 @@ namespace SDNUOJ.Controllers.Core
 
             if (!RegexVerify.IsPageName(name))
             {
-                throw new InvalidRequstException(RequestType.TopicPage);
+                return MethodResult.InvalidRequest(RequestType.TopicPage);
             }
 
             TopicPageEntity entity = TopicPageRepository.Instance.GetEntity(name);
 
             if (entity == null)
             {
-                throw new NullResponseException(RequestType.TopicPage);
+                return MethodResult.NotExist(RequestType.TopicPage);
             }
 
-            return entity;
+            return MethodResult.Success(entity);
         }
 
         /// <summary>

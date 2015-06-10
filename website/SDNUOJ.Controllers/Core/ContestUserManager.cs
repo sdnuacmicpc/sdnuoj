@@ -120,7 +120,7 @@ namespace SDNUOJ.Controllers.Core
 
             if (String.IsNullOrEmpty(usernames))
             {
-                return MethodResult.InvalidRequst(RequestType.User);
+                return MethodResult.InvalidRequest(RequestType.User);
             }
 
             Dictionary<String, ContestUserEntity> dict = new Dictionary<String, ContestUserEntity>();
@@ -237,43 +237,26 @@ namespace SDNUOJ.Controllers.Core
         /// 导出竞赛用户列表
         /// </summary>
         /// <param name="cid">竞赛ID</param>
-        /// <param name="mask">导出内容掩码</param>
+        /// <param name="maskcode">导出内容掩码</param>
         /// <param name="withTitle">包括标题行</param>
         /// <returns>竞赛用户列表</returns>
         /// <remarks>
-        /// 第1位-竞赛ID
-        /// 第2位-用户名
-        /// 第3位-真实姓名
-        /// 第4位-注册时间
-        /// 第5位-是否启用
+        /// 第1位-竞赛ID      （0x01）
+        /// 第2位-用户名      （0x02）
+        /// 第3位-真实姓名    （0x04）
+        /// 第4位-注册时间    （0x08）
+        /// 第5位-是否启用    （0x10）
         /// </remarks>
-        public static String AdminExportContestUserList(Int32 cid, String mask, Boolean withTitle)
+        public static IMethodResult AdminGetContestUserList(Int32 cid, Int32 maskcode, Boolean withTitle)
         {
             if (!AdminManager.HasPermission(PermissionType.ContestManage))
             {
                 throw new NoPermissionException();
             }
 
-            Int32 maskcode = 0;
-
-            if (!String.IsNullOrEmpty(mask))
-            {
-                String[] codes = mask.Replace(" ", "").Split(',');
-
-                foreach (String code in codes)
-                {
-                    Int32 num = 0;
-
-                    if (Int32.TryParse(code, out num))
-                    {
-                        maskcode += num;
-                    }
-                }
-            }
-
             if (maskcode <= 0)
             {
-                throw new InvalidInputException("You must select at least one item to export!");
+                return MethodResult.FailedAndLog("You must select at least one item to export!");
             }
 
             Dictionary<String, ContestUserEntity> dict = ContestUserRepository.Instance.GetEntities(cid);
@@ -346,7 +329,53 @@ namespace SDNUOJ.Controllers.Core
                 }
             }
 
-            return sb.ToString();
+            return MethodResult.Success(sb.ToString());
+        }
+
+        /// <summary>
+        /// 导出竞赛用户列表
+        /// </summary>
+        /// <param name="cid">竞赛ID</param>
+        /// <param name="mask">导出内容掩码</param>
+        /// <param name="withTitle">包括标题行</param>
+        /// <returns>竞赛用户列表</returns>
+        /// <remarks>
+        /// 第1位-竞赛ID      （0x01）
+        /// 第2位-用户名      （0x02）
+        /// 第3位-真实姓名    （0x04）
+        /// 第4位-注册时间    （0x08）
+        /// 第5位-是否启用    （0x10）
+        /// </remarks>
+        public static IMethodResult AdminExportContestUserList(Int32 cid, String mask, Boolean withTitle)
+        {
+            Int32 maskcode = 0;
+
+            if (!String.IsNullOrEmpty(mask))
+            {
+                String[] codes = mask.Replace(" ", "").Split(',');
+
+                foreach (String code in codes)
+                {
+                    Int32 num = 0;
+
+                    if (Int32.TryParse(code, out num))
+                    {
+                        maskcode += num;
+                    }
+                }
+            }
+
+            IMethodResult ret = ContestUserManager.AdminGetContestUserList(cid, maskcode, withTitle);
+
+            if (!ret.IsSuccess)
+            {
+                return ret;
+            }
+
+            String content = ret.ResultObject as String;
+            Byte[] data = Encoding.UTF8.GetBytes(content);
+
+            return MethodResult.SuccessAndLog<Byte[]>(data, "Admin export contest user list, id = {0}", cid.ToString());
         }
 
         /// <summary>

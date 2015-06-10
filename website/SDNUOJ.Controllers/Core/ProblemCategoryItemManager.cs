@@ -32,12 +32,12 @@ namespace SDNUOJ.Controllers.Core
 
             if (problemID < ConfigurationManager.ProblemSetStartID)
             {
-                return MethodResult.InvalidRequst(RequestType.Problem);
+                return MethodResult.InvalidRequest(RequestType.Problem);
             }
 
             if ((!String.IsNullOrEmpty(sourceIDs) && !RegexVerify.IsNumericIDs(sourceIDs)) || (!String.IsNullOrEmpty(targetIDs) && !RegexVerify.IsNumericIDs(targetIDs)))
             {
-                return MethodResult.InvalidRequst(RequestType.ProblemCategory);
+                return MethodResult.InvalidRequest(RequestType.ProblemCategory);
             }
 
             StringBuilder deleteIDs = new StringBuilder();
@@ -88,9 +88,8 @@ namespace SDNUOJ.Controllers.Core
         /// 获取题目类型列表
         /// </summary>
         /// <param name="problemID">题目ID</param>
-        /// <param name="lstUnSelectedList">题目没有选择的类型列表</param>
         /// <returns>题目选择的类型列表</returns>
-        public static String AdminGetProblemCategoryItemList(Int32 problemID, out List<ProblemCategoryEntity> lstSelectedList, out List<ProblemCategoryEntity> lstUnSelectedList)
+        public static IMethodResult AdminGetProblemCategoryItemList(Int32 problemID)
         {
             if (!AdminManager.HasPermission(PermissionType.ProblemManage))
             {
@@ -100,8 +99,8 @@ namespace SDNUOJ.Controllers.Core
             List<ProblemCategoryItemEntity> lstPT = ProblemCategoryItemRepository.Instance.GetEntities(problemID);
             StringBuilder sb = new StringBuilder();
 
-            lstSelectedList = new List<ProblemCategoryEntity>();
-            lstUnSelectedList = new List<ProblemCategoryEntity>(ProblemCategoryManager.GetProblemCategoryList());
+            List<ProblemCategoryEntity> lstSelectedList = new List<ProblemCategoryEntity>();
+            List<ProblemCategoryEntity> lstUnSelectedList = new List<ProblemCategoryEntity>(ProblemCategoryManager.GetProblemCategoryList());
             
             if (lstPT == null)
             {
@@ -123,7 +122,7 @@ namespace SDNUOJ.Controllers.Core
                 }
             }
 
-            return sb.ToString();
+            return MethodResult.Success(new Tuple<String, List<ProblemCategoryEntity>, List<ProblemCategoryEntity>>(sb.ToString(), lstUnSelectedList, lstSelectedList));
         }
         #endregion
     }

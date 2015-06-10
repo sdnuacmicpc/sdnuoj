@@ -25,9 +25,9 @@ namespace SDNUOJ.Controllers.Core
                 throw new NoPermissionException();
             }
 
-            Boolean success = UserManager.InternalAdminUpdatePermision(userName, PermissionType.HttpJudge);
+            IMethodResult ret = UserManager.InternalAdminUpdatePermission(userName, PermissionType.HttpJudge);
 
-            if (!success)
+            if (!ret.IsSuccess)
             {
                 return MethodResult.FailedAndLog("No judger was created!");
             }
@@ -47,9 +47,9 @@ namespace SDNUOJ.Controllers.Core
                 throw new NoPermissionException();
             }
 
-            Boolean success = UserManager.InternalAdminUpdatePermision(userName, PermissionType.None);
+            IMethodResult ret = UserManager.InternalAdminUpdatePermission(userName, PermissionType.None);
 
-            if (!success)
+            if (!ret.IsSuccess)
             {
                 return MethodResult.FailedAndLog("No judger was deleted!");
             }
@@ -61,7 +61,7 @@ namespace SDNUOJ.Controllers.Core
         /// 当前评测机列表
         /// </summary>
         /// <returns>当前评测机列表</returns>
-        public static List<UserEntity> AdminGetJudgers()
+        public static IMethodResult AdminGetJudgers()
         {
             if (!AdminManager.HasPermission(PermissionType.SuperAdministrator))
             {
@@ -78,7 +78,7 @@ namespace SDNUOJ.Controllers.Core
                 }
             }
 
-            return list;
+            return MethodResult.Success(list);
         }
         #endregion
     }
