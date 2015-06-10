@@ -41,7 +41,7 @@
             <td>@Html.ActionLink(Item.Title, "Detail", "News", new { area = "", id = Item.AnnounceID }, new { @target = "_blank" })</td>
             <td class="text-center">@Item.PublishDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
             <td class="text-center">@Html.ActionLink("编辑", "Edit", "News", new { id = Item.AnnounceID }, null)</td>
-            <td class="text-center">@(Item.AnnounceID > 1 ? Html.ActionLink("删除", "Delete", "News", new { id = Item.AnnounceID }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" }) : Html.Raw("删除"))</td>
+            <td class="text-center">@(Item.AnnounceID != SDNUOJ.Data.NewsRepository.DEFAULTID ? Html.ActionLink("删除", "Delete", "News", new { id = Item.AnnounceID }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" }) : Html.Raw("删除"))</td>
         </tr>
     }
     @if (Model.Count == 0)
