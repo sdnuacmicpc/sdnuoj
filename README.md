@@ -7,21 +7,26 @@ SDNU Online Judge是基于Microsoft .NET Framework开发的高校在线评测系
 
 本项目使用了以下开源项目：
 
+Website:
+
 1. [DotMaysWind.Data](http://github.com/mayswind/DotMaysWind.Data)
 2. [NLog](http://nlog-project.org)
 3. [NPOI](http://github.com/tonyqus/npoi)
 4. [DotNetZip](http://dotnetzip.codeplex.com)
-5. [SharpZipLib](http://icsharpcode.github.io/SharpZipLib)
-6. [NUniversalCharDet](http://code.google.com/p/nuniversalchardet)
-7. [LowercaseRoutesMVC](http://lowercaseroutesmvc.codeplex.com)
-8. [jQuery](http://jquery.com)
-9. [Bootstrap](http://getbootstrap.com)
-10. [CodeMirror](http://codemirror.net)
-11. [Flot](http://www.flotcharts.org)
-12. [DateTimePicker](http://xdsoft.net/jqplugins/datetimepicker)
-13. [TinyEditor](http://www.leigeber.com/2010/02/javascript-wysiwyg-editor)
-14. [HTML5 Shiv](http://code.google.com/p/html5shiv)
-15. [explorercanvas](http://code.google.com/p/explorercanvas)
-16. [Respond.js](http://j.mp/respondjs)
-17. [Json2](https://github.com/douglascrockford/JSON-js)
-18. [jquery-placeholder](http://mths.be/placeholder)
+5. [LowercaseRoutesMVC](http://lowercaseroutesmvc.codeplex.com)
+6. [jQuery](http://jquery.com)
+7. [Bootstrap](http://getbootstrap.com)
+8. [CodeMirror](http://codemirror.net)
+9. [Flot](http://www.flotcharts.org)
+10. [DateTimePicker](http://xdsoft.net/jqplugins/datetimepicker)
+11. [TinyEditor](http://www.leigeber.com/2010/02/javascript-wysiwyg-editor)
+12. [HTML5 Shiv](http://code.google.com/p/html5shiv)
+13. [explorercanvas](http://code.google.com/p/explorercanvas)
+14. [Respond.js](http://j.mp/respondjs)
+15. [Json2](https://github.com/douglascrockford/JSON-js)
+16. [jquery-placeholder](http://mths.be/placeholder)
+
+评测机:
+
+1. [SharpZipLib](http://icsharpcode.github.io/SharpZipLib)
+2. [NUniversalCharDet](http://code.google.com/p/nuniversalchardet)
