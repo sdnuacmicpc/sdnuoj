@@ -17,7 +17,7 @@ namespace SDNUOJ.Caching
         /// <summary>
         /// 缓存时间
         /// </summary>
-        private const Int32 RECENTCONTEST_CACHE_TIME = 600;
+        private const Int32 RECENTCONTEST_CACHE_TIME = 3600;
 
         /// <summary>
         /// 向缓存中写入最近比赛信息
