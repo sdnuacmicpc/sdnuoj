@@ -14,6 +14,7 @@ namespace SDNUOJ
             AreaRegistration.RegisterAllAreas();
             GlobalFiltersRegistration.RegisterGlobalFilters(GlobalFilters.Filters);
             GlobalRoutesTable.RegisterRoutes(RouteTable.Routes);
+            ScheduleTaskRegistration.RegisterAllScheduleTasks();
         }
 
         protected void Application_AuthenticateRequest(Object sender, EventArgs e)

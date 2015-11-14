@@ -173,6 +173,7 @@
     <Compile Include="MailController.cs" />
     <Compile Include="PageType.cs" />
     <Compile Include="ResourceController.cs" />
+    <Compile Include="ScheduleTaskRegistration.cs" />
     <Compile Include="Status\JudgeOnlineStatus.cs" />
     <Compile Include="Status\UserBrowserStatus.cs" />
     <Compile Include="Status\UserCurrentStatus.cs" />
