@@ -10,6 +10,24 @@ namespace SDNUOJ.Controllers.Core.Judge
 {
     internal static class JudgeSolutionManager
     {
+        #region 常量
+        /// <summary>
+        /// 自动重测最多尝试次数
+        /// </summary>
+        private const Int32 AUTO_REJUDGE_MAX_TIMES = 5;
+        #endregion
+
+        #region 字段
+        private static Dictionary<Int32, Int32> _rejudgeTimesMap;
+        #endregion
+
+        #region 构造方法
+        static JudgeSolutionManager()
+        {
+            _rejudgeTimesMap = new Dictionary<Int32, Int32>();
+        }
+        #endregion
+
         #region 评测机获取评测列表
         /// <summary>
         /// 获取评测列表的Json信息
@@ -128,9 +146,30 @@ namespace SDNUOJ.Controllers.Core.Judge
                     MemoryCost = mcost.ToInt32(0)
                 };
 
-                if (entity.Result > ResultType.Accepted)//没有题目数据则评测失败 否则重新评测
+                if (entity.Result > ResultType.Accepted)//评测失败
                 {
-                    entity.Result = String.IsNullOrEmpty(ProblemDataManager.GetProblemDataRealPath(entity.ProblemID)) ? ResultType.JudgeFailed : ResultType.RejudgePending;
+                    Boolean hasProblemData = !String.IsNullOrEmpty(ProblemDataManager.GetProblemDataRealPath(entity.ProblemID));
+                    
+                    //没有题目的不重新评测
+                    Boolean canAutoRejudge = hasProblemData;
+
+                    Int32 triedTimes = 0;
+                    if (!_rejudgeTimesMap.TryGetValue(entity.SolutionID, out triedTimes))
+                    {
+                        triedTimes = 0;
+                    }
+
+                    if (triedTimes > AUTO_REJUDGE_MAX_TIMES)
+                    {
+                        _rejudgeTimesMap.Remove(entity.SolutionID);
+                        canAutoRejudge = false;
+                    }
+                    else
+                    {
+                        _rejudgeTimesMap[entity.SolutionID] = triedTimes + 1;
+                    }
+
+                    entity.Result = canAutoRejudge ? ResultType.RejudgePending : ResultType.JudgeFailed;
                 }
 
                 SolutionManager.JudgeUpdateSolutionAllResult(entity, detail);
