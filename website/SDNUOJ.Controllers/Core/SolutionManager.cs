@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Web;
 
 using SDNUOJ.Caching;
 using SDNUOJ.Configuration;
@@ -16,7 +15,6 @@ using SDNUOJ.Utilities;
 using SDNUOJ.Utilities.Security;
 using SDNUOJ.Utilities.Text;
 using SDNUOJ.Utilities.Text.RegularExpressions;
-using SDNUOJ.Utilities.Web;
 
 namespace SDNUOJ.Controllers.Core
 {
@@ -78,23 +76,27 @@ namespace SDNUOJ.Controllers.Core
         /// <summary>
         /// 更新一条提交(更新所有评测信息)
         /// </summary>
-        /// <param name="model">对象实体</param>
+        /// <param name="entity">对象实体</param>
         /// <param name="error">编译错误信息</param>
         /// <returns>是否成功更新</returns>
-        public static Boolean JudgeUpdateSolutionAllResult(SolutionEntity model, String error)
+        public static Boolean JudgeUpdateSolutionAllResult(SolutionEntity entity, String error)
         {
-            if (model == null) return false;
+            if (entity == null) return false;
 
             lock (_updateLock)
             {
-                model.JudgeTime = DateTime.Now;
+                entity.JudgeTime = DateTime.Now;
 
-                if (SolutionRepository.Instance.UpdateEntity(model, error) > 0)
+                if (SolutionRepository.Instance.UpdateEntity(entity, error) > 0)
                 {
-                    if (model.Result == ResultType.Accepted)
+                    if (entity.Result == ResultType.Accepted)
                     {
                         UserCache.RemoveUserTop10Cache();
                     }
+
+                    SolutionCache.RemoveAcceptedCodesCache(entity.UserName);
+                    SolutionCache.RemoveProblemIDListCache(entity.UserName, false);
+                    SolutionCache.RemoveProblemIDListCache(entity.UserName, true);
 
                     return true;
                 }
@@ -174,6 +176,7 @@ namespace SDNUOJ.Controllers.Core
             if (success)
             {
                 ProblemCache.UpdateProblemCacheSubmitCount(entity.ProblemID, -1);//更新缓存
+                SolutionCache.RemoveProblemIDListCache(entity.UserName, true);
             }
 
             return success;

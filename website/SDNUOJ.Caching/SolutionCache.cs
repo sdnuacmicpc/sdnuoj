@@ -69,7 +69,7 @@ namespace SDNUOJ.Caching
         /// <summary>
         /// 缓存时间
         /// </summary>
-        private const Int32 ACCEPTED_CODES_CACHE_TIME = 10;
+        private const Int32 ACCEPTED_CODES_CACHE_TIME = 600;
 
         /// <summary>
         /// 向缓存中写入AC代码打包文件
@@ -92,6 +92,15 @@ namespace SDNUOJ.Caching
         }
 
         /// <summary>
+        /// 从缓存中删除AC代码打包文件
+        /// </summary>
+        /// <param name="userName">用户名</param>
+        public static void RemoveAcceptedCodesCache(String userName)
+        {
+            CacheManager.Remove(GetAcceptedCodesKey(userName));
+        }
+
+        /// <summary>
         /// 获取指定用户名缓存KEY
         /// </summary>
         /// <param name="userName">用户名</param>
@@ -111,7 +120,7 @@ namespace SDNUOJ.Caching
         /// <summary>
         /// 缓存时间
         /// </summary>
-        private const Int32 PROBLEMID_LIST_CACHE_TIME = 10;
+        private const Int32 PROBLEMID_LIST_CACHE_TIME = 600;
 
         /// <summary>
         /// 向缓存中写入题目ID列表
@@ -133,6 +142,16 @@ namespace SDNUOJ.Caching
         public static List<Int32> GetProblemIDListCache(String userName, Boolean isUnsolved)
         {
             return CacheManager.Get<List<Int32>>(GetProblemIDListCacheKey(userName, isUnsolved));
+        }
+
+        /// <summary>
+        /// 从缓存中删除题目ID列表
+        /// </summary>
+        /// <param name="userName">用户名</param>
+        /// <param name="isUnsolved">是否非完成列表</param>
+        public static void RemoveProblemIDListCache(String userName, Boolean isUnsolved)
+        {
+            CacheManager.Remove(GetProblemIDListCacheKey(userName, isUnsolved));
         }
 
         /// <summary>
