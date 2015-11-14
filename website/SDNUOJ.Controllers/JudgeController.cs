@@ -80,6 +80,7 @@ namespace SDNUOJ.Controllers
         /// 评测机更新评测状态
         /// </summary>
         /// <returns>Json结果</returns>
+        [ValidateInput(false)]
         public ActionResult UpdateStatus()
         {
             String sid = Request["sid"];
