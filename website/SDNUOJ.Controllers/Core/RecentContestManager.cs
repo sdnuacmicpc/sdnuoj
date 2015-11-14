@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -21,7 +23,7 @@ namespace SDNUOJ.Controllers.Core
         /// <summary>
         /// 获取信息超时时间
         /// </summary>
-        private const Int32 REQUEST_TIMEOUT = 10000;//ms
+        private const Int32 REQUEST_TIMEOUT = 20000;//ms
         #endregion
 
         #region 用户方法
@@ -51,25 +53,51 @@ namespace SDNUOJ.Controllers.Core
         /// <returns>异步任务</returns>
         public static void ScheduleGetAllRecentContestsJsonFromWeb()
         {
-            ScheduledTaskManager.Schedule("RequestRecentContest", 0, AUTO_REQUEST_INTERVAL, async () =>
-            {
-                String content = await RecentContestManager.GetAllRecentContestsJsonFromWebAsync();
-
-                if (!String.IsNullOrEmpty(content))
-                {
-                    RecentContestCache.SetRecentContestCache(content);//设置缓存
-                }
-            });
+            ScheduledTaskManager.Schedule("RequestRecentContest", 0, AUTO_REQUEST_INTERVAL, 
+                RecentContestManager.ScheduleGetAllRecentContestsJsonCallback);
         }
         #endregion
 
         #region 私有方法
+        private static void ScheduleGetAllRecentContestsJsonCallback(Object state)
+        {
+            try
+            {
+                HttpWebRequest request = HttpWebRequest.CreateHttp(ConfigurationManager.RecentContestURL);
+                request.Timeout = REQUEST_TIMEOUT;
+                request.BeginGetResponse(ar => 
+                {
+                    HttpWebResponse response = (HttpWebResponse)request.EndGetResponse(ar);
+
+                    using (Stream stream = response.GetResponseStream())
+                    {
+                        StreamReader sr = new StreamReader(stream);
+                        String content = RecentContestManager.ProcessRecentContestsJsonContent(sr.ReadToEnd());
+
+                        if (!String.IsNullOrEmpty(content))
+                        {
+                            RecentContestCache.SetRecentContestCache(content);//设置缓存
+                        }
+                    }
+                }, request);
+            }
+            catch (System.Exception)
+            {
+                ;//Do Nothing
+            }
+        }
+
         private static async Task<String> GetAllRecentContestsJsonFromWebAsync()
         {
             HttpClient client = new HttpClient();
             client.Timeout = TimeSpan.FromMilliseconds(REQUEST_TIMEOUT);
 
             String content = await client.GetStringAsync(ConfigurationManager.RecentContestURL);
+            return RecentContestManager.ProcessRecentContestsJsonContent(content);
+        }
+
+        private static String ProcessRecentContestsJsonContent(String content)
+        {
             content = content.Replace("\"Rigister\"", "\"Register\"");//修正HDU Rigister
             content = content.Replace("\"Open\"", "\"Public\"");//修正XMU Open
             content = content.Replace("\"open\"", "\"Public\"");//修正JLU open

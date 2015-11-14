@@ -27,10 +27,17 @@ namespace SDNUOJ.Caching
         /// <param name="taskName">任务名称</param>
         /// <param name="startDelay">开始延时（秒）</param>
         /// <param name="interval">间隔时间（秒）</param>
-        /// <param name="action">执行内容</param>
-        public static void Schedule(String taskName, Int32 startDelay, Int32 interval, Action action)
+        /// <param name="callback">执行回调方法</param>
+        public static void Schedule(String taskName, Int32 startDelay, Int32 interval, TimerCallback callback)
         {
-            Timer timer = new Timer((state) => action(), null, TimeSpan.FromSeconds(startDelay), TimeSpan.FromSeconds(interval));
+            Timer timer = null;
+
+            if (_tasks.TryGetValue(taskName, out timer) && timer != null)
+            {
+                timer.Dispose();
+            }
+
+            timer = new Timer(callback, null, TimeSpan.FromSeconds(startDelay), TimeSpan.FromSeconds(interval));
             _tasks[taskName] = timer;
         }
         #endregion
