@@ -31,8 +31,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotMaysWind.Data, Version=0.3.2.0, Culture=neutral, PublicKeyToken=0d869d299c64cf93, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Debug\DotMaysWind.Data.dll</HintPath>
+      <HintPath>..\packages\DotMaysWind.Data.0.3.2.0\lib\net40\DotMaysWind.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

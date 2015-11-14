@@ -43,9 +43,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotMaysWind.Data, Version=0.3.1.0, Culture=neutral, PublicKeyToken=0d869d299c64cf93, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Debug\DotMaysWind.Data.dll</HintPath>
+    <Reference Include="DotMaysWind.Data, Version=0.3.2.0, Culture=neutral, PublicKeyToken=0d869d299c64cf93, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotMaysWind.Data.0.3.2.0\lib\net40\DotMaysWind.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -82,6 +82,9 @@
       <Project>{2EFFCD01-5AD3-4437-B176-D040443DB279}</Project>
       <Name>SDNUOJ.Entity</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
