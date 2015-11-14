@@ -197,6 +197,11 @@ namespace SDNUOJ.Controllers.Core
 
             for (Int32 i = startIndex; i <= endIndex; i++)
             {
+                if (String.Equals(files[i].Name, "web.config", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 fis.Add(files[i]);
             }
 
