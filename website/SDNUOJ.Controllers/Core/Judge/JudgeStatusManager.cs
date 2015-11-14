@@ -8,6 +8,16 @@ namespace SDNUOJ.Controllers.Core.Judge
 {
     internal static class JudgeStatusManager
     {
+        #region 属性
+        /// <summary>
+        /// 获取当前评测机用户名
+        /// </summary>
+        public static String JudgeUserName
+        {
+            get { return UserManager.CurrentUserName; }
+        }
+        #endregion
+
         #region 评测机登录
         /// <summary>
         /// 尝试评测机登录

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 using SDNUOJ.Controllers.Core.Judge;
+using SDNUOJ.Logging;
 using SDNUOJ.Utilities.Text;
 using SDNUOJ.Utilities.Web;
 
@@ -100,6 +102,21 @@ namespace SDNUOJ.Controllers
             }
         }
 
+        #region 保护方法
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            base.OnException(filterContext);
+
+            try
+            {
+                this.LogException(filterContext.Exception, filterContext.RouteData);
+            } catch (System.Exception)
+            {
+                ;//Do Nothing
+            }
+        }
+        #endregion
+
         #region 私有方法
         private ContentResult ErrorJson(String error)
         {
@@ -109,6 +126,27 @@ namespace SDNUOJ.Controllers
         private ContentResult SuccessJson()
         {
             return Content("{\"status\":\"success\"}", "application/json");
+        }
+
+        private void LogException(System.Exception exception, RouteData routeData)
+        {
+            String controller = routeData.Values["controller"] as String;
+            String action = routeData.Values["action"] as String;
+
+            ExceptionLogContext context = new ExceptionLogContext(exception)
+            {
+                Level = LogLevel.Error,
+                RequestUrl = HttpContext.Request.RawUrl,
+                RefererUrl = (HttpContext.Request.UrlReferrer != null ? HttpContext.Request.UrlReferrer.ToString() : "null"),
+                Controller = controller,
+                Action = action,
+                Username = JudgeStatusManager.JudgeUserName,
+                UserIP = this.Request.GetRemoteClientIPv4(),
+                UserAgent = HttpContext.Request.UserAgent,
+                TimeStamp = DateTime.Now,
+            };
+
+            LogManager.LogException(context);
         }
         #endregion
     }
