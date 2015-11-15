@@ -423,6 +423,21 @@ input[readonly] {
     color: #FFA500;
 }
 
+.statistic-chart {
+    height: 200px;
+}
+
+.statistic-chart-tip {
+    padding: 10px 12px 10px 12px;
+    font-size: 12px;
+    font-family: "Arial" !important;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    border-radius: 4px;
+    opacity: 0.8;
+}
+
 .faq-q {
     color:#008000;
     line-height:30px;
@@ -794,4 +809,8 @@ input[readonly] {
 #editorbox {
     background: #FFF;
     border: 0;
+}
+
+.hide {
+    display: none;
 }

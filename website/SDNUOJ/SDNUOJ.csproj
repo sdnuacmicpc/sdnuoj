@@ -20,6 +20,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -154,6 +155,7 @@
       <DependentUpon>jquery.datetimepicker-2.4.3-mod.js</DependentUpon>
     </Content>
     <Content Include="static\js\foundation\jquery.flot-0.8.3.min.js" />
+    <Content Include="static\js\foundation\jquery.flot.pie-0.8.3.min.js" />
     <Content Include="static\js\foundation\json2-150225.js" />
     <Content Include="static\js\foundation\json2-150225.min.js">
       <DependentUpon>json2-150225.js</DependentUpon>
