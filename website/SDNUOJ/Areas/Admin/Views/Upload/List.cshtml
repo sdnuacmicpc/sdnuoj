@@ -42,7 +42,7 @@
             <td><a href="@ViewBag.RootPath@Item.Name" target="_blank">@Item.Name</a></td>
             <td class="text-center">@Item.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
             <td class="text-center">@((Item.Length / 1024.0).ToString("0.00")) KB</td>
-            <td class="text-center"><a href="/@ViewBag.RootPath@Item.Name" target="_blank">下载</a></td>
+            <td class="text-center"><a href="@ViewBag.RootPath@Item.Name" target="_blank">下载</a></td>
             <td class="text-center">@Html.ActionLink("删除", "Delete", "Upload", new { name = Item.Name }, new { @data_advancelink = "true", @data_confirm = "true", @data_async = "true" })</td>
         </tr>
     }
