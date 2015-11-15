@@ -21,9 +21,26 @@
 
 <nav>
     <ul class="pagination">
+    @if (pageIndex == 1)
+    {
+        <li class="disabled"><span>&laquo;&nbsp;First</span></li>
+        <li class="disabled"><span>&lsaquo;&nbsp;Prev</span></li>
+    }
+    else
+    {
         <li><a href="@Url.Action(action, controller, GetRouteValues(routeData, 1))@Request.Url.Query">&laquo;&nbsp;First</a></li>
         <li><a href="@Url.Action(action, controller, GetRouteValues(routeData, lastPageIndex))@Request.Url.Query" rel="prev">&lsaquo;&nbsp;Prev</a></li>
+    }
+
+    @if (pageIndex == pageCount)
+    {
+        <li class="disabled"><span>Next&nbsp;&rsaquo;</span></li>
+        <li class="disabled"><span>Last&nbsp;&raquo;</span></li>
+    }
+    else
+    {
         <li><a href="@Url.Action(action, controller, GetRouteValues(routeData, nextPageIndex))@Request.Url.Query" rel="next">Next&nbsp;&rsaquo;</a></li>
         <li><a href="@Url.Action(action, controller, GetRouteValues(routeData, pageCount))@Request.Url.Query">Last&nbsp;&raquo;</a></li>
+    }
     </ul>
 </nav>
