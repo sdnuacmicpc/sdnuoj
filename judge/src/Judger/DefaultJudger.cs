@@ -328,7 +328,14 @@ namespace JudgeClient.Judger
                 if (run.ExitCode != 0)
                 {
                     res.ResultCode = ResultCode.RuntimeError;
-                    res.Detail = grep_directory(error_output, JudgeTempPath);
+                    if (task.LanguageAndSpecial.ToLower().IndexOf("python") == -1)
+                    {
+                        res.Detail = grep_directory(error_output, JudgeTempPath);
+                    }
+                    else
+                    {
+                        res.Detail = "Cannot show python runtime error";
+                    }
                     return false;
                 }
 
