@@ -146,23 +146,38 @@ namespace JudgeClient.Judger
             var monitor = new System.Timers.Timer(MonitorInterval);
             monitor.Elapsed += (object sender, System.Timers.ElapsedEventArgs args) =>
             {
-                if (run.HasExited)
+                try
                 {
-                    monitor.Stop();
-                    monitor.Dispose();
-                }
-                else
-                {
-                    try
+                    if (run.HasExited)
                     {
-                        var c_memory = (int)(run.PeakPagedMemorySize64 / 1024);
-                        if (c_memory > MemoryCost)
+                        monitor.Stop();
+                        monitor.Dispose();
+                    }
+                    else
+                    {
+                        try
                         {
-                            MemoryCost = c_memory;
-                            if (MemoryCost > task.MemoryLimit)
+                            var c_memory = (int)(run.PeakPagedMemorySize64 / 1024);
+                            if (c_memory > MemoryCost)
                             {
-                                res.ResultCode = ResultCode.MemoryLimitExceeded;
-                                res.MemoryCost = MemoryCost;
+                                MemoryCost = c_memory;
+                                if (MemoryCost > task.MemoryLimit)
+                                {
+                                    res.ResultCode = ResultCode.MemoryLimitExceeded;
+                                    res.MemoryCost = MemoryCost;
+                                    try
+                                    {
+                                        run.Kill();
+                                    }
+                                    catch { }
+                                }
+                            }
+                            TimeCost = (int)((DateTime.Now - run.StartTime).TotalMilliseconds / _profile.TimeLimitScale);
+                            //TimeCost = (int)(run.TotalProcessorTime.TotalMilliseconds / _profile.TimeLimitScale);
+                            if (TimeCost > task.TimeLimit)
+                            {
+                                res.ResultCode = ResultCode.TimeLimitExceeded;
+                                res.TimeCost = task.TimeLimit;
                                 try
                                 {
                                     run.Kill();
@@ -170,23 +185,13 @@ namespace JudgeClient.Judger
                                 catch { }
                             }
                         }
-                        TimeCost = (int)((DateTime.Now - run.StartTime).TotalMilliseconds / _profile.TimeLimitScale);
-                        //TimeCost = (int)(run.TotalProcessorTime.TotalMilliseconds / _profile.TimeLimitScale);
-                        if (TimeCost > task.TimeLimit)
-                        {
-                            res.ResultCode = ResultCode.TimeLimitExceeded;
-                            res.TimeCost = task.TimeLimit;
-                            try
-                            {
-                                run.Kill();
-                            }
-                            catch { }
-                        }
+                        catch { }
                     }
-                    catch { }
                 }
+                catch (InvalidOperationException r)
+                { }
             };
-            monitor.Start();
+            //monitor.Start();
 
             string error_output = null;
             bool error_output_readed = false;
@@ -238,6 +243,7 @@ namespace JudgeClient.Judger
             });
             
             run.Start();
+            monitor.Start();
             using (var usage = AffinityManager.GetUsage(run.ProcessorAffinity))
             {
                 try
