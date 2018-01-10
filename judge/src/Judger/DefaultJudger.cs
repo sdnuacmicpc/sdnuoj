@@ -334,7 +334,7 @@ namespace JudgeClient.Judger
                     }
                     else
                     {
-                        res.Detail = "Cannot show python runtime error";
+                        res.Detail = "No relevant information";
                     }
                     return false;
                 }
