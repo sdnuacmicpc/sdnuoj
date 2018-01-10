@@ -54,6 +54,13 @@ namespace JudgeClient.Judger
 
         private bool Compile(Task task, Result res, string JudgeTempPath)
         {
+            if (CodeChecker.CheckUnsafeCode(task) == false)
+            {
+                res.ResultCode = ResultCode.CompileError;
+                res.Detail = "Include unsafe code.你的代码中含有恶意代码, 因此服务器拒绝判定你的提交, 如有误报请联系QQ:961523404";
+                return false;
+            }
+
             Process p = new Process();
             p.StartInfo.FileName = string.Format("\"{0}\"", wrap_judge_path(_profile.CompilerPath, JudgeTempPath));
             p.StartInfo.Arguments = wrap_judge_path(_profile.CompileParameters, JudgeTempPath);
@@ -188,7 +195,7 @@ namespace JudgeClient.Judger
                         catch { }
                     }
                 }
-                catch (InvalidOperationException r)
+                catch (InvalidOperationException)
                 { }
             };
             //monitor.Start();

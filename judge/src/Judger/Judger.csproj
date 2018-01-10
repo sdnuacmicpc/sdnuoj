@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeChecker.cs" />
     <Compile Include="DefaultJudger.cs" />
     <Compile Include="JudgerException.cs" />
     <Compile Include="ProcessorAffinityManager.cs" />
