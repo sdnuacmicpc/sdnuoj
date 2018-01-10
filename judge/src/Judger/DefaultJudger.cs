@@ -429,8 +429,16 @@ namespace JudgeClient.Judger
             catch (Exception ex)
             {
                 ExceptionManager.Throw(new JudgerException("Judger error.", ex));
-                res.ResultCode = ResultCode.UnJudgable;
-                res.Detail = "Judger error.";
+                if (File.Exists(string.Format("\"{0}\"", wrap_judge_path(_profile.CompilerPath, JudgeTempPath))))
+                {
+                    res.ResultCode = ResultCode.UnJudgable;
+                    res.Detail = "Judger error.";
+                }
+                else//编译器路径不存在
+                {
+                    res.ResultCode = ResultCode.CompileError;
+                    res.Detail = "Compiler not found";
+                }
             }
             DeleteTempDirectory(JudgeTempPath);
             return res;
