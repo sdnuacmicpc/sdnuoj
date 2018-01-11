@@ -16,9 +16,7 @@ namespace JudgeClient.Judger
 
         public static void InitChecker()
         {
-            const string startStr = "LanguageStart:";
-            const string langTypeStr = "LangType=";
-            const string endStr = "LanguageEnd;";
+            const string startStr = "[Language=";
             string data;
             try
             {
@@ -31,38 +29,47 @@ namespace JudgeClient.Judger
                 data = "";
             }
 
+            StringBuilder sb = new StringBuilder();//去掉注释的待解析数据
+            string[] dataArr = Regex.Split(data, "\r\n|\r|\n");
+            foreach (string line in dataArr)
+            {
+                if (line.StartsWith("##") || String.IsNullOrEmpty(line))
+                    continue;
+                sb.Append(line + "\n");
+            }
+            data = sb.ToString();
+
             try
             {
                 int startP = data.IndexOf(startStr);
                 while (startP != -1)
                 {
-                    int endP = data.IndexOf(endStr, startP + startStr.Length);
-                    if (endP == -1)
+                    int langEndP = data.IndexOf("]", startP + startStr.Length);
+                    if (langEndP == -1)
                         break;
 
-                    string nowLangData = data.Substring(startP + startStr.Length, endP - (startP + startStr.Length));
-                    string[] nowLangArr = Regex.Split(nowLangData, "\r\n|\r|\n");
+                    int endP = data.IndexOf(startStr, langEndP);
+                    if (endP == -1)
+                        endP = data.Length - 1;
+
+                    string nowLangName = data.Substring(startP + startStr.Length, langEndP - (startP + startStr.Length));
+                    string nowLangData = data.Substring(langEndP + 1, endP - langEndP - 1);
+
+                    string[] nowLangArr = nowLangData.Split('\n');
                     List<string> unsafeList = new List<string>();
-                    string nowLangName = "";
+
                     foreach (string code in nowLangArr)
                     {
-                        if (code.StartsWith("##") || String.IsNullOrEmpty(code))
-                            continue;
-
-                        if (code.StartsWith(langTypeStr))
-                        {
-                            nowLangName = code.Substring(langTypeStr.Length, code.Length - langTypeStr.Length);
-                            continue;
-                        }
-
-                        unsafeList.Add(code);
+                        if (!String.IsNullOrEmpty(code))
+                            unsafeList.Add(code);
                     }
 
                     if (!String.IsNullOrEmpty(nowLangName) && unsafeList.Count > 0)
                     {
                         unsafeCodeDic[nowLangName] = unsafeList;
                     }
-                    startP = data.IndexOf(startStr, endP + endStr.Length);
+
+                    startP = endP;
                 }
             }
             catch { }
