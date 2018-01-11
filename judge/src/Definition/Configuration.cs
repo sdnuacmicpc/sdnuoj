@@ -41,14 +41,14 @@ namespace JudgeClient.Definition
             Fetchers.Add(new FetcherProfile()
             {
                 Type = "JudgeClient.SDNU.SDNUFetcher, JudgeClient.Fetcher",
-                AuthenticationURL = "http://www.acmicpc.sdnu.edu.cn/Judge.ashx?action=login",
+                AuthenticationURL = "http://127.0.0.1/judge/login",
                 Username = "httpjudge",
                 Password = "iloveeclan",
-                TaskFetchURL = "http://www.acmicpc.sdnu.edu.cn/Judge.ashx?action=getpending",
-                FetchInterval = 5000,
+                TaskFetchURL = "http://127.0.0.1/judge/getpending",
+                FetchInterval = 3000,
                 FetchTimeout = 5000,
-                DataFetchURL = "http://www.acmicpc.sdnu.edu.cn/Judge.ashx?action=getproblem",
-                ResultSubmitURL = "http://www.acmicpc.sdnu.edu.cn/Judge.ashx?action=updatestatus",
+                DataFetchURL = "http://127.0.0.1/judge/getproblem",
+                ResultSubmitURL = "http://127.0.0.1/judge/updatestatus",
                 DataAccessorProfile = new DataAccessorProfile()
                 {
                     Type = "JudgeClient.SDNU.SDNUDataAccessor, JudgeClient.Fetcher",
@@ -97,7 +97,8 @@ namespace JudgeClient.Definition
                 RunnerWorkingDirectory = gcc_prefix + @"\bin",
                 TimeLimitScale = 1,
                 OutputLimit = 20971520,
-                JudgeDirectory = ".gcc_judge"
+                JudgeDirectory = ".gcc_judge",
+                SeeNoCompilerAsCompileError = true
             });
             Judgers.Add(new JudgerProfile()
             {
@@ -112,7 +113,8 @@ namespace JudgeClient.Definition
                 RunnerWorkingDirectory = gcc_prefix + @"\bin",
                 TimeLimitScale = 1.5,
                 OutputLimit = 20971520,
-                JudgeDirectory = ".gpp_judge"
+                JudgeDirectory = ".gpp_judge",
+                SeeNoCompilerAsCompileError = true
             });
             if (!string.IsNullOrEmpty(java_prefix))
             {
@@ -129,7 +131,8 @@ namespace JudgeClient.Definition
                     TimeLimitScale = 1.5,
                     CompilerWaitTime = 20000,
                     OutputLimit = 20971520,
-                    JudgeDirectory = ".java_judge"
+                    JudgeDirectory = ".java_judge",
+                    SeeNoCompilerAsCompileError = true
                 });
             }
             LogFilePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "error.log");

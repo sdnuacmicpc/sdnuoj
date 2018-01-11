@@ -1,14 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{925D4BD8-FB0B-4B1F-B02D-313AB8C25786}</ProjectGuid>
+    <ProjectGuid>{35D63882-A597-4CBD-BCD1-EB9C9F415D82}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestJudger</RootNamespace>
-    <AssemblyName>TestJudger</AssemblyName>
+    <RootNamespace>NewCompileFaker</RootNamespace>
+    <AssemblyName>NewCompileFaker</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,11 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Burst">
-      <HintPath>..\Lib\Burst.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,26 +42,5 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Definition\Definition.csproj">
-      <Project>{d6a6339a-8870-4978-9aa7-40ed70c6723e}</Project>
-      <Name>Definition</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Judger\Judger.csproj">
-      <Project>{4cc5b2aa-6db5-4d41-9a65-a8090a1fe1c0}</Project>
-      <Name>Judger</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TaskFetcher\Fetcher.csproj">
-      <Project>{a6f7f726-844c-4518-a8bd-b0fb132f7111}</Project>
-      <Name>Fetcher</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

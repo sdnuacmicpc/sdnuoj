@@ -22,5 +22,6 @@ namespace JudgeClient.Definition
         public double TimeLimitScale { get; set; }
         public int OutputLimit { get; set; }
         public string JudgeDirectory { get; set; }
+        public bool SeeNoCompilerAsCompileError { get; set; }
     }
 }

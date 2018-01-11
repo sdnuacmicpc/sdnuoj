@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Burst">
+      <HintPath>..\Lib\Burst.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -59,10 +62,6 @@
     <Compile Include="JsonTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BurstFor2.0\Burst\Burst.csproj">
-      <Project>{124e1b7c-ec4c-4e6a-bda4-3fcb0aeef18b}</Project>
-      <Name>Burst</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Definition\Definition.csproj">
       <Project>{d6a6339a-8870-4978-9aa7-40ed70c6723e}</Project>
       <Name>Definition</Name>
