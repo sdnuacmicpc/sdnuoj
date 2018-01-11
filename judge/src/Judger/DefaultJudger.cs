@@ -135,7 +135,6 @@ namespace JudgeClient.Judger
                 return true;
             }
         }
-
         private bool Run(Task task, TestData data, Result res, string JudgeTempPath, char[] Buffer)
         {
             Process run = new Process();
@@ -341,14 +340,7 @@ namespace JudgeClient.Judger
                 if (run.ExitCode != 0)
                 {
                     res.ResultCode = ResultCode.RuntimeError;
-                    if (task.LanguageAndSpecial.ToLower().IndexOf("python") == -1)
-                    {
-                        res.Detail = grep_directory(error_output, JudgeTempPath);
-                    }
-                    else
-                    {
-                        res.Detail = "No relevant information";
-                    }
+                    res.Detail = grep_directory(error_output, JudgeTempPath);
                     return false;
                 }
 

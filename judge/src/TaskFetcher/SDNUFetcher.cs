@@ -219,6 +219,7 @@ namespace JudgeClient.SDNU
 
         public bool Submit(Result result)
         {
+            result.Detail = ReplceAngleBrackets(result.Detail);
             try
             {
                 if (result.ResultCode == ResultCode.UnJudgable)
@@ -244,6 +245,16 @@ namespace JudgeClient.SDNU
                 ExceptionManager.Throw(new FetcherException("SDNUFetcher submit results failed.", ex));
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 若提交信息中带有尖括号,会导致前端500,在提交前替换掉
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        private string ReplceAngleBrackets(string str)
+        {
+            return System.Text.RegularExpressions.Regex.Replace(str, "<|>", "\"");
         }
     }
 }
