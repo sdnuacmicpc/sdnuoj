@@ -9,7 +9,7 @@ using JudgeClient.Definition;
 
 namespace JudgeClient.Judger
 {
-    class CodeChecker
+    static class CodeChecker
     {
         private static Dictionary<string, List<string>> unsafeCodeDic = new Dictionary<string, List<string>>();
         private static bool inited = false;
