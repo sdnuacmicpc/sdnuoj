@@ -96,7 +96,7 @@ namespace JudgeClient.Judger
 
             foreach (string nowusCode in unsafeCodeList)
             {
-                if (Regex.IsMatch(task.SourceCode, nowusCode))
+                if (Regex.IsMatch(task.SourceCode, nowusCode, RegexOptions.Singleline)) 
                 {
                     return false;
                 }
