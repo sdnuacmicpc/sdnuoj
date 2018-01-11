@@ -254,7 +254,14 @@ namespace JudgeClient.SDNU
         /// <returns></returns>
         private string ReplceAngleBrackets(string str)
         {
-            return System.Text.RegularExpressions.Regex.Replace(str, "<|>", "\"");
+            try
+            {
+                return System.Text.RegularExpressions.Regex.Replace(str, "<|>", "\"");
+            }
+            catch
+            {
+                return str;
+            }
         }
     }
 }
