@@ -97,7 +97,8 @@ namespace JudgeClient.Definition
                 RunnerWorkingDirectory = gcc_prefix + @"\bin",
                 TimeLimitScale = 1,
                 OutputLimit = 20971520,
-                JudgeDirectory = ".gcc_judge"
+                JudgeDirectory = ".gcc_judge",
+                SeeNoCompilerAsCompileError = true
             });
             Judgers.Add(new JudgerProfile()
             {
@@ -112,7 +113,8 @@ namespace JudgeClient.Definition
                 RunnerWorkingDirectory = gcc_prefix + @"\bin",
                 TimeLimitScale = 1.5,
                 OutputLimit = 20971520,
-                JudgeDirectory = ".gpp_judge"
+                JudgeDirectory = ".gpp_judge",
+                SeeNoCompilerAsCompileError = true
             });
             if (!string.IsNullOrEmpty(java_prefix))
             {
@@ -129,7 +131,8 @@ namespace JudgeClient.Definition
                     TimeLimitScale = 1.5,
                     CompilerWaitTime = 20000,
                     OutputLimit = 20971520,
-                    JudgeDirectory = ".java_judge"
+                    JudgeDirectory = ".java_judge",
+                    SeeNoCompilerAsCompileError = true
                 });
             }
             LogFilePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "error.log");

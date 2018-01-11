@@ -197,7 +197,6 @@ namespace JudgeClient.Judger
                 catch (InvalidOperationException)
                 { }
             };
-            //monitor.Start();
 
             string error_output = null;
             bool error_output_readed = false;
@@ -435,7 +434,14 @@ namespace JudgeClient.Judger
                 }
                 else//编译器路径不存在
                 {
-                    res.ResultCode = ResultCode.CompileError;
+                    if(_profile.SeeNoCompilerAsCompileError == true)
+                    {
+                        res.ResultCode = ResultCode.CompileError;
+                    }
+                    else
+                    {
+                        res.ResultCode = ResultCode.UnJudgable;
+                    }
                     res.Detail = "Compiler not found";
                 }
             }
