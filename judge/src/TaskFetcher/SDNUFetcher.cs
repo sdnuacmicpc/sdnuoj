@@ -219,7 +219,7 @@ namespace JudgeClient.SDNU
 
         public bool Submit(Result result)
         {
-            result.Detail = ReplceAngleBrackets(result.Detail);
+            result.Detail = ReplceAngleBrackets(UnifyNewlineChar(result.Detail));
             try
             {
                 if (result.ResultCode == ResultCode.UnJudgable)
@@ -257,6 +257,18 @@ namespace JudgeClient.SDNU
             try
             {
                 return System.Text.RegularExpressions.Regex.Replace(str, "<|>", "\"");
+            }
+            catch
+            {
+                return str;
+            }
+        }
+
+        private string UnifyNewlineChar(string str)
+        {
+            try
+            {
+                return System.Text.RegularExpressions.Regex.Replace(str, "\r\n|\r|\n", "\r\n");
             }
             catch
             {
