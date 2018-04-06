@@ -43,12 +43,13 @@ namespace JudgeClient.Definition
                 Type = "JudgeClient.SDNU.SDNUFetcher, JudgeClient.Fetcher",
                 AuthenticationURL = "http://127.0.0.1/judge/login",
                 Username = "httpjudge",
-                Password = "iloveeclan",
+                Password = "12345678",
                 TaskFetchURL = "http://127.0.0.1/judge/getpending",
+                ResultSubmitURL = "http://127.0.0.1/judge/updatestatus",
+                DataFetchURL = "http://127.0.0.1/judge/getproblem",
                 FetchInterval = 3000,
                 FetchTimeout = 5000,
-                DataFetchURL = "http://127.0.0.1/judge/getproblem",
-                ResultSubmitURL = "http://127.0.0.1/judge/updatestatus",
+
                 DataAccessorProfile = new DataAccessorProfile()
                 {
                     Type = "JudgeClient.SDNU.SDNUDataAccessor, JudgeClient.Fetcher",
@@ -62,24 +63,21 @@ namespace JudgeClient.Definition
             });
              */
 
-            string gcc_prefix = "";
+            string gcc_prefix = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Compilers\gcc");
 
-            #if DEBUG
-
-            gcc_prefix = @"D:\lib\limited_mingw\build_for_no_fstream";
-
-            #else
-
-            gcc_prefix = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"compiler\gcc");
-
-            #endif
-
-            string java_prefix = string.Empty;
+            string java_prefix = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Compilers\jdk\bin\");
             try
             {
-                java_prefix = Environment.GetEnvironmentVariable("JAVA_HOME").EnsureTailSplash() + "bin\\";
+                string jdkPath = Environment.GetEnvironmentVariable("JAVA_HOME").EnsureTailSplash();
+                System.Diagnostics.Debug.WriteLine(jdkPath);
+                if (!String.IsNullOrEmpty(jdkPath) && jdkPath != "\\") 
+                {
+                    java_prefix = jdkPath + "bin\\";
+                }
             }
             catch { }
+
+            string python_prefix = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Compilers\python");
 
             MinTaskCountInPool = 5;
             TaskCountPerFetch = 5;
@@ -118,26 +116,37 @@ namespace JudgeClient.Definition
                 SeeNoCompilerAsCompileError = true,
                 NeedCompile = true
             });
-            if (!string.IsNullOrEmpty(java_prefix))
+            Judgers.Add(new JudgerProfile()
             {
-                Judgers.Add(new JudgerProfile()
-                {
-                    Language = "java",
-                    Type = "JudgeClient.Judger.DefaultJudger, JudgeClient.Judger",
-                    SourceCodeFileName = "Main.java",
-                    CompilerPath = java_prefix + "javac.exe",
-                    CompileParameters = "\"%judge_path%Main.java\"",
-                    RunnerFileName = java_prefix + "java.exe",
-                    RunnerWorkingDirectory = "%judge_path%",
-                    RunnerParameters = "Main",
-                    TimeLimitScale = 1.5,
-                    CompilerWaitTime = 20000,
-                    OutputLimit = 20971520,
-                    JudgeDirectory = ".java_judge",
-                    SeeNoCompilerAsCompileError = true,
-                    NeedCompile = true
-                });
-            }
+                Language = "java",
+                Type = "JudgeClient.Judger.DefaultJudger, JudgeClient.Judger",
+                SourceCodeFileName = "Main.java",
+                CompilerPath = java_prefix + "javac.exe",
+                CompileParameters = "-encoding utf-8 \"%judge_path%Main.java\"",
+                RunnerFileName = java_prefix + "java.exe",
+                RunnerWorkingDirectory = "%judge_path%",
+                RunnerParameters = "Main",
+                TimeLimitScale = 1.5,
+                CompilerWaitTime = 20000,
+                OutputLimit = 20971520,
+                JudgeDirectory = ".java_judge",
+                SeeNoCompilerAsCompileError = true,
+                NeedCompile = true
+            });
+            Judgers.Add(new JudgerProfile()
+            {
+                Language = "python",
+                Type = "JudgeClient.Judger.DefaultJudger, JudgeClient.Judger",
+                SourceCodeFileName = "src.py",
+                RunnerFileName = python_prefix + "\\python.exe",
+                RunnerWorkingDirectory = "%judge_path%",
+                RunnerParameters = "\"%judge_path%src.py\"",
+                TimeLimitScale = 1.5,
+                OutputLimit = 20971520,
+                JudgeDirectory = ".py_judge",
+                SeeNoCompilerAsCompileError = true,
+                NeedCompile = false
+            });
             LogFilePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "error.log");
             WriteLog = true;
         }
