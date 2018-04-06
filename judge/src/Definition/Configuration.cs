@@ -97,7 +97,8 @@ namespace JudgeClient.Definition
                 OutputLimit = 20971520,
                 JudgeDirectory = ".gcc_judge",
                 SeeNoCompilerAsCompileError = true,
-                NeedCompile = true
+                NeedCompile = true,
+                TimeCompensation = 1.0
             });
             Judgers.Add(new JudgerProfile()
             {
@@ -114,7 +115,8 @@ namespace JudgeClient.Definition
                 OutputLimit = 20971520,
                 JudgeDirectory = ".gpp_judge",
                 SeeNoCompilerAsCompileError = true,
-                NeedCompile = true
+                NeedCompile = true,
+                TimeCompensation = 1.0
             });
             Judgers.Add(new JudgerProfile()
             {
@@ -131,7 +133,8 @@ namespace JudgeClient.Definition
                 OutputLimit = 20971520,
                 JudgeDirectory = ".java_judge",
                 SeeNoCompilerAsCompileError = true,
-                NeedCompile = true
+                NeedCompile = true,
+                TimeCompensation = 1.0
             });
             Judgers.Add(new JudgerProfile()
             {
@@ -145,7 +148,8 @@ namespace JudgeClient.Definition
                 OutputLimit = 20971520,
                 JudgeDirectory = ".py_judge",
                 SeeNoCompilerAsCompileError = true,
-                NeedCompile = false
+                NeedCompile = false,
+                TimeCompensation = 1.0
             });
             LogFilePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "error.log");
             WriteLog = true;

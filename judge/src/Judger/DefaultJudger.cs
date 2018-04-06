@@ -415,6 +415,8 @@ namespace JudgeClient.Judger
             BufferSize = 10000;
             var Buffer = new char[BufferSize];
 
+            task.TimeLimit = (int)(task.TimeLimit * _profile.TimeCompensation);
+
             var res = new Result();
             res.ResultCode = ResultCode.Accepted;
             res.TimeCost = 0;
@@ -459,6 +461,7 @@ namespace JudgeClient.Judger
                 }
             }
             DeleteTempDirectory(JudgeTempPath);
+            res.TimeCost = (int)(res.TimeCost / _profile.TimeCompensation);
             return res;
         }
 

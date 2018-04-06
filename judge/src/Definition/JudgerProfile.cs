@@ -24,5 +24,6 @@ namespace JudgeClient.Definition
         public string JudgeDirectory { get; set; }
         public bool SeeNoCompilerAsCompileError { get; set; }
         public bool NeedCompile { get; set; }
+        public double TimeCompensation { get; set; }
     }
 }
