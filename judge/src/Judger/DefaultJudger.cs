@@ -61,6 +61,11 @@ namespace JudgeClient.Judger
                 return false;
             }
 
+            if(_profile.NeedCompile == false)
+            {
+                return true;
+            }
+
             Process p = new Process();
             p.StartInfo.FileName = string.Format("\"{0}\"", wrap_judge_path(_profile.CompilerPath, JudgeTempPath));
             p.StartInfo.Arguments = wrap_judge_path(_profile.CompileParameters, JudgeTempPath);
@@ -396,7 +401,15 @@ namespace JudgeClient.Judger
         {
             var JudgeTempPath = string.Format("{0}{1}\\", _judge_path, Guid.NewGuid());
             Directory.CreateDirectory(JudgeTempPath);
-            File.WriteAllText(JudgeTempPath + _profile.SourceCodeFileName, string.Format("{2}\r\n/* Task Id: {0}\r\n   Problem Id: {1} */\r\n", task.Id, task.Problem.Id, task.SourceCode));
+
+            if(_profile.NeedCompile)
+            {
+                File.WriteAllText(JudgeTempPath + _profile.SourceCodeFileName, string.Format("{2}\r\n/* Task Id: {0}\r\n   Problem Id: {1} */\r\n", task.Id, task.Problem.Id, task.SourceCode));
+            }
+            else
+            {
+                File.WriteAllText(JudgeTempPath + _profile.SourceCodeFileName, task.SourceCode);
+            }
 
             MonitorInterval = 30;
             BufferSize = 10000;

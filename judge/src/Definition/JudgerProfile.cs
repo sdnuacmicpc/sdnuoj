@@ -23,5 +23,6 @@ namespace JudgeClient.Definition
         public int OutputLimit { get; set; }
         public string JudgeDirectory { get; set; }
         public bool SeeNoCompilerAsCompileError { get; set; }
+        public bool NeedCompile { get; set; }
     }
 }
