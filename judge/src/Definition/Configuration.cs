@@ -79,6 +79,8 @@ namespace JudgeClient.Definition
 
             string python_prefix = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Compilers\python");
 
+            string kotlin_prefix = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Compilers\kotlin\bin\");
+
             MinTaskCountInPool = 5;
             TaskCountPerFetch = 5;
             Judgers = new List<JudgerProfile>();
@@ -149,6 +151,24 @@ namespace JudgeClient.Definition
                 JudgeDirectory = ".py_judge",
                 SeeNoCompilerAsCompileError = true,
                 NeedCompile = false,
+                TimeCompensation = 1.0
+            });
+            Judgers.Add(new JudgerProfile()
+            {
+                Language = "kotlin",
+                Type = "JudgeClient.Judger.DefaultJudger, JudgeClient.Judger",
+                SourceCodeFileName = "Main.kt",
+                CompilerPath = kotlin_prefix + "kotlinc.bat",
+                CompileParameters = "\"%judge_path%Main.kt\" -include-runtime -d \"%judge_path%Main.jar\"",
+                RunnerFileName = java_prefix + "java.exe",
+                RunnerWorkingDirectory = "%judge_path%",
+                RunnerParameters = "-jar Main.jar",
+                TimeLimitScale = 1.5,
+                CompilerWaitTime = 20000,
+                OutputLimit = 20971520,
+                JudgeDirectory = ".kt_judge",
+                SeeNoCompilerAsCompileError = true,
+                NeedCompile = true,
                 TimeCompensation = 1.0
             });
             LogFilePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "error.log");
