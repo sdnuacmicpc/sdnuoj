@@ -511,9 +511,19 @@ namespace SDNUOJ.Controllers.Core
             Int32 pageSize = UserManager.RANKLIST_PAGE_SIZE;
             Int32 recordCount = UserManager.CountUserRanklist();
 
-            return UserRepository.Instance
-                .GetEntities(pageIndex, pageSize, recordCount)
-                .ToPagedList(pageSize, recordCount);
+            List<UserEntity> users = UserRepository.Instance
+                .GetEntities(pageIndex, pageSize, recordCount);
+
+            foreach(UserEntity user in users)
+            {
+                if(user.IsLocked)
+                {
+                    user.UserName = "Blocked";
+                    user.NickName = "**Blocked**";
+                }
+            }
+
+            return users.ToPagedList(pageSize, recordCount);
         }
 
         /// <summary>
