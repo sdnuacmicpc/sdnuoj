@@ -30,6 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Burst">
+      <HintPath>..\Lib\Burst.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -52,18 +58,13 @@
     <Compile Include="TestFetcher.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\develop\SharpZipLib\src\ICSharpCode.SharpZLib.csproj">
-      <Project>{0e7413ff-eb9e-4714-acf2-be3a6a7b2ffd}</Project>
-      <Name>ICSharpCode.SharpZLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\BurstFor2.0\Burst\Burst.csproj">
-      <Project>{124e1b7c-ec4c-4e6a-bda4-3fcb0aeef18b}</Project>
-      <Name>Burst</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Definition\Definition.csproj">
       <Project>{d6a6339a-8870-4978-9aa7-40ed70c6723e}</Project>
       <Name>Definition</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

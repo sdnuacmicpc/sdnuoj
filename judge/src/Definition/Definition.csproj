@@ -30,6 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Burst">
+      <HintPath>..\Lib\Burst.dll</HintPath>
+    </Reference>
+    <Reference Include="NUniversalCharDet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUniversalCharDet.1.0.0\lib\net20\NUniversalCharDet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -62,14 +68,7 @@
     <Compile Include="EncodingUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\develop\uchardetdotnet\NUniversalCharDet\NUniversalCharDet.csproj">
-      <Project>{d18f01ca-af1a-476f-8667-52526a31b118}</Project>
-      <Name>NUniversalCharDet</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\BurstFor2.0\Burst\Burst.csproj">
-      <Project>{124e1b7c-ec4c-4e6a-bda4-3fcb0aeef18b}</Project>
-      <Name>Burst</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

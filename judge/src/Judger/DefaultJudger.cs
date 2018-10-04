@@ -54,6 +54,18 @@ namespace JudgeClient.Judger
 
         private bool Compile(Task task, Result res, string JudgeTempPath)
         {
+            if (CodeChecker.CheckUnsafeCode(task) == false)
+            {
+                res.ResultCode = ResultCode.CompileError;
+                res.Detail = "Include unsafe code.If you have any question, please contact the administrator.";
+                return false;
+            }
+
+            if(_profile.NeedCompile == false)
+            {
+                return true;
+            }
+
             Process p = new Process();
             p.StartInfo.FileName = string.Format("\"{0}\"", wrap_judge_path(_profile.CompilerPath, JudgeTempPath));
             p.StartInfo.Arguments = wrap_judge_path(_profile.CompileParameters, JudgeTempPath);
@@ -128,7 +140,6 @@ namespace JudgeClient.Judger
                 return true;
             }
         }
-
         private bool Run(Task task, TestData data, Result res, string JudgeTempPath, char[] Buffer)
         {
             Process run = new Process();
@@ -146,23 +157,38 @@ namespace JudgeClient.Judger
             var monitor = new System.Timers.Timer(MonitorInterval);
             monitor.Elapsed += (object sender, System.Timers.ElapsedEventArgs args) =>
             {
-                if (run.HasExited)
+                try
                 {
-                    monitor.Stop();
-                    monitor.Dispose();
-                }
-                else
-                {
-                    try
+                    if (run.HasExited)
                     {
-                        var c_memory = (int)(run.PeakPagedMemorySize64 / 1024);
-                        if (c_memory > MemoryCost)
+                        monitor.Stop();
+                        monitor.Dispose();
+                    }
+                    else
+                    {
+                        try
                         {
-                            MemoryCost = c_memory;
-                            if (MemoryCost > task.MemoryLimit)
+                            var c_memory = (int)(run.PeakPagedMemorySize64 / 1024);
+                            if (c_memory > MemoryCost)
                             {
-                                res.ResultCode = ResultCode.MemoryLimitExceeded;
-                                res.MemoryCost = MemoryCost;
+                                MemoryCost = c_memory;
+                                if (MemoryCost > task.MemoryLimit)
+                                {
+                                    res.ResultCode = ResultCode.MemoryLimitExceeded;
+                                    res.MemoryCost = MemoryCost;
+                                    try
+                                    {
+                                        run.Kill();
+                                    }
+                                    catch { }
+                                }
+                            }
+                            TimeCost = (int)((DateTime.Now - run.StartTime).TotalMilliseconds / _profile.TimeLimitScale);
+                            //TimeCost = (int)(run.TotalProcessorTime.TotalMilliseconds / _profile.TimeLimitScale);
+                            if (TimeCost > task.TimeLimit)
+                            {
+                                res.ResultCode = ResultCode.TimeLimitExceeded;
+                                res.TimeCost = task.TimeLimit;
                                 try
                                 {
                                     run.Kill();
@@ -170,23 +196,12 @@ namespace JudgeClient.Judger
                                 catch { }
                             }
                         }
-                        TimeCost = (int)((DateTime.Now - run.StartTime).TotalMilliseconds / _profile.TimeLimitScale);
-                        //TimeCost = (int)(run.TotalProcessorTime.TotalMilliseconds / _profile.TimeLimitScale);
-                        if (TimeCost > task.TimeLimit)
-                        {
-                            res.ResultCode = ResultCode.TimeLimitExceeded;
-                            res.TimeCost = task.TimeLimit;
-                            try
-                            {
-                                run.Kill();
-                            }
-                            catch { }
-                        }
+                        catch { }
                     }
-                    catch { }
                 }
+                catch (InvalidOperationException)
+                { }
             };
-            monitor.Start();
 
             string error_output = null;
             bool error_output_readed = false;
@@ -238,6 +253,7 @@ namespace JudgeClient.Judger
             });
             
             run.Start();
+            monitor.Start();
             using (var usage = AffinityManager.GetUsage(run.ProcessorAffinity))
             {
                 try
@@ -385,11 +401,21 @@ namespace JudgeClient.Judger
         {
             var JudgeTempPath = string.Format("{0}{1}\\", _judge_path, Guid.NewGuid());
             Directory.CreateDirectory(JudgeTempPath);
-            File.WriteAllText(JudgeTempPath + _profile.SourceCodeFileName, string.Format("{2}\r\n/* Task Id: {0}\r\n   Problem Id: {1} */\r\n", task.Id, task.Problem.Id, task.SourceCode));
+
+            if(_profile.NeedCompile)
+            {
+                File.WriteAllText(JudgeTempPath + _profile.SourceCodeFileName, string.Format("{2}\r\n/* Task Id: {0}\r\n   Problem Id: {1} */\r\n", task.Id, task.Problem.Id, task.SourceCode));
+            }
+            else
+            {
+                File.WriteAllText(JudgeTempPath + _profile.SourceCodeFileName, task.SourceCode);
+            }
 
             MonitorInterval = 30;
             BufferSize = 10000;
             var Buffer = new char[BufferSize];
+
+            task.TimeLimit = (int)(task.TimeLimit * _profile.TimeCompensation);
 
             var res = new Result();
             res.ResultCode = ResultCode.Accepted;
@@ -416,10 +442,26 @@ namespace JudgeClient.Judger
             catch (Exception ex)
             {
                 ExceptionManager.Throw(new JudgerException("Judger error.", ex));
-                res.ResultCode = ResultCode.UnJudgable;
-                res.Detail = "Judger error.";
+                if (File.Exists(string.Format("\"{0}\"", wrap_judge_path(_profile.CompilerPath, JudgeTempPath))))
+                {
+                    res.ResultCode = ResultCode.UnJudgable;
+                    res.Detail = "Judger error.";
+                }
+                else//编译器路径不存在
+                {
+                    if(_profile.SeeNoCompilerAsCompileError == true)
+                    {
+                        res.ResultCode = ResultCode.CompileError;
+                    }
+                    else
+                    {
+                        res.ResultCode = ResultCode.UnJudgable;
+                    }
+                    res.Detail = "Compiler not found";
+                }
             }
             DeleteTempDirectory(JudgeTempPath);
+            res.TimeCost = (int)(res.TimeCost / _profile.TimeCompensation);
             return res;
         }
 
