@@ -1,6 +1,5 @@
 # SDNU Online Judge
-SDNU Online Judge是基于Microsoft .NET Framework开发的高校在线评测系统，整个系统包括Web服务与评测模块两部分，两个模块使用Http进行通信，支持分布式评测。其中Web服务基于.NET 4.5 + ASP.NET MVC 5开发，支持Microsoft SQL Server、Microsoft Access等多种数据库。
-
+SDNU Online Judge是基于Microsoft .NET Framework开发的高校在线评测系统，整个系统包括Web服务与评测模块两部分，两个模块使用Http进行通信，支持分布式评测。其中Web服务基于.NET 4.5 + ASP.NET MVC 5开发，支持Microsoft SQL Server、Microsoft Access等多种数据库。Judger基于.Net Core开发，可跨平台运行。
 网站初始管理员账户 admin，初始密码 admin。
 
 项目网站：http://www.acmicpc.sdnu.edu.cn
@@ -28,5 +27,4 @@ Website:
 
 评测机:
 
-1. [SharpZipLib](http://icsharpcode.github.io/SharpZipLib)
-2. [NUniversalCharDet](http://code.google.com/p/nuniversalchardet)
+1. [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
