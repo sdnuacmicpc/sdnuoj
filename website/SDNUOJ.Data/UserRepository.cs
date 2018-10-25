@@ -331,7 +331,7 @@ namespace SDNUOJ.Data
         {
             return this.Select()
                 .Paged(pageSize, pageIndex, recordCount)
-                .Querys(USERNAME, NICKNAME, SOLVEDCOUNT, SUBMITCOUNT, CREATEDATE)
+                .Querys(USERNAME, NICKNAME, SOLVEDCOUNT, SUBMITCOUNT, CREATEDATE, ISLOCKED)
                 .OrderByDesc(SOLVEDCOUNT)
                 .OrderByAsc(SUBMITCOUNT)
                 .OrderByDesc(CREATEDATE)
