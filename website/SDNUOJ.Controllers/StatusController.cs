@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 
 using SDNUOJ.Configuration;
@@ -35,7 +37,48 @@ namespace SDNUOJ.Controllers
             ViewBag.Language = lang;
             ViewBag.SearchType = type;
 
+            StringBuilder queryBuilder = new StringBuilder();
+            Dictionary<Int32, bool> hasResult = new Dictionary<int, bool>();
+            foreach(var item in list)
+            {
+                Boolean working = // 是否在评测或等待评测
+                    item.Result == SDNUOJ.Entity.ResultType.Pending ||
+                    item.Result == SDNUOJ.Entity.ResultType.RejudgePending ||
+                    item.Result == SDNUOJ.Entity.ResultType.Judging;
+
+                hasResult[item.SolutionID] = !working;
+                if (working) // 加入查询
+                {
+                    queryBuilder.Append(item.SolutionID.ToString() + ",");
+                }
+            }
+
+            ViewBag.HasResult = hasResult;
+            ViewBag.QueryStr = queryBuilder.ToString().TrimEnd(',');
+
             return ViewWithPager(list, id);
+        }
+
+        /// <summary>
+        /// 查询评测状态, 供AJAX更新Status页面
+        /// </summary>
+        /// <param name="sids">多个提交ID(逗号分隔)</param>
+        /// <returns>查询结果(JSON)</returns>
+        public ActionResult QueryStatus(String sids = "")
+        {
+            List<SolutionEntity> soluList = SolutionManager.GetSolutionListBySids(sids);
+            var nowStatus =
+                from x in soluList
+                select new
+                {
+                    x.SolutionID,
+                    x.Result,
+                    x.ResultString,
+                    x.TimeCost,
+                    x.MemoryCost
+                };
+
+            return Json(nowStatus, "text/plain", JsonRequestBehavior.AllowGet);
         }
     }
 }

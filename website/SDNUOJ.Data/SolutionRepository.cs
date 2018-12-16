@@ -399,6 +399,22 @@ namespace SDNUOJ.Data
                 .ToDataTable()
                 .EachToList<Int32>((list, args) => list.Add((Int32)args.Row[problemIDColumn]));
         }
+
+        /// <summary>
+        /// 根据提交ID获取提交实体列表
+        /// </summary>
+        /// <param name="sids">多个提交ID(逗号分隔)</param>
+        /// <returns>提交实体列表</returns>
+        public List<SolutionEntity> GetEntitiesBySids(String sids)
+        {
+            return this.Select()
+                .Querys(SOLUTIONID, RESULT, TIMECOST, MEMORYCOST, JUDGETIME)
+                .Where(c =>
+                {
+                    return c.InInt32(SOLUTIONID, sids, ',');
+                })
+                .ToEntityList(this);
+        }
         #endregion
 
         #region GetProblemStatistic

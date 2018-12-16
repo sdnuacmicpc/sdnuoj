@@ -21,6 +21,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -112,6 +113,7 @@
     <Content Include="static\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="static\img\admin\logo.png" />
     <Content Include="static\img\editoricons.png" />
+    <Content Include="static\img\working.gif" />
     <Content Include="static\js\admin-framework.js">
       <DependentUpon>admin-framework.js.bundle</DependentUpon>
     </Content>

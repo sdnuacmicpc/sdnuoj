@@ -519,6 +519,16 @@ namespace SDNUOJ.Controllers.Core
         }
 
         /// <summary>
+        /// 根据提交ID获取提交实体列表
+        /// </summary>
+        /// <param name="sids">多个提交ID(逗号分隔)</param>
+        /// <returns>提交实体列表</returns>
+        public static List<SolutionEntity> GetSolutionListBySids(String sids)
+        {
+            return SolutionRepository.Instance.GetEntitiesBySids(sids);
+        }
+
+        /// <summary>
         /// 获取所有提交总数(有缓存)
         /// </summary>
         /// <returns>提交总数</returns>
