@@ -83,8 +83,73 @@ SDNUOJ.user = (function () {
 
             $.getJSON("/solution/submitlist").done(function (data) {
                 storage.set(SUBMITLISTKEY, JSON.stringify(data), 30);
-
                 done(data);
+            });
+        }
+    }
+})();
+
+SDNUOJ.namespace("SDNUOJ.status");
+SDNUOJ.status = (function () {
+    if (typeof queryStr != "undefined" && queryStr.length > 0) {
+        setTimeout("SDNUOJ.status.checkPendingStatus()", 1000);
+    }
+
+    function updateStatus(data) {
+        clearQueryStr();
+
+        for (var i in data) {
+            var item = data[i];
+
+            if (item.Result == 0 || item.Result == 1) { //Pending
+                addToQueryStr(item.SolutionID);
+                continue;
+
+            } else if (item.Result == 2) { //Judging
+                addToQueryStr(item.SolutionID);
+            }
+
+            updateItemStatus(item);
+        }
+
+        if (queryStr.length > 0) {
+            setTimeout("SDNUOJ.status.checkPendingStatus()", 1000);
+        }
+    }
+
+    function updateItemStatus(item) {
+        $("#time_" + item.SolutionID).text(item.TimeCost + "MS");
+        $("#mem_" + item.SolutionID).text(item.MemoryCost + "KB");
+
+        var reg = /\s/g;
+        $("#res_" + item.SolutionID).attr("class", "label status_" + item.ResultString.replace(reg, ""));
+
+        if (item.Result == 3 || item.Result == 4) { //Compile Error or Runtime Error
+            item.ResultString = "<a href=\"/solution/info/" + item.SolutionID + "\">" + item.ResultString + "</a>";
+        }
+        else if (item.Result == 2) { //Judging
+            item.ResultString += "<img src=\"/static/img/working.gif\" width=\"10px\" height=\"10px\">";
+        }
+
+        $("#res_" + item.SolutionID).html(item.ResultString);
+    }
+
+    function clearQueryStr() {
+        queryStr = "";
+    }
+
+    function addToQueryStr(sid) {
+        if (queryStr.length > 0) {
+            queryStr += ",";
+        }
+        queryStr += sid;
+    }
+
+    return {
+        checkPendingStatus: function () {
+            $.get("/status/querystatus?sids=" + queryStr).done(function (data) {
+                var jsonData = eval("(" + data + ")");
+                updateStatus(jsonData);
             });
         }
     }
